@@ -1,0 +1,6 @@
+{
+  "address": "127.0.0.1:8080",
+  "database_dsn": "postgres://postgres:postgres@localhost:5432/postgres",
+  "crypto_key": "/Users/skim/GolandProjects/yandex-praktikum/metrics/internal/certs",
+  "hash_key": "defaultHashKey"
+}
