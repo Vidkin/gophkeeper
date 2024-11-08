@@ -1,0 +1,41 @@
+name: Checks and tests
+
+on: [push, pull_request]
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@v5.1.0
+        with:
+          go-version: 1.23
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Build server
+        run: go build -o gophkeeper-server -v ./cmd/server/
+
+      - name: Build client
+        run: go build -o gophkeeper-client -v ./cmd/client/
+
+      - name: Run go vet
+        run: go vet ./...
+
+      - name: Install staticcheck
+        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+
+      - name: Run staticcheck
+        run: staticcheck ./...
+
+      - name: Install golint
+        run: go install golang.org/x/lint/golint@latest
+
+      - name: Run golint
+        run: golint ./...
+
+      - name: Run tests
+        run: go test -race -vet=off ./...
