@@ -1,15 +1,10 @@
 name: Build windows
 
-on:
-  workflow_run:
-    workflows: ["Checks-and-tests"]
-    types:
-      - completed
+on: [push, pull_request]
 
 jobs:
   build-windows:
     runs-on: windows-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
     steps:
       - uses: actions/checkout@v4.2.2
 
