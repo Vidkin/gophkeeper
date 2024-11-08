@@ -1,4 +1,4 @@
-name: Checks and tests
+name: Checks-and-tests
 
 on: [push, pull_request]
 

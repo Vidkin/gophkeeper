@@ -2,7 +2,7 @@ name: Build windows
 
 on:
   workflow_run:
-    workflows: ["Checks and tests"]
+    workflows: ["Checks-and-tests"]
     types:
       - completed
 
