@@ -72,10 +72,10 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 }
 
 func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) {
-	row := p.Conn.QueryRowContext(ctx, "SELECT login, password FROM users WHERE login = $1", login)
+	row := p.Conn.QueryRowContext(ctx, "SELECT login, password, id FROM users WHERE login = $1", login)
 
 	var u model.User
-	if err := row.Scan(&u.Login, &u.Password); err != nil {
+	if err := row.Scan(&u.Login, &u.Password, &u.ID); err != nil {
 		return nil, err
 	}
 	return &u, nil

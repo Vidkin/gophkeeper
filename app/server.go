@@ -39,11 +39,13 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 	gRPCServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			interceptors.LoggingInterceptor,
-			interceptors.HashInterceptor(cfg.Key)))
+			interceptors.HashInterceptor(cfg.Key),
+			interceptors.ValidateToken(cfg.JWTKey)))
 	proto.RegisterGophkeeperServer(gRPCServer, &protoAPI.GophkeeperServer{
 		RetryCount:  cfg.RetryCount,
 		Storage:     repo,
 		DatabaseKey: cfg.DatabaseKey,
+		JWTKey:      cfg.JWTKey,
 	})
 
 	listener, err := getTLSListener(cfg.ServerAddress.Address, cfg.CryptoKeyPublic, cfg.CryptoKeyPrivate)

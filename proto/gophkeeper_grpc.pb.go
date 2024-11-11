@@ -21,6 +21,7 @@ const _ = grpc.SupportPackageIsVersion9
 
 const (
 	Gophkeeper_RegisterUser_FullMethodName = "/gophkeeper.Gophkeeper/RegisterUser"
+	Gophkeeper_Authorize_FullMethodName    = "/gophkeeper.Gophkeeper/Authorize"
 	Gophkeeper_Echo_FullMethodName         = "/gophkeeper.Gophkeeper/Echo"
 	Gophkeeper_AddBankCard_FullMethodName  = "/gophkeeper.Gophkeeper/AddBankCard"
 	Gophkeeper_GetBankCards_FullMethodName = "/gophkeeper.Gophkeeper/GetBankCards"
@@ -31,6 +32,7 @@ const (
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type GophkeeperClient interface {
 	RegisterUser(ctx context.Context, in *RegisterUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*AuthorizeResponse, error)
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 	AddBankCard(ctx context.Context, in *AddBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetBankCards(ctx context.Context, in *GetBankCardsRequest, opts ...grpc.CallOption) (*GetBankCardsResponse, error)
@@ -48,6 +50,16 @@ func (c *gophkeeperClient) RegisterUser(ctx context.Context, in *RegisterUserReq
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Gophkeeper_RegisterUser_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*AuthorizeResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(AuthorizeResponse)
+	err := c.cc.Invoke(ctx, Gophkeeper_Authorize_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -89,6 +101,7 @@ func (c *gophkeeperClient) GetBankCards(ctx context.Context, in *GetBankCardsReq
 // for forward compatibility.
 type GophkeeperServer interface {
 	RegisterUser(context.Context, *RegisterUserRequest) (*emptypb.Empty, error)
+	Authorize(context.Context, *AuthorizeRequest) (*AuthorizeResponse, error)
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
 	AddBankCard(context.Context, *AddBankCardRequest) (*emptypb.Empty, error)
 	GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error)
@@ -104,6 +117,9 @@ type UnimplementedGophkeeperServer struct{}
 
 func (UnimplementedGophkeeperServer) RegisterUser(context.Context, *RegisterUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RegisterUser not implemented")
+}
+func (UnimplementedGophkeeperServer) Authorize(context.Context, *AuthorizeRequest) (*AuthorizeResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method Authorize not implemented")
 }
 func (UnimplementedGophkeeperServer) Echo(context.Context, *EchoRequest) (*EchoResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method Echo not implemented")
@@ -149,6 +165,24 @@ func _Gophkeeper_RegisterUser_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GophkeeperServer).RegisterUser(ctx, req.(*RegisterUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_Authorize_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AuthorizeRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).Authorize(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_Authorize_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).Authorize(ctx, req.(*AuthorizeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -217,6 +251,10 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RegisterUser",
 			Handler:    _Gophkeeper_RegisterUser_Handler,
+		},
+		{
+			MethodName: "Authorize",
+			Handler:    _Gophkeeper_Authorize_Handler,
 		},
 		{
 			MethodName: "Echo",

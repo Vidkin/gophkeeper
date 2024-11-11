@@ -12,6 +12,7 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	"github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/hash"
+	"github.com/Vidkin/gophkeeper/pkg/jwt"
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
@@ -19,6 +20,7 @@ type GophkeeperServer struct {
 	proto.UnimplementedGophkeeperServer
 	Storage     *storage.PostgresStorage // Repository for storing data
 	DatabaseKey string                   // Hash key
+	JWTKey      string                   // JWT secret key
 	RetryCount  int                      // Number of retry attempts for database operations
 }
 
@@ -46,6 +48,37 @@ func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterU
 		return nil, status.Errorf(codes.Internal, "error create user")
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeRequest) (*proto.AuthorizeResponse, error) {
+	var response proto.AuthorizeResponse
+	if in.User.Login == "" || in.User.Password == "" {
+		logger.Log.Error("invalid user login or password")
+		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
+	}
+
+	u, err := g.Storage.GetUser(ctx, in.User.Login)
+	if err != nil {
+		logger.Log.Error("error get user from db", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error get user from db")
+	}
+
+	pHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.User.Password))
+	pHashEncoded := base64.StdEncoding.EncodeToString(pHash)
+
+	if pHashEncoded != u.Password {
+		logger.Log.Error("invalid user login or password", zap.Error(err))
+		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
+	}
+
+	token, err := jwt.BuildJWTString(g.JWTKey, u.ID)
+	if err != nil {
+		logger.Log.Error("error build jwt string", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error build jwt string")
+	}
+
+	response.Token = token
+	return &response, nil
 }
 
 func (g *GophkeeperServer) Echo(_ context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) {

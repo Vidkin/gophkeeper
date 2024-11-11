@@ -15,6 +15,14 @@ message RegisterUserRequest {
   User user = 1;
 }
 
+message AuthorizeRequest {
+  User user = 1;
+}
+
+message AuthorizeResponse {
+  string token = 1;
+}
+
 message EchoRequest {
   string message = 1;
 }
@@ -44,6 +52,7 @@ message GetBankCardsResponse {
 
 service Gophkeeper {
   rpc RegisterUser(RegisterUserRequest) returns (google.protobuf.Empty);
+  rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
   rpc Echo(EchoRequest) returns (EchoResponse);
   rpc AddBankCard(AddBankCardRequest) returns (google.protobuf.Empty);
   rpc GetBankCards(GetBankCardsRequest) returns (GetBankCardsResponse);
