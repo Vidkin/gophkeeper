@@ -2,6 +2,7 @@ package config
 
 import (
 	"encoding/json"
+	"errors"
 	"flag"
 	"os"
 
@@ -18,13 +19,14 @@ import (
 // The fields can be populated from environment variables, allowing for
 // flexible configuration without hardcoding values.
 type ServerConfig struct {
-	ServerAddress *ServerAddress `json:"address"`
-	LogLevel      string
-	ConfigPath    string `env:"CONFIG"`
-	DatabaseDSN   string `env:"DATABASE_DSN" json:"database_dsn"`
-	Key           string `env:"KEY" json:"hash_key"`
-	CryptoKey     string `env:"CRYPTO_KEY" json:"crypto_key"`
-	RetryCount    int
+	ServerAddress    *ServerAddress `json:"address"`
+	LogLevel         string
+	ConfigPath       string `env:"CONFIG"`
+	DatabaseDSN      string `env:"DATABASE_DSN" json:"database_dsn"`
+	Key              string `env:"KEY" json:"hash_key"`
+	CryptoKeyPublic  string `env:"CRYPTO_KEY_PUBLIC"`
+	CryptoKeyPrivate string `env:"CRYPTO_KEY_PRIVATE"`
+	RetryCount       int
 }
 
 // NewServerConfig initializes a new ServerConfig instance with default values
@@ -53,7 +55,8 @@ func (config *ServerConfig) parseFlags() error {
 	fs.StringVar(&config.LogLevel, "l", "info", "Log level")
 	fs.StringVar(&config.DatabaseDSN, "d", "", "Database DSN")
 	fs.StringVar(&config.Key, "k", "", "Hash key")
-	fs.StringVar(&config.CryptoKey, "crypto-key", "", "Crypto key")
+	fs.StringVar(&config.CryptoKeyPublic, "crypto-key-public", "", "Path to public key pem file")
+	fs.StringVar(&config.CryptoKeyPrivate, "crypto-key-private", "", "Path to private key pem file")
 
 	if err := fs.Parse(os.Args[1:]); err != nil {
 		logger.Log.Error("error parse server flags", zap.Error(err))
@@ -72,6 +75,10 @@ func (config *ServerConfig) parseFlags() error {
 
 	if config.ServerAddress.Address == "" {
 		config.ServerAddress.Address = config.ServerAddress.String()
+	}
+
+	if config.CryptoKeyPublic == "" || config.CryptoKeyPrivate == "" {
+		return errors.New("you should pass the path to public and private keys pem files, see --help")
 	}
 
 	return nil
@@ -93,7 +100,6 @@ func (config *ServerConfig) loadJSONConfig(path string) error {
 	}
 
 	dbDSNPassed := false
-	cryptoKeyPassed := false
 	hashKeyPassed := false
 
 	args := os.Args[1:]
@@ -102,8 +108,6 @@ func (config *ServerConfig) loadJSONConfig(path string) error {
 		switch arg {
 		case "--d", "-d":
 			dbDSNPassed = true
-		case "--crypto-key", "-crypto-key":
-			cryptoKeyPassed = true
 		case "--k", "-k":
 			hashKeyPassed = true
 		}
@@ -111,10 +115,6 @@ func (config *ServerConfig) loadJSONConfig(path string) error {
 
 	if !dbDSNPassed {
 		config.DatabaseDSN = jsonServerConfig.DatabaseDSN
-	}
-
-	if !cryptoKeyPassed {
-		config.CryptoKey = jsonServerConfig.CryptoKey
 	}
 
 	if !hashKeyPassed {

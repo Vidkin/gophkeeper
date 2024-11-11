@@ -24,6 +24,6 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	fmt.Println(serverApp)
-	// TODO: serverApp.Run()
+
+	serverApp.Run()
 }

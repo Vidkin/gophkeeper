@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package gophkeeper;
+
+option go_package = "gophkeeper/proto";
+
+message User {
+  string login = 1;
+  string password = 2;
+}
+
+message RegisterUserRequest {
+  User user = 1;
+}
+
+message RegisterUserResponse {
+  string id = 1;
+}
+
+message EchoRequest {
+  string message = 1;
+}
+
+message EchoResponse {
+  string message = 1;
+}
+
+service Gophkeeper {
+  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc Echo(EchoRequest) returns (EchoResponse);
+}

@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"embed"
+	"errors"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
@@ -48,7 +49,7 @@ func NewPostgresStorage(dbDSN string) (*PostgresStorage, error) {
 		return nil, err
 	}
 
-	if err := m.Up(); err != nil && err != migrate.ErrNoChange {
+	if err := m.Up(); err != nil && !errors.Is(err, migrate.ErrNoChange) {
 		logger.Log.Fatal("can't exec migrations", zap.Error(err))
 		return nil, err
 	}
