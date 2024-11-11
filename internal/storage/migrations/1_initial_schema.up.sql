@@ -7,9 +7,10 @@ CREATE TABLE users (
 CREATE TABLE bank_cards (
     id SERIAL PRIMARY KEY,
     user_id INT NOT NULL,
-    encrypted_card_number TEXT NOT NULL,
-    encrypted_expiration_date TEXT NOT NULL,
-    encrypted_cvv TEXT NOT NULL,
+    owner TEXT NOT NULL,
+    card_number TEXT NOT NULL,
+    expiration_date TEXT NOT NULL,
+    cvv TEXT NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );

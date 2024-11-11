@@ -80,3 +80,11 @@ func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.Use
 	}
 	return &u, nil
 }
+
+func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
+	_, err := p.Conn.ExecContext(
+		ctx,
+		"INSERT INTO bank_cards (user_id, card_number, expiration_date, cvv, owner) "+
+			"VALUES ($1, $2, $3, $4, $5)", card.UserID, card.Number, card.ExpireDate, card.CVV, card.Number)
+	return err
+}

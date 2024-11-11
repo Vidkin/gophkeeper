@@ -10,8 +10,10 @@ import (
 	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
+	"github.com/Vidkin/gophkeeper/internal/model"
 	"github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/hash"
+	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/pkg/jwt"
 	"github.com/Vidkin/gophkeeper/proto"
 )
@@ -79,6 +81,39 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 
 	response.Token = token
 	return &response, nil
+}
+
+func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) {
+	if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" {
+		logger.Log.Error("some of the card info is missed")
+		return nil, status.Errorf(codes.InvalidArgument, "some of the card info is missed")
+	}
+
+	CVVHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Cvv))
+	CVVEncoded := base64.StdEncoding.EncodeToString(CVVHash)
+
+	ownerHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Owner))
+	ownerEncoded := base64.StdEncoding.EncodeToString(ownerHash)
+
+	numberHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Number))
+	numberEncoded := base64.StdEncoding.EncodeToString(numberHash)
+
+	expDateHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.ExpireDate))
+	expDateEncoded := base64.StdEncoding.EncodeToString(expDateHash)
+
+	card := &model.BankCard{
+		UserID:     ctx.Value(interceptors.UserID).(int64),
+		CVV:        CVVEncoded,
+		Owner:      ownerEncoded,
+		Number:     numberEncoded,
+		ExpireDate: expDateEncoded,
+	}
+
+	if err := g.Storage.AddCard(ctx, card); err != nil {
+		logger.Log.Error("error add bank card", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error add bank card")
+	}
+	return &emptypb.Empty{}, nil
 }
 
 func (g *GophkeeperServer) Echo(_ context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) {
