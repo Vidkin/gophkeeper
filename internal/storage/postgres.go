@@ -14,6 +14,7 @@ import (
 	"go.uber.org/zap"
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
+	"github.com/Vidkin/gophkeeper/internal/model"
 )
 
 //go:embed migrations/*.sql
@@ -63,4 +64,19 @@ func (p *PostgresStorage) Ping(ctx context.Context) error {
 
 func (p *PostgresStorage) Close() error {
 	return p.Conn.Close()
+}
+
+func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) error {
+	_, err := p.Conn.ExecContext(ctx, "INSERT INTO users (login, password) VALUES ($1, $2)", login, password)
+	return err
+}
+
+func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT login, password FROM users WHERE login = $1", login)
+
+	var u model.User
+	if err := row.Scan(&u.Login, &u.Password); err != nil {
+		return nil, err
+	}
+	return &u, nil
 }

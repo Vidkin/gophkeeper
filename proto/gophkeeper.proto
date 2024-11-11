@@ -1,5 +1,7 @@
 syntax = "proto3";
 
+import "google/protobuf/empty.proto";
+
 package gophkeeper;
 
 option go_package = "gophkeeper/proto";
@@ -13,10 +15,6 @@ message RegisterUserRequest {
   User user = 1;
 }
 
-message RegisterUserResponse {
-  string id = 1;
-}
-
 message EchoRequest {
   string message = 1;
 }
@@ -25,7 +23,28 @@ message EchoResponse {
   string message = 1;
 }
 
+message BankCard {
+  string id = 1;
+  string number = 2;
+  string expireDate = 3;
+  string cvv = 4;
+  string owner = 5;
+}
+
+message AddBankCardRequest {
+  BankCard card = 1;
+}
+
+message GetBankCardsRequest {
+}
+
+message GetBankCardsResponse {
+  repeated BankCard cards = 1;
+}
+
 service Gophkeeper {
-  rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse);
+  rpc RegisterUser(RegisterUserRequest) returns (google.protobuf.Empty);
   rpc Echo(EchoRequest) returns (EchoResponse);
+  rpc AddBankCard(AddBankCardRequest) returns (google.protobuf.Empty);
+  rpc GetBankCards(GetBankCardsRequest) returns (GetBankCardsResponse);
 }

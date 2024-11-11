@@ -39,6 +39,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 	proto.RegisterGophkeeperServer(gRPCServer, &protoAPI.GophkeeperServer{
 		RetryCount: cfg.RetryCount,
 		Storage:    repo,
+		Key:        cfg.Key,
 	})
 
 	listener, err := getTLSListener(cfg.ServerAddress.Address, cfg.CryptoKeyPublic, cfg.CryptoKeyPrivate)

@@ -81,6 +81,10 @@ func (config *ServerConfig) parseFlags() error {
 		return errors.New("you should pass the path to public and private keys pem files, see --help")
 	}
 
+	if config.Key == "" {
+		return errors.New("you should pass the hash key, see --help")
+	}
+
 	return nil
 }
 
