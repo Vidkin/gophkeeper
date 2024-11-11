@@ -23,6 +23,7 @@ type ServerConfig struct {
 	LogLevel         string
 	ConfigPath       string `env:"CONFIG"`
 	DatabaseDSN      string `env:"DATABASE_DSN" json:"database_dsn"`
+	DatabaseKey      string `env:"DATABASE_KEY"`
 	Key              string `env:"KEY" json:"hash_key"`
 	CryptoKeyPublic  string `env:"CRYPTO_KEY_PUBLIC"`
 	CryptoKeyPrivate string `env:"CRYPTO_KEY_PRIVATE"`
@@ -55,6 +56,7 @@ func (config *ServerConfig) parseFlags() error {
 	fs.StringVar(&config.LogLevel, "l", "info", "Log level")
 	fs.StringVar(&config.DatabaseDSN, "d", "", "Database DSN")
 	fs.StringVar(&config.Key, "k", "", "Hash key")
+	fs.StringVar(&config.DatabaseKey, "db-key", "", "Database secret key to encrypt/decrypt data")
 	fs.StringVar(&config.CryptoKeyPublic, "crypto-key-public", "", "Path to public key pem file")
 	fs.StringVar(&config.CryptoKeyPrivate, "crypto-key-private", "", "Path to private key pem file")
 
@@ -81,8 +83,8 @@ func (config *ServerConfig) parseFlags() error {
 		return errors.New("you should pass the path to public and private keys pem files, see --help")
 	}
 
-	if config.Key == "" {
-		return errors.New("you should pass the hash key, see --help")
+	if config.DatabaseKey == "" {
+		return errors.New("you should pass the database secret key, see --help")
 	}
 
 	return nil

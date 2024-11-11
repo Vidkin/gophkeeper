@@ -17,9 +17,9 @@ import (
 
 type GophkeeperServer struct {
 	proto.UnimplementedGophkeeperServer
-	Storage    *storage.PostgresStorage // Repository for storing data
-	Key        string                   // Hash key
-	RetryCount int                      // Number of retry attempts for database operations
+	Storage     *storage.PostgresStorage // Repository for storing data
+	DatabaseKey string                   // Hash key
+	RetryCount  int                      // Number of retry attempts for database operations
 }
 
 func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterUserRequest) (*emptypb.Empty, error) {
@@ -38,7 +38,7 @@ func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterU
 		return nil, status.Errorf(codes.AlreadyExists, "user already exists")
 	}
 
-	pHash := hash.GetHashSHA256(g.Key, []byte(in.User.Password))
+	pHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.User.Password))
 	pHashEncoded := base64.StdEncoding.EncodeToString(pHash)
 
 	if err := g.Storage.AddUser(ctx, in.User.Login, pHashEncoded); err != nil {

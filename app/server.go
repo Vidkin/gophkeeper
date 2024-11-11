@@ -14,6 +14,7 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	protoAPI "github.com/Vidkin/gophkeeper/internal/proto"
 	"github.com/Vidkin/gophkeeper/internal/storage"
+	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
@@ -35,11 +36,14 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 		return nil, err
 	}
 
-	gRPCServer := grpc.NewServer()
+	gRPCServer := grpc.NewServer(
+		grpc.ChainUnaryInterceptor(
+			interceptors.LoggingInterceptor,
+			interceptors.HashInterceptor(cfg.Key)))
 	proto.RegisterGophkeeperServer(gRPCServer, &protoAPI.GophkeeperServer{
-		RetryCount: cfg.RetryCount,
-		Storage:    repo,
-		Key:        cfg.Key,
+		RetryCount:  cfg.RetryCount,
+		Storage:     repo,
+		DatabaseKey: cfg.DatabaseKey,
 	})
 
 	listener, err := getTLSListener(cfg.ServerAddress.Address, cfg.CryptoKeyPublic, cfg.CryptoKeyPrivate)
