@@ -58,7 +58,7 @@ func (config *ServerConfig) parseFlags() error {
 	fs.StringVar(&config.DatabaseDSN, "d", "", "Database DSN")
 	fs.StringVar(&config.Key, "k", "", "Hash key")
 	fs.StringVar(&config.JWTKey, "j", "", "JWT secret key")
-	fs.StringVar(&config.DatabaseKey, "db-key", "", "Database secret key to encrypt/decrypt data")
+	fs.StringVar(&config.DatabaseKey, "db-key", "", "Database secret key to encrypt/decrypt data (32 bytes length)")
 	fs.StringVar(&config.CryptoKeyPublic, "crypto-key-public", "", "Path to public key pem file")
 	fs.StringVar(&config.CryptoKeyPrivate, "crypto-key-private", "", "Path to private key pem file")
 
@@ -85,8 +85,8 @@ func (config *ServerConfig) parseFlags() error {
 		return errors.New("you should pass the path to public and private keys pem files, see --help")
 	}
 
-	if config.DatabaseKey == "" {
-		return errors.New("you should pass the database secret key, see --help")
+	if config.DatabaseKey == "" || len(config.DatabaseKey) != 32 {
+		return errors.New("you should pass the database secret key (32-bytes), see --help")
 	}
 
 	if config.JWTKey == "" {

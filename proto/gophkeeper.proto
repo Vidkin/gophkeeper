@@ -32,7 +32,7 @@ message EchoResponse {
 }
 
 message BankCard {
-  string id = 1;
+  int64 id = 1;
   string number = 2;
   string expireDate = 3;
   string cvv = 4;

@@ -12,6 +12,7 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	"github.com/Vidkin/gophkeeper/internal/model"
 	"github.com/Vidkin/gophkeeper/internal/storage"
+	"github.com/Vidkin/gophkeeper/pkg/aes"
 	"github.com/Vidkin/gophkeeper/pkg/hash"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/pkg/jwt"
@@ -85,28 +86,40 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 
 func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) {
 	if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" {
-		logger.Log.Error("some of the card info is missed")
-		return nil, status.Errorf(codes.InvalidArgument, "some of the card info is missed")
+		logger.Log.Error("you should provide: CVV, expire date, card number, card owner")
+		return nil, status.Errorf(codes.InvalidArgument, "you should provide: CVV, expire date, card number, card owner")
 	}
 
-	CVVHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Cvv))
-	CVVEncoded := base64.StdEncoding.EncodeToString(CVVHash)
+	cvv, err := aes.Encrypt(g.DatabaseKey, in.Card.Cvv)
+	if err != nil {
+		logger.Log.Error("error encrypt data", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt data")
+	}
 
-	ownerHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Owner))
-	ownerEncoded := base64.StdEncoding.EncodeToString(ownerHash)
+	owner, err := aes.Encrypt(g.DatabaseKey, in.Card.Owner)
+	if err != nil {
+		logger.Log.Error("error encrypt data", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt data")
+	}
 
-	numberHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.Number))
-	numberEncoded := base64.StdEncoding.EncodeToString(numberHash)
+	number, err := aes.Encrypt(g.DatabaseKey, in.Card.Number)
+	if err != nil {
+		logger.Log.Error("error encrypt data", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt data")
+	}
 
-	expDateHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.Card.ExpireDate))
-	expDateEncoded := base64.StdEncoding.EncodeToString(expDateHash)
+	expireDate, err := aes.Encrypt(g.DatabaseKey, in.Card.ExpireDate)
+	if err != nil {
+		logger.Log.Error("error encrypt data", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt data")
+	}
 
 	card := &model.BankCard{
 		UserID:     ctx.Value(interceptors.UserID).(int64),
-		CVV:        CVVEncoded,
-		Owner:      ownerEncoded,
-		Number:     numberEncoded,
-		ExpireDate: expDateEncoded,
+		CVV:        cvv,
+		Owner:      owner,
+		Number:     number,
+		ExpireDate: expireDate,
 	}
 
 	if err := g.Storage.AddCard(ctx, card); err != nil {
@@ -114,6 +127,52 @@ func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCar
 		return nil, status.Errorf(codes.Internal, "error add bank card")
 	}
 	return &emptypb.Empty{}, nil
+}
+
+func (g *GophkeeperServer) GetBankCards(ctx context.Context, in *proto.GetBankCardsRequest) (*proto.GetBankCardsResponse, error) {
+	var response proto.GetBankCardsResponse
+
+	cards, err := g.Storage.GetBankCards(ctx, ctx.Value(interceptors.UserID).(int64))
+	if err != nil {
+		logger.Log.Error("error get bank cards from DB", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error get bank cards from DB")
+	}
+
+	protoCards := make([]*proto.BankCard, len(cards))
+	for i, card := range cards {
+		protoCards[i] = &proto.BankCard{}
+
+		owner, err := aes.Decrypt(g.DatabaseKey, card.Owner)
+		if err != nil {
+			logger.Log.Error("error decrypt data", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		}
+		protoCards[i].Owner = owner
+
+		number, err := aes.Decrypt(g.DatabaseKey, card.Number)
+		if err != nil {
+			logger.Log.Error("error decrypt data", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		}
+		protoCards[i].Number = number
+
+		expireDate, err := aes.Decrypt(g.DatabaseKey, card.ExpireDate)
+		if err != nil {
+			logger.Log.Error("error decrypt data", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		}
+		protoCards[i].ExpireDate = expireDate
+
+		cvv, err := aes.Decrypt(g.DatabaseKey, card.CVV)
+		if err != nil {
+			logger.Log.Error("error decrypt data", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		}
+		protoCards[i].Cvv = cvv
+		protoCards[i].Id = card.ID
+	}
+	response.Cards = protoCards
+	return &response, nil
 }
 
 func (g *GophkeeperServer) Echo(_ context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) {

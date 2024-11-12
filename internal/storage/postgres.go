@@ -85,6 +85,33 @@ func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) err
 	_, err := p.Conn.ExecContext(
 		ctx,
 		"INSERT INTO bank_cards (user_id, card_number, expiration_date, cvv, owner) "+
-			"VALUES ($1, $2, $3, $4, $5)", card.UserID, card.Number, card.ExpireDate, card.CVV, card.Number)
+			"VALUES ($1, $2, $3, $4, $5)", card.UserID, card.Number, card.ExpireDate, card.CVV, card.Owner)
 	return err
+}
+
+func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*model.BankCard, error) {
+	rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv FROM bank_cards WHERE user_id = $1", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			logger.Log.Error("error close rows", zap.Error(err))
+		}
+	}(rows)
+
+	var cards []*model.BankCard
+	for rows.Next() {
+		var b model.BankCard
+		if err = rows.Scan(&b.ID, &b.UserID, &b.Owner, &b.Number, &b.ExpireDate, &b.CVV); err != nil {
+			return nil, err
+		}
+		cards = append(cards, &b)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return cards, nil
 }

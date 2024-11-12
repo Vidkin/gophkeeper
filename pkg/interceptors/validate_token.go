@@ -41,7 +41,7 @@ func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnarySer
 			}
 		}
 		if len(tokenString) == 0 {
-			return nil, status.Error(codes.InvalidArgument, "missing token")
+			return nil, status.Error(codes.PermissionDenied, "missing token")
 		}
 
 		claims := &jwtPKG.Claims{}
@@ -56,12 +56,12 @@ func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnarySer
 
 		if err != nil {
 			logger.Log.Error("error parse claims", zap.Error(err))
-			return nil, status.Errorf(codes.InvalidArgument, "error parse claims")
+			return nil, status.Errorf(codes.PermissionDenied, "error parse claims")
 		}
 
 		if !token.Valid {
 			logger.Log.Error("token  is not valid")
-			return nil, status.Errorf(codes.InvalidArgument, "token is not valid")
+			return nil, status.Errorf(codes.PermissionDenied, "token is not valid")
 		}
 
 		logger.Log.Info("token is valid")
