@@ -64,7 +64,6 @@ func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnarySer
 			return nil, status.Errorf(codes.PermissionDenied, "token is not valid")
 		}
 
-		logger.Log.Info("token is valid")
 		ctx = context.WithValue(ctx, UserID, claims.UserID)
 		return handler(ctx, req)
 	}

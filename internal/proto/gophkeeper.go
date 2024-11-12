@@ -28,28 +28,28 @@ type GophkeeperServer struct {
 }
 
 func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterUserRequest) (*emptypb.Empty, error) {
-	if in.User.Login == "" {
+	if in.Credentials.Login == "" {
 		logger.Log.Error("invalid user login")
 		return nil, status.Errorf(codes.InvalidArgument, "invalid user login")
 	}
-	if in.User.Password == "" {
+	if in.Credentials.Password == "" {
 		logger.Log.Error("invalid user password")
 		return nil, status.Errorf(codes.InvalidArgument, "invalid user password")
 	}
 
-	_, err := g.Storage.GetUser(ctx, in.User.Login)
+	_, err := g.Storage.GetUser(ctx, in.Credentials.Login)
 	if err == nil {
 		logger.Log.Error("user already exists")
 		return nil, status.Errorf(codes.AlreadyExists, "user already exists")
 	}
 
-	encPwd, err := aes.Encrypt(g.DatabaseKey, in.User.Password)
+	encPwd, err := aes.Encrypt(g.DatabaseKey, in.Credentials.Password)
 	if err != nil {
 		logger.Log.Error("error encrypt password", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "error encrypt password")
 	}
 
-	if err := g.Storage.AddUser(ctx, in.User.Login, encPwd); err != nil {
+	if err := g.Storage.AddUser(ctx, in.Credentials.Login, encPwd); err != nil {
 		logger.Log.Error("error create user", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "error create user")
 	}
@@ -58,12 +58,12 @@ func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterU
 
 func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeRequest) (*proto.AuthorizeResponse, error) {
 	var response proto.AuthorizeResponse
-	if in.User.Login == "" || in.User.Password == "" {
+	if in.Credentials.Login == "" || in.Credentials.Password == "" {
 		logger.Log.Error("invalid user login or password")
 		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
 
-	u, err := g.Storage.GetUser(ctx, in.User.Login)
+	u, err := g.Storage.GetUser(ctx, in.Credentials.Login)
 	if err != nil {
 		logger.Log.Error("error get user from db", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "error get user from db")
@@ -75,7 +75,7 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 		return nil, status.Errorf(codes.Internal, "error encrypt password")
 	}
 
-	if in.User.Password != decPwd {
+	if in.Credentials.Password != decPwd {
 		logger.Log.Error("invalid user login or password", zap.Error(err))
 		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
@@ -178,6 +178,48 @@ func (g *GophkeeperServer) GetBankCards(ctx context.Context, in *proto.GetBankCa
 		protoCards[i].Id = card.ID
 	}
 	response.Cards = protoCards
+	return &response, nil
+}
+
+func (g *GophkeeperServer) AddUserCredentials(ctx context.Context, in *proto.AddUserCredentialsRequest) (*emptypb.Empty, error) {
+	if in.Credentials.Login == "" || in.Credentials.Password == "" {
+		logger.Log.Error("you should provide: login and password")
+		return nil, status.Errorf(codes.InvalidArgument, "you should provide: login and password")
+	}
+
+	cred := &model.Credentials{
+		UserID:      ctx.Value(interceptors.UserID).(int64),
+		Login:       in.Credentials.Login,
+		Password:    in.Credentials.Password,
+		Description: in.Credentials.Description,
+	}
+
+	if err := g.Storage.AddUserCredentials(ctx, cred); err != nil {
+		logger.Log.Error("error add user credentials", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error add user credentials")
+	}
+	return &emptypb.Empty{}, nil
+}
+
+func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, in *proto.GetUserCredentialsRequest) (*proto.GetUserCredentialsResponse, error) {
+	var response proto.GetUserCredentialsResponse
+
+	creds, err := g.Storage.GetUserCredentials(ctx, ctx.Value(interceptors.UserID).(int64))
+	if err != nil {
+		logger.Log.Error("error get user credentials from DB", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error get user credentials from DB")
+	}
+
+	protoCreds := make([]*proto.Credentials, len(creds))
+	for i, cred := range creds {
+		protoCreds[i] = &proto.Credentials{
+			Login:       cred.Login,
+			Password:    cred.Password,
+			Description: cred.Description,
+			Id:          cred.ID,
+		}
+	}
+	response.Credentials = protoCreds
 	return &response, nil
 }
 

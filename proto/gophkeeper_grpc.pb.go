@@ -20,11 +20,13 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Gophkeeper_RegisterUser_FullMethodName = "/gophkeeper.Gophkeeper/RegisterUser"
-	Gophkeeper_Authorize_FullMethodName    = "/gophkeeper.Gophkeeper/Authorize"
-	Gophkeeper_Echo_FullMethodName         = "/gophkeeper.Gophkeeper/Echo"
-	Gophkeeper_AddBankCard_FullMethodName  = "/gophkeeper.Gophkeeper/AddBankCard"
-	Gophkeeper_GetBankCards_FullMethodName = "/gophkeeper.Gophkeeper/GetBankCards"
+	Gophkeeper_RegisterUser_FullMethodName       = "/gophkeeper.Gophkeeper/RegisterUser"
+	Gophkeeper_Authorize_FullMethodName          = "/gophkeeper.Gophkeeper/Authorize"
+	Gophkeeper_Echo_FullMethodName               = "/gophkeeper.Gophkeeper/Echo"
+	Gophkeeper_AddBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/AddBankCard"
+	Gophkeeper_GetBankCards_FullMethodName       = "/gophkeeper.Gophkeeper/GetBankCards"
+	Gophkeeper_AddUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/AddUserCredentials"
+	Gophkeeper_GetUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/GetUserCredentials"
 )
 
 // GophkeeperClient is the client API for Gophkeeper service.
@@ -36,6 +38,8 @@ type GophkeeperClient interface {
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 	AddBankCard(ctx context.Context, in *AddBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetBankCards(ctx context.Context, in *GetBankCardsRequest, opts ...grpc.CallOption) (*GetBankCardsResponse, error)
+	AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
 }
 
 type gophkeeperClient struct {
@@ -96,6 +100,26 @@ func (c *gophkeeperClient) GetBankCards(ctx context.Context, in *GetBankCardsReq
 	return out, nil
 }
 
+func (c *gophkeeperClient) AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_AddUserCredentials_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetUserCredentialsResponse)
+	err := c.cc.Invoke(ctx, Gophkeeper_GetUserCredentials_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // GophkeeperServer is the server API for Gophkeeper service.
 // All implementations must embed UnimplementedGophkeeperServer
 // for forward compatibility.
@@ -105,6 +129,8 @@ type GophkeeperServer interface {
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
 	AddBankCard(context.Context, *AddBankCardRequest) (*emptypb.Empty, error)
 	GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error)
+	AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error)
+	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
 	mustEmbedUnimplementedGophkeeperServer()
 }
 
@@ -129,6 +155,12 @@ func (UnimplementedGophkeeperServer) AddBankCard(context.Context, *AddBankCardRe
 }
 func (UnimplementedGophkeeperServer) GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBankCards not implemented")
+}
+func (UnimplementedGophkeeperServer) AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUserCredentials not implemented")
+}
+func (UnimplementedGophkeeperServer) GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserCredentials not implemented")
 }
 func (UnimplementedGophkeeperServer) mustEmbedUnimplementedGophkeeperServer() {}
 func (UnimplementedGophkeeperServer) testEmbeddedByValue()                    {}
@@ -241,6 +273,42 @@ func _Gophkeeper_GetBankCards_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gophkeeper_AddUserCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddUserCredentialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).AddUserCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_AddUserCredentials_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).AddUserCredentials(ctx, req.(*AddUserCredentialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_GetUserCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserCredentialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).GetUserCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_GetUserCredentials_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).GetUserCredentials(ctx, req.(*GetUserCredentialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Gophkeeper_ServiceDesc is the grpc.ServiceDesc for Gophkeeper service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -267,6 +335,14 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetBankCards",
 			Handler:    _Gophkeeper_GetBankCards_Handler,
+		},
+		{
+			MethodName: "AddUserCredentials",
+			Handler:    _Gophkeeper_AddUserCredentials_Handler,
+		},
+		{
+			MethodName: "GetUserCredentials",
+			Handler:    _Gophkeeper_GetUserCredentials_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

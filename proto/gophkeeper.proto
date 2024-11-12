@@ -6,21 +6,34 @@ package gophkeeper;
 
 option go_package = "gophkeeper/proto";
 
-message User {
-  string login = 1;
-  string password = 2;
+message Credentials {
+  int64 id = 1;
+  string login = 2;
+  string password = 3;
+  string description = 4;
 }
 
 message RegisterUserRequest {
-  User user = 1;
+  Credentials credentials = 1;
 }
 
 message AuthorizeRequest {
-  User user = 1;
+  Credentials credentials = 1;
 }
 
 message AuthorizeResponse {
   string token = 1;
+}
+
+message AddUserCredentialsRequest {
+  Credentials credentials = 1;
+}
+
+message GetUserCredentialsRequest {
+}
+
+message GetUserCredentialsResponse {
+  repeated Credentials credentials = 1;
 }
 
 message EchoRequest {
@@ -56,4 +69,6 @@ service Gophkeeper {
   rpc Echo(EchoRequest) returns (EchoResponse);
   rpc AddBankCard(AddBankCardRequest) returns (google.protobuf.Empty);
   rpc GetBankCards(GetBankCardsRequest) returns (GetBankCardsResponse);
+  rpc AddUserCredentials(AddUserCredentialsRequest) returns (google.protobuf.Empty);
+  rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
 }

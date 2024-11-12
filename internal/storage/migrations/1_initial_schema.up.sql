@@ -15,6 +15,16 @@ CREATE TABLE bank_cards (
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
+CREATE TABLE user_credentials (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    login TEXT NOT NULL,
+    password TEXT NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE TABLE files (
    id SERIAL PRIMARY KEY,
    user_id INT NOT NULL,

@@ -81,6 +81,41 @@ func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.Use
 	return &u, nil
 }
 
+func (p *PostgresStorage) AddUserCredentials(ctx context.Context, cred *model.Credentials) error {
+	_, err := p.Conn.ExecContext(
+		ctx,
+		"INSERT INTO user_credentials (login, password, description, user_id) VALUES ($1, $2, $3, $4)",
+		cred.Login, cred.Password, cred.Description, cred.UserID)
+	return err
+}
+
+func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) ([]*model.Credentials, error) {
+	rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE user_id = $1", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			logger.Log.Error("error close rows", zap.Error(err))
+		}
+	}(rows)
+
+	var creds []*model.Credentials
+	for rows.Next() {
+		var c model.Credentials
+		if err = rows.Scan(&c.ID, &c.UserID, &c.Login, &c.Password, &c.Description); err != nil {
+			return nil, err
+		}
+		creds = append(creds, &c)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return creds, nil
+}
+
 func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
 	_, err := p.Conn.ExecContext(
 		ctx,
