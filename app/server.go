@@ -36,6 +36,12 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 		return nil, err
 	}
 
+	_, err = storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey)
+	if err != nil {
+		logger.Log.Error("error init minio storage", zap.Error(err))
+		return nil, err
+	}
+
 	gRPCServer := grpc.NewServer(
 		grpc.ChainUnaryInterceptor(
 			interceptors.LoggingInterceptor,

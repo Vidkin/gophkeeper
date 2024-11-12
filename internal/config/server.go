@@ -19,16 +19,19 @@ import (
 // The fields can be populated from environment variables, allowing for
 // flexible configuration without hardcoding values.
 type ServerConfig struct {
-	ServerAddress    *ServerAddress `json:"address"`
-	LogLevel         string
-	ConfigPath       string `env:"CONFIG"`
-	DatabaseDSN      string `env:"DATABASE_DSN" json:"database_dsn"`
-	DatabaseKey      string `env:"DATABASE_KEY"`
-	JWTKey           string `env:"JWT_KEY"`
-	Key              string `env:"KEY" json:"hash_key"`
-	CryptoKeyPublic  string `env:"CRYPTO_KEY_PUBLIC"`
-	CryptoKeyPrivate string `env:"CRYPTO_KEY_PRIVATE"`
-	RetryCount       int
+	ServerAddress        *ServerAddress `json:"address"`
+	LogLevel             string
+	MinioEndpoint        string `env:"MINIO_ENDPOINT"`
+	MinioAccessKeyID     string `env:"MINIO_ACCESS_KEY_ID"`
+	MinioSecretAccessKey string `env:"MINIO_SECRET_ACCESS_KEY"`
+	ConfigPath           string `env:"CONFIG"`
+	DatabaseDSN          string `env:"DATABASE_DSN" json:"database_dsn"`
+	DatabaseKey          string `env:"DATABASE_KEY"`
+	JWTKey               string `env:"JWT_KEY"`
+	Key                  string `env:"KEY" json:"hash_key"`
+	CryptoKeyPublic      string `env:"CRYPTO_KEY_PUBLIC"`
+	CryptoKeyPrivate     string `env:"CRYPTO_KEY_PRIVATE"`
+	RetryCount           int
 }
 
 // NewServerConfig initializes a new ServerConfig instance with default values
@@ -58,6 +61,9 @@ func (config *ServerConfig) parseFlags() error {
 	fs.StringVar(&config.DatabaseDSN, "d", "", "Database DSN")
 	fs.StringVar(&config.Key, "k", "", "Hash key")
 	fs.StringVar(&config.JWTKey, "j", "", "JWT secret key")
+	fs.StringVar(&config.MinioEndpoint, "minio-endpoint", "", "Minio endpoint host:port")
+	fs.StringVar(&config.MinioSecretAccessKey, "minio-secret", "", "Minio secret access key")
+	fs.StringVar(&config.MinioAccessKeyID, "minio-id", "", "Minio access key ID")
 	fs.StringVar(&config.DatabaseKey, "db-key", "", "Database secret key to encrypt/decrypt data (32 bytes length)")
 	fs.StringVar(&config.CryptoKeyPublic, "crypto-key-public", "", "Path to public key pem file")
 	fs.StringVar(&config.CryptoKeyPrivate, "crypto-key-private", "", "Path to private key pem file")
@@ -87,6 +93,18 @@ func (config *ServerConfig) parseFlags() error {
 
 	if config.DatabaseKey == "" || len(config.DatabaseKey) != 32 {
 		return errors.New("you should pass the database secret key (32-bytes), see --help")
+	}
+
+	if config.MinioEndpoint == "" {
+		return errors.New("you should pass correct endpoint to minio service, see --help")
+	}
+
+	if config.MinioSecretAccessKey == "" {
+		return errors.New("you should pass correct minio secret access key, see --help")
+	}
+
+	if config.MinioAccessKeyID == "" {
+		return errors.New("you should pass correct minio access key id, see --help")
 	}
 
 	if config.JWTKey == "" {
