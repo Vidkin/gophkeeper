@@ -36,7 +36,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 		return nil, err
 	}
 
-	_, err = storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey)
+	minioClient, err := storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey)
 	if err != nil {
 		logger.Log.Error("error init minio storage", zap.Error(err))
 		return nil, err
@@ -50,6 +50,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 	proto.RegisterGophkeeperServer(gRPCServer, &protoAPI.GophkeeperServer{
 		RetryCount:  cfg.RetryCount,
 		Storage:     repo,
+		Minio:       minioClient,
 		DatabaseKey: cfg.DatabaseKey,
 		JWTKey:      cfg.JWTKey,
 	})

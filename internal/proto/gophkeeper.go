@@ -2,8 +2,8 @@ package proto
 
 import (
 	"context"
-	"encoding/base64"
 
+	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -13,7 +13,6 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/model"
 	"github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/aes"
-	"github.com/Vidkin/gophkeeper/pkg/hash"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/pkg/jwt"
 	"github.com/Vidkin/gophkeeper/proto"
@@ -22,6 +21,7 @@ import (
 type GophkeeperServer struct {
 	proto.UnimplementedGophkeeperServer
 	Storage     *storage.PostgresStorage // Repository for storing data
+	Minio       *minio.Client            // Client to minio storage
 	DatabaseKey string                   // Hash key
 	JWTKey      string                   // JWT secret key
 	RetryCount  int                      // Number of retry attempts for database operations
@@ -43,10 +43,13 @@ func (g *GophkeeperServer) RegisterUser(ctx context.Context, in *proto.RegisterU
 		return nil, status.Errorf(codes.AlreadyExists, "user already exists")
 	}
 
-	pHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.User.Password))
-	pHashEncoded := base64.StdEncoding.EncodeToString(pHash)
+	encPwd, err := aes.Encrypt(g.DatabaseKey, in.User.Password)
+	if err != nil {
+		logger.Log.Error("error encrypt password", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt password")
+	}
 
-	if err := g.Storage.AddUser(ctx, in.User.Login, pHashEncoded); err != nil {
+	if err := g.Storage.AddUser(ctx, in.User.Login, encPwd); err != nil {
 		logger.Log.Error("error create user", zap.Error(err))
 		return nil, status.Errorf(codes.Internal, "error create user")
 	}
@@ -66,10 +69,13 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 		return nil, status.Errorf(codes.Internal, "error get user from db")
 	}
 
-	pHash := hash.GetHashSHA256(g.DatabaseKey, []byte(in.User.Password))
-	pHashEncoded := base64.StdEncoding.EncodeToString(pHash)
+	decPwd, err := aes.Decrypt(g.DatabaseKey, u.Password)
+	if err != nil {
+		logger.Log.Error("error encrypt password", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt password")
+	}
 
-	if pHashEncoded != u.Password {
+	if in.User.Password != decPwd {
 		logger.Log.Error("invalid user login or password", zap.Error(err))
 		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
