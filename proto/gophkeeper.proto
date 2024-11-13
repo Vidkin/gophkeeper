@@ -63,6 +63,16 @@ message GetBankCardsResponse {
   repeated BankCard cards = 1;
 }
 
+message FileUploadRequest {
+  string file_name = 1;
+  string content_type = 2;
+  bytes chunk = 3;
+}
+message FileUploadResponse {
+  string file_name = 1;
+  uint32 size = 2;
+}
+
 service Gophkeeper {
   rpc RegisterUser(RegisterUserRequest) returns (google.protobuf.Empty);
   rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
@@ -71,4 +81,5 @@ service Gophkeeper {
   rpc GetBankCards(GetBankCardsRequest) returns (GetBankCardsResponse);
   rpc AddUserCredentials(AddUserCredentialsRequest) returns (google.protobuf.Empty);
   rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
+  rpc Upload(stream FileUploadRequest) returns(FileUploadResponse);
 }

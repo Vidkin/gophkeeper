@@ -27,6 +27,7 @@ const (
 	Gophkeeper_GetBankCards_FullMethodName       = "/gophkeeper.Gophkeeper/GetBankCards"
 	Gophkeeper_AddUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/AddUserCredentials"
 	Gophkeeper_GetUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/GetUserCredentials"
+	Gophkeeper_Upload_FullMethodName             = "/gophkeeper.Gophkeeper/Upload"
 )
 
 // GophkeeperClient is the client API for Gophkeeper service.
@@ -40,6 +41,7 @@ type GophkeeperClient interface {
 	GetBankCards(ctx context.Context, in *GetBankCardsRequest, opts ...grpc.CallOption) (*GetBankCardsResponse, error)
 	AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
+	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error)
 }
 
 type gophkeeperClient struct {
@@ -120,6 +122,19 @@ func (c *gophkeeperClient) GetUserCredentials(ctx context.Context, in *GetUserCr
 	return out, nil
 }
 
+func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Gophkeeper_ServiceDesc.Streams[0], Gophkeeper_Upload_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[FileUploadRequest, FileUploadResponse]{ClientStream: stream}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Gophkeeper_UploadClient = grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse]
+
 // GophkeeperServer is the server API for Gophkeeper service.
 // All implementations must embed UnimplementedGophkeeperServer
 // for forward compatibility.
@@ -131,6 +146,7 @@ type GophkeeperServer interface {
 	GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error)
 	AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error)
 	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
+	Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error
 	mustEmbedUnimplementedGophkeeperServer()
 }
 
@@ -161,6 +177,9 @@ func (UnimplementedGophkeeperServer) AddUserCredentials(context.Context, *AddUse
 }
 func (UnimplementedGophkeeperServer) GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserCredentials not implemented")
+}
+func (UnimplementedGophkeeperServer) Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
 }
 func (UnimplementedGophkeeperServer) mustEmbedUnimplementedGophkeeperServer() {}
 func (UnimplementedGophkeeperServer) testEmbeddedByValue()                    {}
@@ -309,6 +328,13 @@ func _Gophkeeper_GetUserCredentials_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error {
+	return srv.(GophkeeperServer).Upload(&grpc.GenericServerStream[FileUploadRequest, FileUploadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Gophkeeper_UploadServer = grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]
+
 // Gophkeeper_ServiceDesc is the grpc.ServiceDesc for Gophkeeper service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -345,6 +371,12 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _Gophkeeper_GetUserCredentials_Handler,
 		},
 	},
-	Streams:  []grpc.StreamDesc{},
+	Streams: []grpc.StreamDesc{
+		{
+			StreamName:    "Upload",
+			Handler:       _Gophkeeper_Upload_Handler,
+			ClientStreams: true,
+		},
+	},
 	Metadata: "proto/gophkeeper.proto",
 }
