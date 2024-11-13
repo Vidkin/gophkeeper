@@ -11,8 +11,8 @@ import (
 	"google.golang.org/grpc"
 
 	"github.com/Vidkin/gophkeeper/internal/config"
+	"github.com/Vidkin/gophkeeper/internal/handlers"
 	"github.com/Vidkin/gophkeeper/internal/logger"
-	protoAPI "github.com/Vidkin/gophkeeper/internal/proto"
 	"github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
@@ -47,7 +47,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 			interceptors.LoggingInterceptor,
 			interceptors.HashInterceptor(cfg.Key),
 			interceptors.ValidateToken(cfg.JWTKey)))
-	proto.RegisterGophkeeperServer(gRPCServer, &protoAPI.GophkeeperServer{
+	proto.RegisterGophkeeperServer(gRPCServer, &handlers.GophkeeperServer{
 		RetryCount:  cfg.RetryCount,
 		Storage:     repo,
 		Minio:       minioClient,

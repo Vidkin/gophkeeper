@@ -71,6 +71,14 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 	return err
 }
 
+func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType string, userID int64, fileSize uint64) error {
+	_, err := p.Conn.ExecContext(
+		ctx,
+		"INSERT INTO files (user_id, bucket_name, file_name, file_type, file_size) VALUES ($1, $2, $3, $4, $5)",
+		userID, bucketName, fileName, fileType, fileSize)
+	return err
+}
+
 func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) {
 	row := p.Conn.QueryRowContext(ctx, "SELECT login, password, id FROM users WHERE login = $1", login)
 
