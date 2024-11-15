@@ -71,11 +71,11 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 	return err
 }
 
-func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType string, userID int64, fileSize uint64) error {
+func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType, description string, userID int64, fileSize uint64) error {
 	_, err := p.Conn.ExecContext(
 		ctx,
-		"INSERT INTO files (user_id, bucket_name, file_name, file_type, file_size) VALUES ($1, $2, $3, $4, $5)",
-		userID, bucketName, fileName, fileType, fileSize)
+		"INSERT INTO files (user_id, bucket_name, file_name, file_type, file_size, description) VALUES ($1, $2, $3, $4, $5, $6)",
+		userID, bucketName, fileName, fileType, fileSize, description)
 	return err
 }
 
@@ -127,13 +127,13 @@ func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) 
 func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
 	_, err := p.Conn.ExecContext(
 		ctx,
-		"INSERT INTO bank_cards (user_id, card_number, expiration_date, cvv, owner) "+
-			"VALUES ($1, $2, $3, $4, $5)", card.UserID, card.Number, card.ExpireDate, card.CVV, card.Owner)
+		"INSERT INTO bank_cards (user_id, card_number, expiration_date, cvv, owner, description) "+
+			"VALUES ($1, $2, $3, $4, $5, $6)", card.UserID, card.Number, card.ExpireDate, card.CVV, card.Owner, card.Description)
 	return err
 }
 
 func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*model.BankCard, error) {
-	rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv FROM bank_cards WHERE user_id = $1", userID)
+	rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE user_id = $1", userID)
 	if err != nil {
 		return nil, err
 	}
@@ -147,7 +147,7 @@ func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*mo
 	var cards []*model.BankCard
 	for rows.Next() {
 		var b model.BankCard
-		if err = rows.Scan(&b.ID, &b.UserID, &b.Owner, &b.Number, &b.ExpireDate, &b.CVV); err != nil {
+		if err = rows.Scan(&b.ID, &b.UserID, &b.Owner, &b.Number, &b.ExpireDate, &b.CVV, &b.Description); err != nil {
 			return nil, err
 		}
 		cards = append(cards, &b)

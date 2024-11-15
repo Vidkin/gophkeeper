@@ -39,6 +39,12 @@ func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCar
 		return nil, status.Errorf(codes.Internal, "error encrypt data")
 	}
 
+	description, err := aes.Encrypt(g.DatabaseKey, in.Card.Description)
+	if err != nil {
+		logger.Log.Error("error encrypt data", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error encrypt data")
+	}
+
 	expireDate, err := aes.Encrypt(g.DatabaseKey, in.Card.ExpireDate)
 	if err != nil {
 		logger.Log.Error("error encrypt data", zap.Error(err))
@@ -46,11 +52,12 @@ func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCar
 	}
 
 	card := &model.BankCard{
-		UserID:     ctx.Value(interceptors.UserID).(int64),
-		CVV:        cvv,
-		Owner:      owner,
-		Number:     number,
-		ExpireDate: expireDate,
+		UserID:      ctx.Value(interceptors.UserID).(int64),
+		CVV:         cvv,
+		Owner:       owner,
+		Number:      number,
+		ExpireDate:  expireDate,
+		Description: description,
 	}
 
 	if err := g.Storage.AddCard(ctx, card); err != nil {

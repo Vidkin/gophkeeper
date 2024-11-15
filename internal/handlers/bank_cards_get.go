@@ -53,6 +53,14 @@ func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCar
 			return nil, status.Errorf(codes.Internal, "error decrypt data")
 		}
 		protoCards[i].Cvv = cvv
+
+		description, err := aes.Decrypt(g.DatabaseKey, card.Description)
+		if err != nil {
+			logger.Log.Error("error decrypt data", zap.Error(err))
+			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		}
+		protoCards[i].Description = description
+
 		protoCards[i].Id = card.ID
 	}
 	response.Cards = protoCards

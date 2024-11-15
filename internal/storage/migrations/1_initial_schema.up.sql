@@ -11,6 +11,7 @@ CREATE TABLE bank_cards (
     card_number TEXT NOT NULL,
     expiration_date TEXT NOT NULL,
     cvv TEXT NOT NULL,
+    description VARCHAR(255),
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
@@ -32,6 +33,7 @@ CREATE TABLE files (
    file_name VARCHAR(255) NOT NULL,
    file_type VARCHAR(50) NOT NULL, -- Тип файла (например, "text/plain", "image/jpeg" и т.д.)
    file_size BIGINT NOT NULL,
+   description VARCHAR(255),
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );

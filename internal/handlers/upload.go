@@ -19,7 +19,7 @@ import (
 )
 
 func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
-	var fileName, contentType string
+	var fileName, contentType, description string
 	var fileSize uint64
 
 	var tokenString string
@@ -95,6 +95,10 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 			}
 		}
 
+		if description == "" {
+			description = req.Description
+		}
+
 		chunk := req.GetChunk()
 		fileSize += uint64(len(chunk))
 
@@ -118,7 +122,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
-	err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, contentType, claims.UserID, fileSize)
+	err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, contentType, description, claims.UserID, fileSize)
 	if err != nil {
 		if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil {
 			logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
