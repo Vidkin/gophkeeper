@@ -72,7 +72,25 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 }
 
 func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType, description string, userID int64, fileSize uint64) error {
-	_, err := p.Conn.ExecContext(
+	var count int
+	row := p.Conn.QueryRowContext(
+		ctx,
+		"SELECT count(*) FROM files WHERE file_name=$1 and user_id=$2",
+		fileName, userID)
+	err := row.Scan(&count)
+	if err != nil {
+		return err
+	}
+
+	if count > 0 {
+		_, err = p.Conn.ExecContext(
+			ctx,
+			"UPDATE files SET file_type=$1, file_size=$2, description=$3 WHERE file_name=$4",
+			fileType, fileSize, description, fileName)
+		return err
+	}
+
+	_, err = p.Conn.ExecContext(
 		ctx,
 		"INSERT INTO files (user_id, bucket_name, file_name, file_type, file_size, description) VALUES ($1, $2, $3, $4, $5, $6)",
 		userID, bucketName, fileName, fileType, fileSize, description)
