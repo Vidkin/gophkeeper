@@ -1,18 +1,48 @@
 package handlers
 
 import (
+	"fmt"
 	"io"
 
+	"github.com/golang-jwt/jwt/v4"
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
+	jwtPKG "github.com/Vidkin/gophkeeper/pkg/jwt"
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
 func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error {
+	var tokenString string
+	if md, ok := metadata.FromIncomingContext(srv.Context()); ok {
+		values := md.Get("token")
+		if len(values) > 0 {
+			tokenString = values[0]
+		}
+	}
+	if len(tokenString) == 0 {
+		return status.Error(codes.PermissionDenied, "missing token")
+	}
+
+	claims := &jwtPKG.Claims{}
+	token, err := jwt.ParseWithClaims(tokenString, claims,
+		func(t *jwt.Token) (interface{}, error) {
+			if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok {
+				logger.Log.Error("unexpected signing method")
+				return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
+			}
+			return []byte(g.JWTKey), nil
+		})
+
+	if err != nil || !token.Valid {
+		logger.Log.Error("error parse claims", zap.Error(err))
+		return status.Errorf(codes.PermissionDenied, "error parse claims")
+	}
+
 	fileID := in.Id
 	if fileID == 0 {
 		logger.Log.Error("file id is required")

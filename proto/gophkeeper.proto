@@ -89,6 +89,23 @@ message FileDownloadResponse {
   string description = 5;
 }
 
+message File {
+  int64 id = 1;
+  string file_name = 3;
+  string content_type = 4;
+  string description = 5;
+  string created_at = 6;
+  int64 file_size = 7;
+}
+
+message GetFilesRequest {
+  int64 user_id = 1;
+}
+
+message GetFilesResponse {
+  repeated File files = 1;
+}
+
 service Gophkeeper {
   rpc RegisterUser(RegisterUserRequest) returns (google.protobuf.Empty);
   rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
@@ -99,4 +116,5 @@ service Gophkeeper {
   rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
   rpc Upload(stream FileUploadRequest) returns(FileUploadResponse);
   rpc Download(FileDownloadRequest) returns(stream FileDownloadResponse);
+  rpc GetFiles(GetFilesRequest) returns (GetFilesResponse);
 }

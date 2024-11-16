@@ -1,9 +1,7 @@
 package model
 
-import "time"
-
 type File struct {
-	CreatedAt   time.Time
+	CreatedAt   string
 	BucketName  string
 	FileName    string
 	ContentType string
