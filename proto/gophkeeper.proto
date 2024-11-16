@@ -69,10 +69,24 @@ message FileUploadRequest {
   string content_type = 2;
   bytes chunk = 3;
   string description = 4;
+  int64 file_size = 5;
 }
+
 message FileUploadResponse {
   string file_name = 1;
+  int64 file_size = 2;
+}
+
+message FileDownloadRequest {
+  int64 id = 1;
+}
+
+message FileDownloadResponse {
+  bytes chunk = 1;
   uint64 size = 2;
+  string filename =3;
+  string content_type = 4;
+  string description = 5;
 }
 
 service Gophkeeper {
@@ -84,4 +98,5 @@ service Gophkeeper {
   rpc AddUserCredentials(AddUserCredentialsRequest) returns (google.protobuf.Empty);
   rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
   rpc Upload(stream FileUploadRequest) returns(FileUploadResponse);
+  rpc Download(FileDownloadRequest) returns(stream FileDownloadResponse);
 }

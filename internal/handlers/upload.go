@@ -3,7 +3,6 @@ package handlers
 import (
 	"fmt"
 	"io"
-	"os"
 
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/minio/minio-go/v7"
@@ -20,9 +19,9 @@ import (
 
 func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 	var fileName, contentType, description string
-	var fileSize uint64
-
+	var fileSize int64
 	var tokenString string
+
 	if md, ok := metadata.FromIncomingContext(stream.Context()); ok {
 		values := md.Get("token")
 		if len(values) > 0 {
@@ -43,82 +42,88 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 			return []byte(g.JWTKey), nil
 		})
 
-	if err != nil {
+	if err != nil || !token.Valid {
 		logger.Log.Error("error parse claims", zap.Error(err))
 		return status.Errorf(codes.PermissionDenied, "error parse claims")
 	}
 
-	if !token.Valid {
-		logger.Log.Error("token is not valid")
-		return status.Errorf(codes.PermissionDenied, "token is not valid")
-	}
+	pr, pw := io.Pipe()
+	defer func(pw *io.PipeWriter) {
+		err = pw.Close()
+		if err != nil {
+			logger.Log.Error("error closing pipe writer", zap.Error(err))
+		}
+	}(pw)
 
-	f, err := os.CreateTemp("", "*")
+	req, err := stream.Recv()
+	if err == io.EOF {
+		logger.Log.Error("empty file")
+		return status.Errorf(codes.FailedPrecondition, "empty file")
+	}
 	if err != nil {
-		logger.Log.Error("error creating temp file", zap.Error(err))
-		return status.Errorf(codes.Internal, "error creating temp file")
+		logger.Log.Error("error receive file", zap.Error(err))
+		return status.Errorf(codes.Internal, "error receive file")
 	}
-	defer func(name string) {
-		err = f.Close()
-		if err != nil {
-			logger.Log.Error("error close temp file", zap.Error(err))
-		}
-		err = os.Remove(name)
-		if err != nil {
-			logger.Log.Error("error removing temp file", zap.Error(err))
-		}
-	}(f.Name())
 
-	for {
-		req, err := stream.Recv()
-		if err == io.EOF {
-			break
-		}
-		if err != nil {
-			logger.Log.Error("error receive file", zap.Error(err))
-			return status.Errorf(codes.Internal, "error receive file")
-		}
+	fileName = req.FileName
+	contentType = req.ContentType
+	description = req.Description
+	fileSize = req.FileSize
+	if fileName == "" || contentType == "" || fileSize == 0 {
+		return status.Errorf(codes.InvalidArgument, "filename, content-type, file-size are required")
+	}
+	chunk := req.GetChunk()
 
-		if fileName == "" {
-			fileName = req.FileName
-			if fileName == "" {
-				logger.Log.Error("need to provide filaname", zap.Error(err))
-				return status.Errorf(codes.InvalidArgument, "need to provide filaname")
+	resultChan := make(chan error, 1)
+	go func() {
+		defer func(pr *io.PipeReader) {
+			err = pr.Close()
+			if err != nil {
+				logger.Log.Error("error closing pipe reader", zap.Error(err))
 			}
-		}
-
-		if contentType == "" {
-			contentType = req.ContentType
-			if contentType == "" {
-				logger.Log.Error("need to provide content-type", zap.Error(err))
-				return status.Errorf(codes.InvalidArgument, "need to provide content-type")
+		}(pr)
+		for {
+			if chunk != nil {
+				if _, err = pw.Write(chunk); err != nil {
+					logger.Log.Error("error writing chunk to pipe", zap.Error(err))
+					resultChan <- err
+					return
+				}
 			}
+
+			req, err = stream.Recv()
+			if err == io.EOF {
+				break
+			}
+			if err != nil {
+				logger.Log.Error("error receive file", zap.Error(err))
+				resultChan <- status.Errorf(codes.Internal, "error receive file")
+			}
+
+			chunk = req.GetChunk()
+			if _, err = pw.Write(chunk); err != nil {
+				logger.Log.Error("error writing chunk to pipe", zap.Error(err))
+				resultChan <- err
+				return
+			}
+			chunk = nil
 		}
+		resultChan <- nil
+	}()
 
-		if description == "" {
-			description = req.Description
-		}
-
-		chunk := req.GetChunk()
-		fileSize += uint64(len(chunk))
-
-		if _, err = f.Write(chunk); err != nil {
-			logger.Log.Error("error writing chunk to temp file", zap.Error(err))
-			return status.Errorf(codes.Internal, "error writing chunk to temp file")
-		}
-	}
-
-	_, err = f.Seek(0, io.SeekStart)
-	if err != nil {
-		logger.Log.Error("error seek temp file to start", zap.Error(err))
-		return status.Errorf(codes.Internal, "error seek temp file to start")
-	}
-
-	_, err = g.Minio.PutObject(stream.Context(), storage.MinioBucketName, fileName, f, int64(fileSize), minio.PutObjectOptions{
+	_, err = g.Minio.PutObject(stream.Context(), storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
 		ContentType: contentType,
 	})
 	if err != nil {
 		logger.Log.Error("failed to upload file to MinIO", zap.Error(err))
+		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
+	}
+
+	err = <-resultChan
+	if err != nil {
+		if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil {
+			logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
+		}
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
@@ -127,12 +132,12 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil {
 			logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
 		}
-		logger.Log.Error("failed to sava file info to database", zap.Error(err))
+		logger.Log.Error("failed to save file info to database", zap.Error(err))
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
 	return stream.SendAndClose(&proto.FileUploadResponse{
 		FileName: fileName,
-		Size:     fileSize,
+		FileSize: fileSize,
 	})
 }

@@ -71,7 +71,7 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 	return err
 }
 
-func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType, description string, userID int64, fileSize uint64) error {
+func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType, description string, userID int64, fileSize int64) error {
 	var count int
 	row := p.Conn.QueryRowContext(
 		ctx,

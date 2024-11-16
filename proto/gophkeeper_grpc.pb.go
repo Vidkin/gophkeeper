@@ -28,6 +28,7 @@ const (
 	Gophkeeper_AddUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/AddUserCredentials"
 	Gophkeeper_GetUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/GetUserCredentials"
 	Gophkeeper_Upload_FullMethodName             = "/gophkeeper.Gophkeeper/Upload"
+	Gophkeeper_Download_FullMethodName           = "/gophkeeper.Gophkeeper/Download"
 )
 
 // GophkeeperClient is the client API for Gophkeeper service.
@@ -42,6 +43,7 @@ type GophkeeperClient interface {
 	AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
 	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error)
+	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error)
 }
 
 type gophkeeperClient struct {
@@ -135,6 +137,25 @@ func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_UploadClient = grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse]
 
+func (c *gophkeeperClient) Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	stream, err := c.cc.NewStream(ctx, &Gophkeeper_ServiceDesc.Streams[1], Gophkeeper_Download_FullMethodName, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	x := &grpc.GenericClientStream[FileDownloadRequest, FileDownloadResponse]{ClientStream: stream}
+	if err := x.ClientStream.SendMsg(in); err != nil {
+		return nil, err
+	}
+	if err := x.ClientStream.CloseSend(); err != nil {
+		return nil, err
+	}
+	return x, nil
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Gophkeeper_DownloadClient = grpc.ServerStreamingClient[FileDownloadResponse]
+
 // GophkeeperServer is the server API for Gophkeeper service.
 // All implementations must embed UnimplementedGophkeeperServer
 // for forward compatibility.
@@ -147,6 +168,7 @@ type GophkeeperServer interface {
 	AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error)
 	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
 	Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error
+	Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error
 	mustEmbedUnimplementedGophkeeperServer()
 }
 
@@ -180,6 +202,9 @@ func (UnimplementedGophkeeperServer) GetUserCredentials(context.Context, *GetUse
 }
 func (UnimplementedGophkeeperServer) Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
+}
+func (UnimplementedGophkeeperServer) Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error {
+	return status.Errorf(codes.Unimplemented, "method Download not implemented")
 }
 func (UnimplementedGophkeeperServer) mustEmbedUnimplementedGophkeeperServer() {}
 func (UnimplementedGophkeeperServer) testEmbeddedByValue()                    {}
@@ -335,6 +360,17 @@ func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_UploadServer = grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]
 
+func _Gophkeeper_Download_Handler(srv interface{}, stream grpc.ServerStream) error {
+	m := new(FileDownloadRequest)
+	if err := stream.RecvMsg(m); err != nil {
+		return err
+	}
+	return srv.(GophkeeperServer).Download(m, &grpc.GenericServerStream[FileDownloadRequest, FileDownloadResponse]{ServerStream: stream})
+}
+
+// This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
+type Gophkeeper_DownloadServer = grpc.ServerStreamingServer[FileDownloadResponse]
+
 // Gophkeeper_ServiceDesc is the grpc.ServiceDesc for Gophkeeper service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -376,6 +412,11 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 			StreamName:    "Upload",
 			Handler:       _Gophkeeper_Upload_Handler,
 			ClientStreams: true,
+		},
+		{
+			StreamName:    "Download",
+			Handler:       _Gophkeeper_Download_Handler,
+			ServerStreams: true,
 		},
 	},
 	Metadata: "proto/gophkeeper.proto",
