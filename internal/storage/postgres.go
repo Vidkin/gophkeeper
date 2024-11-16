@@ -71,7 +71,7 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 	return err
 }
 
-func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fileType, description string, userID int64, fileSize int64) error {
+func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, contentType, description string, userID int64, fileSize int64) error {
 	var count int
 	row := p.Conn.QueryRowContext(
 		ctx,
@@ -85,16 +85,59 @@ func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, fil
 	if count > 0 {
 		_, err = p.Conn.ExecContext(
 			ctx,
-			"UPDATE files SET file_type=$1, file_size=$2, description=$3 WHERE file_name=$4",
-			fileType, fileSize, description, fileName)
+			"UPDATE files SET content_type=$1, file_size=$2, description=$3 WHERE file_name=$4",
+			contentType, fileSize, description, fileName)
 		return err
 	}
 
 	_, err = p.Conn.ExecContext(
 		ctx,
-		"INSERT INTO files (user_id, bucket_name, file_name, file_type, file_size, description) VALUES ($1, $2, $3, $4, $5, $6)",
-		userID, bucketName, fileName, fileType, fileSize, description)
+		"INSERT INTO files (user_id, bucket_name, file_name, content_type, file_size, description) VALUES ($1, $2, $3, $4, $5, $6)",
+		userID, bucketName, fileName, contentType, fileSize, description)
 	return err
+}
+
+func (p *PostgresStorage) GetFile(ctx context.Context, fileID int64) (*model.File, error) {
+	row := p.Conn.QueryRowContext(
+		ctx,
+		"SELECT user_id, id, file_name, bucket_name, content_type, description, file_size, created_at id FROM files WHERE id = $1",
+		fileID)
+
+	var f model.File
+	if err := row.Scan(&f.UserID, &f.ID, &f.FileName, &f.BucketName, &f.ContentType, &f.Description, &f.FileSize, &f.CreatedAt); err != nil {
+		return nil, err
+	}
+	return &f, nil
+}
+
+func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.File, error) {
+	rows, err := p.Conn.QueryContext(
+		ctx,
+		"SELECT user_id, id, file_name, bucket_name, content_type, description, file_size, created_at id FROM files WHERE user_id = $1",
+		userID)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			logger.Log.Error("error close rows", zap.Error(err))
+		}
+	}(rows)
+
+	var files []*model.File
+	for rows.Next() {
+		var f model.File
+		if err = rows.Scan(&f.UserID, &f.ID, &f.FileName, &f.BucketName, &f.ContentType, &f.Description, &f.FileSize, &f.CreatedAt); err != nil {
+			return nil, err
+		}
+		files = append(files, &f)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return files, nil
 }
 
 func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) {

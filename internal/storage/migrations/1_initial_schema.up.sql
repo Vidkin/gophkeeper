@@ -31,7 +31,7 @@ CREATE TABLE files (
    user_id INT NOT NULL,
    bucket_name VARCHAR(255) NOT NULL,
    file_name VARCHAR(255) NOT NULL,
-   file_type VARCHAR(50) NOT NULL, -- Тип файла (например, "text/plain", "image/jpeg" и т.д.)
+   content_type VARCHAR(50) NOT NULL, -- Тип файла (например, "text/plain", "image/jpeg" и т.д.)
    file_size BIGINT NOT NULL,
    description VARCHAR(255),
    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

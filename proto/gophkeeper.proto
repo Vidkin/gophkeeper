@@ -83,7 +83,7 @@ message FileDownloadRequest {
 
 message FileDownloadResponse {
   bytes chunk = 1;
-  uint64 size = 2;
+  int64 file_size = 2;
   string filename =3;
   string content_type = 4;
   string description = 5;
