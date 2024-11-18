@@ -80,6 +80,7 @@ func getTLSListener(address, publicKeyPath, privateKeyPath string) (net.Listener
 
 	cfg := &tls.Config{
 		Certificates: []tls.Certificate{cert},
+		NextProtos:   []string{"h2"},
 	}
 	listener, err := tls.Listen("tcp", address, cfg)
 	if err != nil {

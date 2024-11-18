@@ -1,6 +1,13 @@
+/*
+Copyright © 2024 MIKHAIL SIRKIN <skim991@gmail.com>
+*/
 package main
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/Vidkin/gophkeeper/app/cmd"
+)
 
 var (
 	buildVersion = "N/A"
@@ -8,5 +15,7 @@ var (
 )
 
 func main() {
-	fmt.Printf("Build version: %s\nBuild date: %s\n", buildVersion, buildDate)
+	fmt.Printf("Build version: %s\nBuild date: %s\n---------------\n", buildVersion, buildDate)
+	cmd.Execute()
+
 }

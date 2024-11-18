@@ -13,7 +13,7 @@ var (
 )
 
 func main() {
-	fmt.Printf("Build version: %s\nBuild date: %s\n", buildVersion, buildDate)
+	fmt.Printf("Build version: %s\nBuild date: %s\n---------------\n", buildVersion, buildDate)
 
 	cfg, err := config.NewServerConfig()
 	if err != nil {
