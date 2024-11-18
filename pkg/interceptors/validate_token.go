@@ -15,11 +15,13 @@ import (
 	jwtPKG "github.com/Vidkin/gophkeeper/pkg/jwt"
 )
 
+type contextKey string
+
 const (
-	GrpcRegisterUserMethod = "/gophkeeper.Gophkeeper/RegisterUser"
-	GrpcAuthorizeMethod    = "/gophkeeper.Gophkeeper/Authorize"
-	GrpcEchoMethod         = "/gophkeeper.Gophkeeper/Echo"
-	UserID                 = "UserID"
+	GrpcRegisterUserMethod            = "/gophkeeper.Gophkeeper/RegisterUser"
+	GrpcAuthorizeMethod               = "/gophkeeper.Gophkeeper/Authorize"
+	GrpcEchoMethod                    = "/gophkeeper.Gophkeeper/Echo"
+	UserID                 contextKey = "UserID"
 )
 
 func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnaryServerInfo, grpc.UnaryHandler) (interface{}, error) {
