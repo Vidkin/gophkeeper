@@ -185,6 +185,17 @@ func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) 
 	return creds, nil
 }
 
+func (p *PostgresStorage) GetUserCredential(ctx context.Context, credID int64) (*model.Credentials, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE id = $1", credID)
+
+	var cred model.Credentials
+	if err := row.Scan(&cred.ID, &cred.UserID, &cred.Login, &cred.Password, &cred.Description); err != nil {
+		return nil, err
+	}
+
+	return &cred, nil
+}
+
 func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
 	_, err := p.Conn.ExecContext(
 		ctx,
@@ -218,4 +229,15 @@ func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*mo
 	}
 
 	return cards, nil
+}
+
+func (p *PostgresStorage) GetBankCard(ctx context.Context, cardID int64) (*model.BankCard, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE id = $1", cardID)
+
+	var card model.BankCard
+	if err := row.Scan(&card.ID, &card.UserID, &card.Owner, &card.Number, &card.ExpireDate, &card.CVV, &card.Description); err != nil {
+		return nil, err
+	}
+
+	return &card, nil
 }
