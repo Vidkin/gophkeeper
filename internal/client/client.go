@@ -6,13 +6,17 @@ import (
 	"errors"
 	"os"
 
+	"github.com/spf13/viper"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/credentials"
 
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
-func NewGophkeeperClient(serverAddress, certPath string) (proto.GophkeeperClient, *grpc.ClientConn, error) {
+func NewGophkeeperClient() (proto.GophkeeperClient, *grpc.ClientConn, error) {
+	serverAddress := viper.GetString("address")
+	certPath := viper.GetString("crypto_key_public_path")
+
 	certPool := x509.NewCertPool()
 	caCert, err := os.ReadFile(certPath)
 	if err != nil {

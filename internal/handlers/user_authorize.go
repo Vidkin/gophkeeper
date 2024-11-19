@@ -23,13 +23,13 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 	u, err := g.Storage.GetUser(ctx, in.Credentials.Login)
 	if err != nil {
 		logger.Log.Error("error get user from db", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error get user from db")
+		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
 
 	decPwd, err := aes.Decrypt(g.DatabaseKey, u.Password)
 	if err != nil {
 		logger.Log.Error("error encrypt password", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt password")
+		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
 
 	if in.Credentials.Password != decPwd {

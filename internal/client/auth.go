@@ -4,6 +4,8 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+	"os"
+	"path"
 	"time"
 
 	"github.com/spf13/viper"
@@ -15,7 +17,7 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
-func Register(login, password string) error {
+func Auth(login, password string) error {
 	client, conn, err := NewGophkeeperClient()
 	if err != nil {
 		return err
@@ -31,7 +33,7 @@ func Register(login, password string) error {
 		Login:    login,
 		Password: password,
 	}
-	req := &proto.RegisterUserRequest{
+	req := &proto.AuthorizeRequest{
 		Credentials: &cred,
 	}
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
@@ -48,9 +50,35 @@ func Register(login, password string) error {
 		ctxTimeout = metadata.NewOutgoingContext(ctxTimeout, md)
 	}
 
-	_, err = client.RegisterUser(ctxTimeout, req)
-	if err == nil {
-		fmt.Println("User successfully registered!")
+	resp, err := client.Authorize(ctxTimeout, req)
+
+	if err != nil {
+		return err
 	}
+
+	err = os.Remove(path.Join(os.TempDir(), "gophkeeperJWT.tmp"))
+	if err != nil {
+		if !os.IsNotExist(err) {
+			return err
+		}
+	}
+
+	f, err := os.Create(path.Join(os.TempDir(), "gophkeeperJWT.tmp"))
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) {
+		err = f.Close()
+		if err != nil {
+			fmt.Println("failed to close jwt temp file")
+		}
+	}(f)
+
+	if _, err = f.WriteString(resp.Token); err != nil {
+		return err
+	}
+
+	fmt.Println("Successfully authorized!")
+
 	return err
 }
