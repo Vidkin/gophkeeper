@@ -42,6 +42,18 @@ var addCmd = &cobra.Command{
 	},
 }
 
+var getAllCmd = &cobra.Command{
+	Use:   "getAll",
+	Short: "Get all bank cards from GophKeeper",
+	Long: `This command allows you to get all bank cards from your account in GophKeeper. For example:
+	- client cards getAll`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := client.GetAllCards(); err != nil {
+			fmt.Println(err)
+		}
+	},
+}
+
 func init() {
 	addCmd.PersistentFlags().StringVar(&card.Owner, "owner", "", "bank card owner")
 	addCmd.PersistentFlags().StringVar(&card.Cvv, "cvv", "", "bank card CVV")
@@ -50,5 +62,6 @@ func init() {
 	addCmd.PersistentFlags().StringVar(&card.Description, "desc", "", "bank card description")
 
 	cardsCmd.AddCommand(addCmd)
+	cardsCmd.AddCommand(getAllCmd)
 	rootCmd.AddCommand(cardsCmd)
 }
