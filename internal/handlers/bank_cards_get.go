@@ -8,7 +8,6 @@ import (
 	"google.golang.org/grpc/status"
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
-	"github.com/Vidkin/gophkeeper/pkg/aes"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
 )
@@ -24,44 +23,14 @@ func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCar
 
 	protoCards := make([]*proto.BankCard, len(cards))
 	for i, card := range cards {
-		protoCards[i] = &proto.BankCard{}
-
-		owner, err := aes.Decrypt(g.DatabaseKey, card.Owner)
-		if err != nil {
-			logger.Log.Error("error decrypt data", zap.Error(err))
-			return nil, status.Errorf(codes.Internal, "error decrypt data")
+		protoCards[i] = &proto.BankCard{
+			Owner:       card.Owner,
+			Number:      card.Number,
+			ExpireDate:  card.ExpireDate,
+			Cvv:         card.CVV,
+			Description: card.Description,
+			Id:          card.ID,
 		}
-		protoCards[i].Owner = owner
-
-		number, err := aes.Decrypt(g.DatabaseKey, card.Number)
-		if err != nil {
-			logger.Log.Error("error decrypt data", zap.Error(err))
-			return nil, status.Errorf(codes.Internal, "error decrypt data")
-		}
-		protoCards[i].Number = number
-
-		expireDate, err := aes.Decrypt(g.DatabaseKey, card.ExpireDate)
-		if err != nil {
-			logger.Log.Error("error decrypt data", zap.Error(err))
-			return nil, status.Errorf(codes.Internal, "error decrypt data")
-		}
-		protoCards[i].ExpireDate = expireDate
-
-		cvv, err := aes.Decrypt(g.DatabaseKey, card.CVV)
-		if err != nil {
-			logger.Log.Error("error decrypt data", zap.Error(err))
-			return nil, status.Errorf(codes.Internal, "error decrypt data")
-		}
-		protoCards[i].Cvv = cvv
-
-		description, err := aes.Decrypt(g.DatabaseKey, card.Description)
-		if err != nil {
-			logger.Log.Error("error decrypt data", zap.Error(err))
-			return nil, status.Errorf(codes.Internal, "error decrypt data")
-		}
-		protoCards[i].Description = description
-
-		protoCards[i].Id = card.ID
 	}
 	response.Cards = protoCards
 	return &response, nil

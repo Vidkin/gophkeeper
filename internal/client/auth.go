@@ -56,14 +56,14 @@ func Auth(login, password string) error {
 		return err
 	}
 
-	err = os.Remove(path.Join(os.TempDir(), "gophkeeperJWT.tmp"))
+	err = os.Remove(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
 		if !os.IsNotExist(err) {
 			return err
 		}
 	}
 
-	f, err := os.Create(path.Join(os.TempDir(), "gophkeeperJWT.tmp"))
+	f, err := os.Create(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
 		return err
 	}

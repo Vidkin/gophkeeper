@@ -13,6 +13,8 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+const TokenFileName = "gophkeeperJWT.tmp"
+
 func NewGophkeeperClient() (proto.GophkeeperClient, *grpc.ClientConn, error) {
 	serverAddress := viper.GetString("address")
 	certPath := viper.GetString("crypto_key_public_path")

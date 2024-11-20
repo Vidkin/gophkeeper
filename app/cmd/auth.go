@@ -11,7 +11,7 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/client"
 )
 
-// registerCmd represents the register command
+// authCmd represents the authorize command
 var authCmd = &cobra.Command{
 	Use:   "auth [login] [password]",
 	Short: "Authorize user",

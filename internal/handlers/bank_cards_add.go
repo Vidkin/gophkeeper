@@ -10,7 +10,6 @@ import (
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	"github.com/Vidkin/gophkeeper/internal/model"
-	"github.com/Vidkin/gophkeeper/pkg/aes"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
 )
@@ -21,43 +20,13 @@ func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCar
 		return nil, status.Errorf(codes.InvalidArgument, "you should provide: CVV, expire date, card number, card owner")
 	}
 
-	cvv, err := aes.Encrypt(g.DatabaseKey, in.Card.Cvv)
-	if err != nil {
-		logger.Log.Error("error encrypt data", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt data")
-	}
-
-	owner, err := aes.Encrypt(g.DatabaseKey, in.Card.Owner)
-	if err != nil {
-		logger.Log.Error("error encrypt data", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt data")
-	}
-
-	number, err := aes.Encrypt(g.DatabaseKey, in.Card.Number)
-	if err != nil {
-		logger.Log.Error("error encrypt data", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt data")
-	}
-
-	description, err := aes.Encrypt(g.DatabaseKey, in.Card.Description)
-	if err != nil {
-		logger.Log.Error("error encrypt data", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt data")
-	}
-
-	expireDate, err := aes.Encrypt(g.DatabaseKey, in.Card.ExpireDate)
-	if err != nil {
-		logger.Log.Error("error encrypt data", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error encrypt data")
-	}
-
 	card := &model.BankCard{
 		UserID:      ctx.Value(interceptors.UserID).(int64),
-		CVV:         cvv,
-		Owner:       owner,
-		Number:      number,
-		ExpireDate:  expireDate,
-		Description: description,
+		CVV:         in.Card.Cvv,
+		Owner:       in.Card.Owner,
+		Number:      in.Card.Number,
+		ExpireDate:  in.Card.ExpireDate,
+		Description: in.Card.Description,
 	}
 
 	if err := g.Storage.AddCard(ctx, card); err != nil {
