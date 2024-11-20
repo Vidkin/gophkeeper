@@ -65,6 +65,10 @@ message AddBankCardRequest {
   BankCard card = 1;
 }
 
+message RemoveBankCardRequest {
+  string id = 1;
+}
+
 message GetBankCardsRequest {
 }
 
@@ -127,6 +131,7 @@ service Gophkeeper {
   rpc Authorize(AuthorizeRequest) returns (AuthorizeResponse);
   rpc Echo(EchoRequest) returns (EchoResponse);
   rpc AddBankCard(AddBankCardRequest) returns (google.protobuf.Empty);
+  rpc RemoveBankCard(RemoveBankCardRequest) returns (google.protobuf.Empty);
   rpc GetBankCards(GetBankCardsRequest) returns (GetBankCardsResponse);
   rpc GetBankCard(GetBankCardRequest) returns (GetBankCardResponse);
   rpc AddUserCredentials(AddUserCredentialsRequest) returns (google.protobuf.Empty);

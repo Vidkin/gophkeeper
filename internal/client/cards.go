@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strconv"
 	"time"
 
 	"github.com/spf13/viper"
@@ -144,30 +145,156 @@ func GetAllCards() error {
 		return err
 	}
 
+	fmt.Println("Bank cards:")
 	for _, card := range resp.Cards {
 		card.Owner, err = aes.Decrypt(viper.GetString("secret_key"), card.Owner)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
 		}
 		card.Description, err = aes.Decrypt(viper.GetString("secret_key"), card.Description)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
 		}
 		card.Number, err = aes.Decrypt(viper.GetString("secret_key"), card.Number)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
 		}
 		card.Cvv, err = aes.Decrypt(viper.GetString("secret_key"), card.Cvv)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
 		}
 		card.ExpireDate, err = aes.Decrypt(viper.GetString("secret_key"), card.ExpireDate)
 		if err != nil {
-			return err
+			return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
 		}
 		fmt.Printf("id=%d, number=%s, owner=%s, cvv=%s, expire=%s, description=%s\n", card.Id, card.Number, card.Cvv, card.Owner, card.Description, card.ExpireDate)
 	}
+	return err
+}
 
-	fmt.Println("Successfully add a new bank card!")
+func GetCard(cardID int64) error {
+	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
+	if err != nil {
+		return fmt.Errorf("error open JWT file, need to authorize: %v", err)
+	}
+	token := string(f)
+
+	client, conn, err := NewGophkeeperClient()
+	if err != nil {
+		return err
+	}
+	defer func(conn *grpc.ClientConn) {
+		err = conn.Close()
+		if err != nil {
+			fmt.Println("failed to close grpc connection")
+		}
+	}(conn)
+
+	req := &proto.GetBankCardRequest{Id: strconv.FormatInt(cardID, 10)}
+
+	ctxTimeout, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+
+	md := metadata.New(map[string]string{"token": token})
+	ctxTimeout = metadata.NewOutgoingContext(ctxTimeout, md)
+
+	if viper.GetString("hash_key") != "" {
+		data, err := pb.Marshal(req)
+		if err != nil {
+			return err
+		}
+		h := hash.GetHashSHA256(viper.GetString("hash_key"), data)
+		hEnc := base64.StdEncoding.EncodeToString(h)
+		md.Append("HashSHA256", hEnc)
+		ctxTimeout = metadata.NewOutgoingContext(ctxTimeout, md)
+	}
+
+	resp, err := client.GetBankCard(ctxTimeout, req)
+
+	if err != nil {
+		if e, ok := status.FromError(err); ok {
+			if e.Code() == codes.PermissionDenied {
+				return errors.New("need to re-authorize, call auth command")
+			}
+		}
+		return err
+	}
+
+	fmt.Println("Bank card:")
+	resp.Card.Owner, err = aes.Decrypt(viper.GetString("secret_key"), resp.Card.Owner)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
+	}
+	resp.Card.Description, err = aes.Decrypt(viper.GetString("secret_key"), resp.Card.Description)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
+	}
+	resp.Card.Number, err = aes.Decrypt(viper.GetString("secret_key"), resp.Card.Number)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
+	}
+	resp.Card.Cvv, err = aes.Decrypt(viper.GetString("secret_key"), resp.Card.Cvv)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
+	}
+	resp.Card.ExpireDate, err = aes.Decrypt(viper.GetString("secret_key"), resp.Card.ExpireDate)
+	if err != nil {
+		return fmt.Errorf("failed to decrypt card info, check secret key, original error: %v", err)
+	}
+	fmt.Printf(
+		"id=%d, number=%s, owner=%s, cvv=%s, expire=%s, description=%s\n",
+		resp.Card.Id, resp.Card.Number, resp.Card.Cvv, resp.Card.Owner, resp.Card.Description, resp.Card.ExpireDate)
+	return err
+}
+
+func RemoveCard(cardID int64) error {
+	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
+	if err != nil {
+		return fmt.Errorf("error open JWT file, need to authorize: %v", err)
+	}
+	token := string(f)
+
+	client, conn, err := NewGophkeeperClient()
+	if err != nil {
+		return err
+	}
+	defer func(conn *grpc.ClientConn) {
+		err = conn.Close()
+		if err != nil {
+			fmt.Println("failed to close grpc connection")
+		}
+	}(conn)
+
+	req := &proto.RemoveBankCardRequest{Id: strconv.FormatInt(cardID, 10)}
+
+	ctxTimeout, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
+	defer cancel()
+
+	md := metadata.New(map[string]string{"token": token})
+	ctxTimeout = metadata.NewOutgoingContext(ctxTimeout, md)
+
+	if viper.GetString("hash_key") != "" {
+		data, err := pb.Marshal(req)
+		if err != nil {
+			return err
+		}
+		h := hash.GetHashSHA256(viper.GetString("hash_key"), data)
+		hEnc := base64.StdEncoding.EncodeToString(h)
+		md.Append("HashSHA256", hEnc)
+		ctxTimeout = metadata.NewOutgoingContext(ctxTimeout, md)
+	}
+
+	_, err = client.RemoveBankCard(ctxTimeout, req)
+
+	if err != nil {
+		if e, ok := status.FromError(err); ok {
+			if e.Code() == codes.PermissionDenied {
+				return errors.New("need to re-authorize, call auth command")
+			}
+		}
+		return err
+	}
+
+	fmt.Println("Bank card has been successfully removed")
 	return err
 }

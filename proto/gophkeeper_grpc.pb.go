@@ -8,7 +8,6 @@ package proto
 
 import (
 	context "context"
-
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
@@ -25,6 +24,7 @@ const (
 	Gophkeeper_Authorize_FullMethodName          = "/gophkeeper.Gophkeeper/Authorize"
 	Gophkeeper_Echo_FullMethodName               = "/gophkeeper.Gophkeeper/Echo"
 	Gophkeeper_AddBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/AddBankCard"
+	Gophkeeper_RemoveBankCard_FullMethodName     = "/gophkeeper.Gophkeeper/RemoveBankCard"
 	Gophkeeper_GetBankCards_FullMethodName       = "/gophkeeper.Gophkeeper/GetBankCards"
 	Gophkeeper_GetBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/GetBankCard"
 	Gophkeeper_AddUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/AddUserCredentials"
@@ -43,6 +43,7 @@ type GophkeeperClient interface {
 	Authorize(ctx context.Context, in *AuthorizeRequest, opts ...grpc.CallOption) (*AuthorizeResponse, error)
 	Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error)
 	AddBankCard(ctx context.Context, in *AddBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RemoveBankCard(ctx context.Context, in *RemoveBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetBankCards(ctx context.Context, in *GetBankCardsRequest, opts ...grpc.CallOption) (*GetBankCardsResponse, error)
 	GetBankCard(ctx context.Context, in *GetBankCardRequest, opts ...grpc.CallOption) (*GetBankCardResponse, error)
 	AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -95,6 +96,16 @@ func (c *gophkeeperClient) AddBankCard(ctx context.Context, in *AddBankCardReque
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(emptypb.Empty)
 	err := c.cc.Invoke(ctx, Gophkeeper_AddBankCard_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) RemoveBankCard(ctx context.Context, in *RemoveBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_RemoveBankCard_FullMethodName, in, out, cOpts...)
 	if err != nil {
 		return nil, err
 	}
@@ -201,6 +212,7 @@ type GophkeeperServer interface {
 	Authorize(context.Context, *AuthorizeRequest) (*AuthorizeResponse, error)
 	Echo(context.Context, *EchoRequest) (*EchoResponse, error)
 	AddBankCard(context.Context, *AddBankCardRequest) (*emptypb.Empty, error)
+	RemoveBankCard(context.Context, *RemoveBankCardRequest) (*emptypb.Empty, error)
 	GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error)
 	GetBankCard(context.Context, *GetBankCardRequest) (*GetBankCardResponse, error)
 	AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error)
@@ -230,6 +242,9 @@ func (UnimplementedGophkeeperServer) Echo(context.Context, *EchoRequest) (*EchoR
 }
 func (UnimplementedGophkeeperServer) AddBankCard(context.Context, *AddBankCardRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddBankCard not implemented")
+}
+func (UnimplementedGophkeeperServer) RemoveBankCard(context.Context, *RemoveBankCardRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveBankCard not implemented")
 }
 func (UnimplementedGophkeeperServer) GetBankCards(context.Context, *GetBankCardsRequest) (*GetBankCardsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetBankCards not implemented")
@@ -344,6 +359,24 @@ func _Gophkeeper_AddBankCard_Handler(srv interface{}, ctx context.Context, dec f
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(GophkeeperServer).AddBankCard(ctx, req.(*AddBankCardRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_RemoveBankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveBankCardRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).RemoveBankCard(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_RemoveBankCard_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).RemoveBankCard(ctx, req.(*RemoveBankCardRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -496,6 +529,10 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "AddBankCard",
 			Handler:    _Gophkeeper_AddBankCard_Handler,
+		},
+		{
+			MethodName: "RemoveBankCard",
+			Handler:    _Gophkeeper_RemoveBankCard_Handler,
 		},
 		{
 			MethodName: "GetBankCards",

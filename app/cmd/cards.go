@@ -12,6 +12,11 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+var (
+	cardID int64
+	card   proto.BankCard
+)
+
 // cardsCmd represents the bank cards management command
 var cardsCmd = &cobra.Command{
 	Use:   "cards [command] [flags]",
@@ -29,7 +34,6 @@ var cardsCmd = &cobra.Command{
 	},
 }
 
-var card proto.BankCard
 var addCmd = &cobra.Command{
 	Use:   "add [flags]",
 	Short: "Add a new bank card to GophKeeper",
@@ -37,6 +41,30 @@ var addCmd = &cobra.Command{
 	- client cards add --owner "Name Surname" --cvv 123 --expire 2024-12-26 --number 78878877 --desc "Test card"`,
 	Run: func(cmd *cobra.Command, args []string) {
 		if err := client.AddCard(&card); err != nil {
+			fmt.Println(err)
+		}
+	},
+}
+
+var getCmd = &cobra.Command{
+	Use:   "get [flags]",
+	Short: "Get bank card by ID from GophKeeper",
+	Long: `This command allows you to get bank card info by ID from your account in GophKeeper. For example:
+	- client cards get --id 9`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := client.GetCard(cardID); err != nil {
+			fmt.Println(err)
+		}
+	},
+}
+
+var removeCmd = &cobra.Command{
+	Use:   "remove [flags]",
+	Short: "Remove bank card by ID from GophKeeper",
+	Long: `This command allows you to remove bank card info by ID from your account in GophKeeper. For example:
+	- client cards remove --id 9`,
+	Run: func(cmd *cobra.Command, args []string) {
+		if err := client.RemoveCard(cardID); err != nil {
 			fmt.Println(err)
 		}
 	},
@@ -61,6 +89,11 @@ func init() {
 	addCmd.PersistentFlags().StringVar(&card.Number, "number", "", "bank card number")
 	addCmd.PersistentFlags().StringVar(&card.Description, "desc", "", "bank card description")
 
+	getCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
+	removeCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
+
+	cardsCmd.AddCommand(getCmd)
+	cardsCmd.AddCommand(removeCmd)
 	cardsCmd.AddCommand(addCmd)
 	cardsCmd.AddCommand(getAllCmd)
 	rootCmd.AddCommand(cardsCmd)

@@ -241,3 +241,11 @@ func (p *PostgresStorage) GetBankCard(ctx context.Context, cardID int64) (*model
 
 	return &card, nil
 }
+
+func (p *PostgresStorage) RemoveBankCard(ctx context.Context, cardID int64) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM bank_cards WHERE id = $1", cardID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
