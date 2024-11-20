@@ -20,19 +20,20 @@ import (
 const _ = grpc.SupportPackageIsVersion9
 
 const (
-	Gophkeeper_RegisterUser_FullMethodName       = "/gophkeeper.Gophkeeper/RegisterUser"
-	Gophkeeper_Authorize_FullMethodName          = "/gophkeeper.Gophkeeper/Authorize"
-	Gophkeeper_Echo_FullMethodName               = "/gophkeeper.Gophkeeper/Echo"
-	Gophkeeper_AddBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/AddBankCard"
-	Gophkeeper_RemoveBankCard_FullMethodName     = "/gophkeeper.Gophkeeper/RemoveBankCard"
-	Gophkeeper_GetBankCards_FullMethodName       = "/gophkeeper.Gophkeeper/GetBankCards"
-	Gophkeeper_GetBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/GetBankCard"
-	Gophkeeper_AddUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/AddUserCredentials"
-	Gophkeeper_GetUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/GetUserCredentials"
-	Gophkeeper_GetUserCredential_FullMethodName  = "/gophkeeper.Gophkeeper/GetUserCredential"
-	Gophkeeper_Upload_FullMethodName             = "/gophkeeper.Gophkeeper/Upload"
-	Gophkeeper_Download_FullMethodName           = "/gophkeeper.Gophkeeper/Download"
-	Gophkeeper_GetFiles_FullMethodName           = "/gophkeeper.Gophkeeper/GetFiles"
+	Gophkeeper_RegisterUser_FullMethodName          = "/gophkeeper.Gophkeeper/RegisterUser"
+	Gophkeeper_Authorize_FullMethodName             = "/gophkeeper.Gophkeeper/Authorize"
+	Gophkeeper_Echo_FullMethodName                  = "/gophkeeper.Gophkeeper/Echo"
+	Gophkeeper_AddBankCard_FullMethodName           = "/gophkeeper.Gophkeeper/AddBankCard"
+	Gophkeeper_RemoveBankCard_FullMethodName        = "/gophkeeper.Gophkeeper/RemoveBankCard"
+	Gophkeeper_GetBankCards_FullMethodName          = "/gophkeeper.Gophkeeper/GetBankCards"
+	Gophkeeper_GetBankCard_FullMethodName           = "/gophkeeper.Gophkeeper/GetBankCard"
+	Gophkeeper_AddUserCredentials_FullMethodName    = "/gophkeeper.Gophkeeper/AddUserCredentials"
+	Gophkeeper_GetUserCredentials_FullMethodName    = "/gophkeeper.Gophkeeper/GetUserCredentials"
+	Gophkeeper_GetUserCredential_FullMethodName     = "/gophkeeper.Gophkeeper/GetUserCredential"
+	Gophkeeper_RemoveUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/RemoveUserCredentials"
+	Gophkeeper_Upload_FullMethodName                = "/gophkeeper.Gophkeeper/Upload"
+	Gophkeeper_Download_FullMethodName              = "/gophkeeper.Gophkeeper/Download"
+	Gophkeeper_GetFiles_FullMethodName              = "/gophkeeper.Gophkeeper/GetFiles"
 )
 
 // GophkeeperClient is the client API for Gophkeeper service.
@@ -49,6 +50,7 @@ type GophkeeperClient interface {
 	AddUserCredentials(ctx context.Context, in *AddUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
 	GetUserCredential(ctx context.Context, in *GetUserCredentialRequest, opts ...grpc.CallOption) (*GetUserCredentialResponse, error)
+	RemoveUserCredentials(ctx context.Context, in *RemoveUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error)
 	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error)
 	GetFiles(ctx context.Context, in *GetFilesRequest, opts ...grpc.CallOption) (*GetFilesResponse, error)
@@ -162,6 +164,16 @@ func (c *gophkeeperClient) GetUserCredential(ctx context.Context, in *GetUserCre
 	return out, nil
 }
 
+func (c *gophkeeperClient) RemoveUserCredentials(ctx context.Context, in *RemoveUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_RemoveUserCredentials_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &Gophkeeper_ServiceDesc.Streams[0], Gophkeeper_Upload_FullMethodName, cOpts...)
@@ -218,6 +230,7 @@ type GophkeeperServer interface {
 	AddUserCredentials(context.Context, *AddUserCredentialsRequest) (*emptypb.Empty, error)
 	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
 	GetUserCredential(context.Context, *GetUserCredentialRequest) (*GetUserCredentialResponse, error)
+	RemoveUserCredentials(context.Context, *RemoveUserCredentialsRequest) (*emptypb.Empty, error)
 	Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error
 	Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error
 	GetFiles(context.Context, *GetFilesRequest) (*GetFilesResponse, error)
@@ -260,6 +273,9 @@ func (UnimplementedGophkeeperServer) GetUserCredentials(context.Context, *GetUse
 }
 func (UnimplementedGophkeeperServer) GetUserCredential(context.Context, *GetUserCredentialRequest) (*GetUserCredentialResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetUserCredential not implemented")
+}
+func (UnimplementedGophkeeperServer) RemoveUserCredentials(context.Context, *RemoveUserCredentialsRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserCredentials not implemented")
 }
 func (UnimplementedGophkeeperServer) Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
@@ -471,6 +487,24 @@ func _Gophkeeper_GetUserCredential_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gophkeeper_RemoveUserCredentials_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveUserCredentialsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).RemoveUserCredentials(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_RemoveUserCredentials_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).RemoveUserCredentials(ctx, req.(*RemoveUserCredentialsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(GophkeeperServer).Upload(&grpc.GenericServerStream[FileUploadRequest, FileUploadResponse]{ServerStream: stream})
 }
@@ -553,6 +587,10 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetUserCredential",
 			Handler:    _Gophkeeper_GetUserCredential_Handler,
+		},
+		{
+			MethodName: "RemoveUserCredentials",
+			Handler:    _Gophkeeper_RemoveUserCredentials_Handler,
 		},
 		{
 			MethodName: "GetFiles",

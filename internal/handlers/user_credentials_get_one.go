@@ -21,8 +21,8 @@ func (g *GophkeeperServer) GetUserCredential(ctx context.Context, in *proto.GetU
 
 	cred, err := g.Storage.GetUserCredential(ctx, int64(credID))
 	if err != nil {
-		logger.Log.Error("error get bank card from DB", zap.Error(err))
-		return nil, status.Errorf(codes.Internal, "error get bank card from DB")
+		logger.Log.Error("error get credentials from DB", zap.Error(err))
+		return nil, status.Errorf(codes.Internal, "error get credentials from DB")
 	}
 
 	protoCreds := &proto.Credentials{

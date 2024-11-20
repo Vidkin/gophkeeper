@@ -706,6 +706,51 @@ func (x *RemoveBankCardRequest) GetId() string {
 	return ""
 }
 
+type RemoveUserCredentialsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id string `protobuf:"bytes,1,opt,name=id,proto3" json:"id,omitempty"`
+}
+
+func (x *RemoveUserCredentialsRequest) Reset() {
+	*x = RemoveUserCredentialsRequest{}
+	mi := &file_proto_gophkeeper_proto_msgTypes[14]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RemoveUserCredentialsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RemoveUserCredentialsRequest) ProtoMessage() {}
+
+func (x *RemoveUserCredentialsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_proto_gophkeeper_proto_msgTypes[14]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RemoveUserCredentialsRequest.ProtoReflect.Descriptor instead.
+func (*RemoveUserCredentialsRequest) Descriptor() ([]byte, []int) {
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{14}
+}
+
+func (x *RemoveUserCredentialsRequest) GetId() string {
+	if x != nil {
+		return x.Id
+	}
+	return ""
+}
+
 type GetBankCardsRequest struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -714,7 +759,7 @@ type GetBankCardsRequest struct {
 
 func (x *GetBankCardsRequest) Reset() {
 	*x = GetBankCardsRequest{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[14]
+	mi := &file_proto_gophkeeper_proto_msgTypes[15]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -726,7 +771,7 @@ func (x *GetBankCardsRequest) String() string {
 func (*GetBankCardsRequest) ProtoMessage() {}
 
 func (x *GetBankCardsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[14]
+	mi := &file_proto_gophkeeper_proto_msgTypes[15]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -739,7 +784,7 @@ func (x *GetBankCardsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBankCardsRequest.ProtoReflect.Descriptor instead.
 func (*GetBankCardsRequest) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{14}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{15}
 }
 
 type GetBankCardsResponse struct {
@@ -752,7 +797,7 @@ type GetBankCardsResponse struct {
 
 func (x *GetBankCardsResponse) Reset() {
 	*x = GetBankCardsResponse{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[15]
+	mi := &file_proto_gophkeeper_proto_msgTypes[16]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -764,7 +809,7 @@ func (x *GetBankCardsResponse) String() string {
 func (*GetBankCardsResponse) ProtoMessage() {}
 
 func (x *GetBankCardsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[15]
+	mi := &file_proto_gophkeeper_proto_msgTypes[16]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -777,7 +822,7 @@ func (x *GetBankCardsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBankCardsResponse.ProtoReflect.Descriptor instead.
 func (*GetBankCardsResponse) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{15}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{16}
 }
 
 func (x *GetBankCardsResponse) GetCards() []*BankCard {
@@ -797,7 +842,7 @@ type GetBankCardRequest struct {
 
 func (x *GetBankCardRequest) Reset() {
 	*x = GetBankCardRequest{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[16]
+	mi := &file_proto_gophkeeper_proto_msgTypes[17]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -809,7 +854,7 @@ func (x *GetBankCardRequest) String() string {
 func (*GetBankCardRequest) ProtoMessage() {}
 
 func (x *GetBankCardRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[16]
+	mi := &file_proto_gophkeeper_proto_msgTypes[17]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -822,7 +867,7 @@ func (x *GetBankCardRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBankCardRequest.ProtoReflect.Descriptor instead.
 func (*GetBankCardRequest) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{16}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{17}
 }
 
 func (x *GetBankCardRequest) GetId() string {
@@ -842,7 +887,7 @@ type GetBankCardResponse struct {
 
 func (x *GetBankCardResponse) Reset() {
 	*x = GetBankCardResponse{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[17]
+	mi := &file_proto_gophkeeper_proto_msgTypes[18]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -854,7 +899,7 @@ func (x *GetBankCardResponse) String() string {
 func (*GetBankCardResponse) ProtoMessage() {}
 
 func (x *GetBankCardResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[17]
+	mi := &file_proto_gophkeeper_proto_msgTypes[18]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -867,7 +912,7 @@ func (x *GetBankCardResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetBankCardResponse.ProtoReflect.Descriptor instead.
 func (*GetBankCardResponse) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{17}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{18}
 }
 
 func (x *GetBankCardResponse) GetCard() *BankCard {
@@ -891,7 +936,7 @@ type FileUploadRequest struct {
 
 func (x *FileUploadRequest) Reset() {
 	*x = FileUploadRequest{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[18]
+	mi := &file_proto_gophkeeper_proto_msgTypes[19]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -903,7 +948,7 @@ func (x *FileUploadRequest) String() string {
 func (*FileUploadRequest) ProtoMessage() {}
 
 func (x *FileUploadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[18]
+	mi := &file_proto_gophkeeper_proto_msgTypes[19]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -916,7 +961,7 @@ func (x *FileUploadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileUploadRequest.ProtoReflect.Descriptor instead.
 func (*FileUploadRequest) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{18}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{19}
 }
 
 func (x *FileUploadRequest) GetFileName() string {
@@ -965,7 +1010,7 @@ type FileUploadResponse struct {
 
 func (x *FileUploadResponse) Reset() {
 	*x = FileUploadResponse{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[19]
+	mi := &file_proto_gophkeeper_proto_msgTypes[20]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -977,7 +1022,7 @@ func (x *FileUploadResponse) String() string {
 func (*FileUploadResponse) ProtoMessage() {}
 
 func (x *FileUploadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[19]
+	mi := &file_proto_gophkeeper_proto_msgTypes[20]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -990,7 +1035,7 @@ func (x *FileUploadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileUploadResponse.ProtoReflect.Descriptor instead.
 func (*FileUploadResponse) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{19}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{20}
 }
 
 func (x *FileUploadResponse) GetFileName() string {
@@ -1017,7 +1062,7 @@ type FileDownloadRequest struct {
 
 func (x *FileDownloadRequest) Reset() {
 	*x = FileDownloadRequest{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[20]
+	mi := &file_proto_gophkeeper_proto_msgTypes[21]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1029,7 +1074,7 @@ func (x *FileDownloadRequest) String() string {
 func (*FileDownloadRequest) ProtoMessage() {}
 
 func (x *FileDownloadRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[20]
+	mi := &file_proto_gophkeeper_proto_msgTypes[21]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1042,7 +1087,7 @@ func (x *FileDownloadRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileDownloadRequest.ProtoReflect.Descriptor instead.
 func (*FileDownloadRequest) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{20}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{21}
 }
 
 func (x *FileDownloadRequest) GetId() int64 {
@@ -1066,7 +1111,7 @@ type FileDownloadResponse struct {
 
 func (x *FileDownloadResponse) Reset() {
 	*x = FileDownloadResponse{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[21]
+	mi := &file_proto_gophkeeper_proto_msgTypes[22]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1078,7 +1123,7 @@ func (x *FileDownloadResponse) String() string {
 func (*FileDownloadResponse) ProtoMessage() {}
 
 func (x *FileDownloadResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[21]
+	mi := &file_proto_gophkeeper_proto_msgTypes[22]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1091,7 +1136,7 @@ func (x *FileDownloadResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use FileDownloadResponse.ProtoReflect.Descriptor instead.
 func (*FileDownloadResponse) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{21}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{22}
 }
 
 func (x *FileDownloadResponse) GetChunk() []byte {
@@ -1144,7 +1189,7 @@ type File struct {
 
 func (x *File) Reset() {
 	*x = File{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[22]
+	mi := &file_proto_gophkeeper_proto_msgTypes[23]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1156,7 +1201,7 @@ func (x *File) String() string {
 func (*File) ProtoMessage() {}
 
 func (x *File) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[22]
+	mi := &file_proto_gophkeeper_proto_msgTypes[23]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1169,7 +1214,7 @@ func (x *File) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use File.ProtoReflect.Descriptor instead.
 func (*File) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{22}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{23}
 }
 
 func (x *File) GetId() int64 {
@@ -1224,7 +1269,7 @@ type GetFilesRequest struct {
 
 func (x *GetFilesRequest) Reset() {
 	*x = GetFilesRequest{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[23]
+	mi := &file_proto_gophkeeper_proto_msgTypes[24]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1236,7 +1281,7 @@ func (x *GetFilesRequest) String() string {
 func (*GetFilesRequest) ProtoMessage() {}
 
 func (x *GetFilesRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[23]
+	mi := &file_proto_gophkeeper_proto_msgTypes[24]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1249,7 +1294,7 @@ func (x *GetFilesRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFilesRequest.ProtoReflect.Descriptor instead.
 func (*GetFilesRequest) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{23}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{24}
 }
 
 func (x *GetFilesRequest) GetUserId() int64 {
@@ -1269,7 +1314,7 @@ type GetFilesResponse struct {
 
 func (x *GetFilesResponse) Reset() {
 	*x = GetFilesResponse{}
-	mi := &file_proto_gophkeeper_proto_msgTypes[24]
+	mi := &file_proto_gophkeeper_proto_msgTypes[25]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -1281,7 +1326,7 @@ func (x *GetFilesResponse) String() string {
 func (*GetFilesResponse) ProtoMessage() {}
 
 func (x *GetFilesResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_proto_gophkeeper_proto_msgTypes[24]
+	mi := &file_proto_gophkeeper_proto_msgTypes[25]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -1294,7 +1339,7 @@ func (x *GetFilesResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetFilesResponse.ProtoReflect.Descriptor instead.
 func (*GetFilesResponse) Descriptor() ([]byte, []int) {
-	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{24}
+	return file_proto_gophkeeper_proto_rawDescGZIP(), []int{25}
 }
 
 func (x *GetFilesResponse) GetFiles() []*File {
@@ -1373,6 +1418,9 @@ var file_proto_gophkeeper_proto_rawDesc = []byte{
 	0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x42, 0x61, 0x6e, 0x6b, 0x43, 0x61, 0x72, 0x64, 0x52, 0x04,
 	0x63, 0x61, 0x72, 0x64, 0x22, 0x27, 0x0a, 0x15, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x42, 0x61,
 	0x6e, 0x6b, 0x43, 0x61, 0x72, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a,
+	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x2e, 0x0a,
+	0x1c, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x0e, 0x0a,
 	0x02, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x09, 0x52, 0x02, 0x69, 0x64, 0x22, 0x15, 0x0a,
 	0x13, 0x47, 0x65, 0x74, 0x42, 0x61, 0x6e, 0x6b, 0x43, 0x61, 0x72, 0x64, 0x73, 0x52, 0x65, 0x71,
 	0x75, 0x65, 0x73, 0x74, 0x22, 0x42, 0x0a, 0x14, 0x47, 0x65, 0x74, 0x42, 0x61, 0x6e, 0x6b, 0x43,
@@ -1432,7 +1480,7 @@ var file_proto_gophkeeper_proto_rawDesc = []byte{
 	0x64, 0x22, 0x3a, 0x0a, 0x10, 0x47, 0x65, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73,
 	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x26, 0x0a, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x18, 0x01,
 	0x20, 0x03, 0x28, 0x0b, 0x32, 0x10, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65,
-	0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x32, 0x90, 0x08,
+	0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x52, 0x05, 0x66, 0x69, 0x6c, 0x65, 0x73, 0x32, 0xeb, 0x08,
 	0x0a, 0x0a, 0x47, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x12, 0x47, 0x0a, 0x0c,
 	0x52, 0x65, 0x67, 0x69, 0x73, 0x74, 0x65, 0x72, 0x55, 0x73, 0x65, 0x72, 0x12, 0x1f, 0x2e, 0x67,
 	0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x52, 0x65, 0x67, 0x69, 0x73, 0x74,
@@ -1483,23 +1531,29 @@ var file_proto_gophkeeper_proto_rawDesc = []byte{
 	0x74, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52,
 	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x25, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65,
 	0x70, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65,
-	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x49, 0x0a,
-	0x06, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x12, 0x1d, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65,
-	0x65, 0x70, 0x65, 0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x52,
-	0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1e, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65,
-	0x70, 0x65, 0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65,
-	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x28, 0x01, 0x12, 0x4f, 0x0a, 0x08, 0x44, 0x6f, 0x77, 0x6e,
-	0x6c, 0x6f, 0x61, 0x64, 0x12, 0x1f, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65,
-	0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65,
-	0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x20, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70,
-	0x65, 0x72, 0x2e, 0x46, 0x69, 0x6c, 0x65, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x52,
-	0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x30, 0x01, 0x12, 0x45, 0x0a, 0x08, 0x47, 0x65, 0x74,
-	0x46, 0x69, 0x6c, 0x65, 0x73, 0x12, 0x1b, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70,
-	0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65,
-	0x73, 0x74, 0x1a, 0x1c, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e,
-	0x47, 0x65, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65,
-	0x42, 0x12, 0x5a, 0x10, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2f, 0x70,
-	0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x59, 0x0a,
+	0x15, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72, 0x65, 0x64, 0x65,
+	0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x12, 0x28, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65,
+	0x70, 0x65, 0x72, 0x2e, 0x52, 0x65, 0x6d, 0x6f, 0x76, 0x65, 0x55, 0x73, 0x65, 0x72, 0x43, 0x72,
+	0x65, 0x64, 0x65, 0x6e, 0x74, 0x69, 0x61, 0x6c, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x16, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x75, 0x66, 0x2e, 0x45, 0x6d, 0x70, 0x74, 0x79, 0x12, 0x49, 0x0a, 0x06, 0x55, 0x70, 0x6c, 0x6f,
+	0x61, 0x64, 0x12, 0x1d, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e,
+	0x46, 0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x1e, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x46,
+	0x69, 0x6c, 0x65, 0x55, 0x70, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73,
+	0x65, 0x28, 0x01, 0x12, 0x4f, 0x0a, 0x08, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x12,
+	0x1f, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x46, 0x69, 0x6c,
+	0x65, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74,
+	0x1a, 0x20, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x46, 0x69,
+	0x6c, 0x65, 0x44, 0x6f, 0x77, 0x6e, 0x6c, 0x6f, 0x61, 0x64, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x30, 0x01, 0x12, 0x45, 0x0a, 0x08, 0x47, 0x65, 0x74, 0x46, 0x69, 0x6c, 0x65, 0x73,
+	0x12, 0x1b, 0x2e, 0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x47, 0x65,
+	0x74, 0x46, 0x69, 0x6c, 0x65, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1c, 0x2e,
+	0x67, 0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2e, 0x47, 0x65, 0x74, 0x46, 0x69,
+	0x6c, 0x65, 0x73, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x42, 0x12, 0x5a, 0x10, 0x67,
+	0x6f, 0x70, 0x68, 0x6b, 0x65, 0x65, 0x70, 0x65, 0x72, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -1514,34 +1568,35 @@ func file_proto_gophkeeper_proto_rawDescGZIP() []byte {
 	return file_proto_gophkeeper_proto_rawDescData
 }
 
-var file_proto_gophkeeper_proto_msgTypes = make([]protoimpl.MessageInfo, 25)
+var file_proto_gophkeeper_proto_msgTypes = make([]protoimpl.MessageInfo, 26)
 var file_proto_gophkeeper_proto_goTypes = []any{
-	(*Credentials)(nil),                // 0: gophkeeper.Credentials
-	(*RegisterUserRequest)(nil),        // 1: gophkeeper.RegisterUserRequest
-	(*AuthorizeRequest)(nil),           // 2: gophkeeper.AuthorizeRequest
-	(*AuthorizeResponse)(nil),          // 3: gophkeeper.AuthorizeResponse
-	(*AddUserCredentialsRequest)(nil),  // 4: gophkeeper.AddUserCredentialsRequest
-	(*GetUserCredentialsRequest)(nil),  // 5: gophkeeper.GetUserCredentialsRequest
-	(*GetUserCredentialsResponse)(nil), // 6: gophkeeper.GetUserCredentialsResponse
-	(*GetUserCredentialRequest)(nil),   // 7: gophkeeper.GetUserCredentialRequest
-	(*GetUserCredentialResponse)(nil),  // 8: gophkeeper.GetUserCredentialResponse
-	(*EchoRequest)(nil),                // 9: gophkeeper.EchoRequest
-	(*EchoResponse)(nil),               // 10: gophkeeper.EchoResponse
-	(*BankCard)(nil),                   // 11: gophkeeper.BankCard
-	(*AddBankCardRequest)(nil),         // 12: gophkeeper.AddBankCardRequest
-	(*RemoveBankCardRequest)(nil),      // 13: gophkeeper.RemoveBankCardRequest
-	(*GetBankCardsRequest)(nil),        // 14: gophkeeper.GetBankCardsRequest
-	(*GetBankCardsResponse)(nil),       // 15: gophkeeper.GetBankCardsResponse
-	(*GetBankCardRequest)(nil),         // 16: gophkeeper.GetBankCardRequest
-	(*GetBankCardResponse)(nil),        // 17: gophkeeper.GetBankCardResponse
-	(*FileUploadRequest)(nil),          // 18: gophkeeper.FileUploadRequest
-	(*FileUploadResponse)(nil),         // 19: gophkeeper.FileUploadResponse
-	(*FileDownloadRequest)(nil),        // 20: gophkeeper.FileDownloadRequest
-	(*FileDownloadResponse)(nil),       // 21: gophkeeper.FileDownloadResponse
-	(*File)(nil),                       // 22: gophkeeper.File
-	(*GetFilesRequest)(nil),            // 23: gophkeeper.GetFilesRequest
-	(*GetFilesResponse)(nil),           // 24: gophkeeper.GetFilesResponse
-	(*emptypb.Empty)(nil),              // 25: google.protobuf.Empty
+	(*Credentials)(nil),                  // 0: gophkeeper.Credentials
+	(*RegisterUserRequest)(nil),          // 1: gophkeeper.RegisterUserRequest
+	(*AuthorizeRequest)(nil),             // 2: gophkeeper.AuthorizeRequest
+	(*AuthorizeResponse)(nil),            // 3: gophkeeper.AuthorizeResponse
+	(*AddUserCredentialsRequest)(nil),    // 4: gophkeeper.AddUserCredentialsRequest
+	(*GetUserCredentialsRequest)(nil),    // 5: gophkeeper.GetUserCredentialsRequest
+	(*GetUserCredentialsResponse)(nil),   // 6: gophkeeper.GetUserCredentialsResponse
+	(*GetUserCredentialRequest)(nil),     // 7: gophkeeper.GetUserCredentialRequest
+	(*GetUserCredentialResponse)(nil),    // 8: gophkeeper.GetUserCredentialResponse
+	(*EchoRequest)(nil),                  // 9: gophkeeper.EchoRequest
+	(*EchoResponse)(nil),                 // 10: gophkeeper.EchoResponse
+	(*BankCard)(nil),                     // 11: gophkeeper.BankCard
+	(*AddBankCardRequest)(nil),           // 12: gophkeeper.AddBankCardRequest
+	(*RemoveBankCardRequest)(nil),        // 13: gophkeeper.RemoveBankCardRequest
+	(*RemoveUserCredentialsRequest)(nil), // 14: gophkeeper.RemoveUserCredentialsRequest
+	(*GetBankCardsRequest)(nil),          // 15: gophkeeper.GetBankCardsRequest
+	(*GetBankCardsResponse)(nil),         // 16: gophkeeper.GetBankCardsResponse
+	(*GetBankCardRequest)(nil),           // 17: gophkeeper.GetBankCardRequest
+	(*GetBankCardResponse)(nil),          // 18: gophkeeper.GetBankCardResponse
+	(*FileUploadRequest)(nil),            // 19: gophkeeper.FileUploadRequest
+	(*FileUploadResponse)(nil),           // 20: gophkeeper.FileUploadResponse
+	(*FileDownloadRequest)(nil),          // 21: gophkeeper.FileDownloadRequest
+	(*FileDownloadResponse)(nil),         // 22: gophkeeper.FileDownloadResponse
+	(*File)(nil),                         // 23: gophkeeper.File
+	(*GetFilesRequest)(nil),              // 24: gophkeeper.GetFilesRequest
+	(*GetFilesResponse)(nil),             // 25: gophkeeper.GetFilesResponse
+	(*emptypb.Empty)(nil),                // 26: google.protobuf.Empty
 }
 var file_proto_gophkeeper_proto_depIdxs = []int32{
 	0,  // 0: gophkeeper.RegisterUserRequest.credentials:type_name -> gophkeeper.Credentials
@@ -1552,35 +1607,37 @@ var file_proto_gophkeeper_proto_depIdxs = []int32{
 	11, // 5: gophkeeper.AddBankCardRequest.card:type_name -> gophkeeper.BankCard
 	11, // 6: gophkeeper.GetBankCardsResponse.cards:type_name -> gophkeeper.BankCard
 	11, // 7: gophkeeper.GetBankCardResponse.card:type_name -> gophkeeper.BankCard
-	22, // 8: gophkeeper.GetFilesResponse.files:type_name -> gophkeeper.File
+	23, // 8: gophkeeper.GetFilesResponse.files:type_name -> gophkeeper.File
 	1,  // 9: gophkeeper.Gophkeeper.RegisterUser:input_type -> gophkeeper.RegisterUserRequest
 	2,  // 10: gophkeeper.Gophkeeper.Authorize:input_type -> gophkeeper.AuthorizeRequest
 	9,  // 11: gophkeeper.Gophkeeper.Echo:input_type -> gophkeeper.EchoRequest
 	12, // 12: gophkeeper.Gophkeeper.AddBankCard:input_type -> gophkeeper.AddBankCardRequest
 	13, // 13: gophkeeper.Gophkeeper.RemoveBankCard:input_type -> gophkeeper.RemoveBankCardRequest
-	14, // 14: gophkeeper.Gophkeeper.GetBankCards:input_type -> gophkeeper.GetBankCardsRequest
-	16, // 15: gophkeeper.Gophkeeper.GetBankCard:input_type -> gophkeeper.GetBankCardRequest
+	15, // 14: gophkeeper.Gophkeeper.GetBankCards:input_type -> gophkeeper.GetBankCardsRequest
+	17, // 15: gophkeeper.Gophkeeper.GetBankCard:input_type -> gophkeeper.GetBankCardRequest
 	4,  // 16: gophkeeper.Gophkeeper.AddUserCredentials:input_type -> gophkeeper.AddUserCredentialsRequest
 	5,  // 17: gophkeeper.Gophkeeper.GetUserCredentials:input_type -> gophkeeper.GetUserCredentialsRequest
 	7,  // 18: gophkeeper.Gophkeeper.GetUserCredential:input_type -> gophkeeper.GetUserCredentialRequest
-	18, // 19: gophkeeper.Gophkeeper.Upload:input_type -> gophkeeper.FileUploadRequest
-	20, // 20: gophkeeper.Gophkeeper.Download:input_type -> gophkeeper.FileDownloadRequest
-	23, // 21: gophkeeper.Gophkeeper.GetFiles:input_type -> gophkeeper.GetFilesRequest
-	25, // 22: gophkeeper.Gophkeeper.RegisterUser:output_type -> google.protobuf.Empty
-	3,  // 23: gophkeeper.Gophkeeper.Authorize:output_type -> gophkeeper.AuthorizeResponse
-	10, // 24: gophkeeper.Gophkeeper.Echo:output_type -> gophkeeper.EchoResponse
-	25, // 25: gophkeeper.Gophkeeper.AddBankCard:output_type -> google.protobuf.Empty
-	25, // 26: gophkeeper.Gophkeeper.RemoveBankCard:output_type -> google.protobuf.Empty
-	15, // 27: gophkeeper.Gophkeeper.GetBankCards:output_type -> gophkeeper.GetBankCardsResponse
-	17, // 28: gophkeeper.Gophkeeper.GetBankCard:output_type -> gophkeeper.GetBankCardResponse
-	25, // 29: gophkeeper.Gophkeeper.AddUserCredentials:output_type -> google.protobuf.Empty
-	6,  // 30: gophkeeper.Gophkeeper.GetUserCredentials:output_type -> gophkeeper.GetUserCredentialsResponse
-	8,  // 31: gophkeeper.Gophkeeper.GetUserCredential:output_type -> gophkeeper.GetUserCredentialResponse
-	19, // 32: gophkeeper.Gophkeeper.Upload:output_type -> gophkeeper.FileUploadResponse
-	21, // 33: gophkeeper.Gophkeeper.Download:output_type -> gophkeeper.FileDownloadResponse
-	24, // 34: gophkeeper.Gophkeeper.GetFiles:output_type -> gophkeeper.GetFilesResponse
-	22, // [22:35] is the sub-list for method output_type
-	9,  // [9:22] is the sub-list for method input_type
+	14, // 19: gophkeeper.Gophkeeper.RemoveUserCredentials:input_type -> gophkeeper.RemoveUserCredentialsRequest
+	19, // 20: gophkeeper.Gophkeeper.Upload:input_type -> gophkeeper.FileUploadRequest
+	21, // 21: gophkeeper.Gophkeeper.Download:input_type -> gophkeeper.FileDownloadRequest
+	24, // 22: gophkeeper.Gophkeeper.GetFiles:input_type -> gophkeeper.GetFilesRequest
+	26, // 23: gophkeeper.Gophkeeper.RegisterUser:output_type -> google.protobuf.Empty
+	3,  // 24: gophkeeper.Gophkeeper.Authorize:output_type -> gophkeeper.AuthorizeResponse
+	10, // 25: gophkeeper.Gophkeeper.Echo:output_type -> gophkeeper.EchoResponse
+	26, // 26: gophkeeper.Gophkeeper.AddBankCard:output_type -> google.protobuf.Empty
+	26, // 27: gophkeeper.Gophkeeper.RemoveBankCard:output_type -> google.protobuf.Empty
+	16, // 28: gophkeeper.Gophkeeper.GetBankCards:output_type -> gophkeeper.GetBankCardsResponse
+	18, // 29: gophkeeper.Gophkeeper.GetBankCard:output_type -> gophkeeper.GetBankCardResponse
+	26, // 30: gophkeeper.Gophkeeper.AddUserCredentials:output_type -> google.protobuf.Empty
+	6,  // 31: gophkeeper.Gophkeeper.GetUserCredentials:output_type -> gophkeeper.GetUserCredentialsResponse
+	8,  // 32: gophkeeper.Gophkeeper.GetUserCredential:output_type -> gophkeeper.GetUserCredentialResponse
+	26, // 33: gophkeeper.Gophkeeper.RemoveUserCredentials:output_type -> google.protobuf.Empty
+	20, // 34: gophkeeper.Gophkeeper.Upload:output_type -> gophkeeper.FileUploadResponse
+	22, // 35: gophkeeper.Gophkeeper.Download:output_type -> gophkeeper.FileDownloadResponse
+	25, // 36: gophkeeper.Gophkeeper.GetFiles:output_type -> gophkeeper.GetFilesResponse
+	23, // [23:37] is the sub-list for method output_type
+	9,  // [9:23] is the sub-list for method input_type
 	9,  // [9:9] is the sub-list for extension type_name
 	9,  // [9:9] is the sub-list for extension extendee
 	0,  // [0:9] is the sub-list for field type_name
@@ -1597,7 +1654,7 @@ func file_proto_gophkeeper_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_proto_gophkeeper_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   25,
+			NumMessages:   26,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

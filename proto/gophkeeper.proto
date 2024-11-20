@@ -69,6 +69,10 @@ message RemoveBankCardRequest {
   string id = 1;
 }
 
+message RemoveUserCredentialsRequest {
+  string id = 1;
+}
+
 message GetBankCardsRequest {
 }
 
@@ -137,6 +141,7 @@ service Gophkeeper {
   rpc AddUserCredentials(AddUserCredentialsRequest) returns (google.protobuf.Empty);
   rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
   rpc GetUserCredential(GetUserCredentialRequest) returns (GetUserCredentialResponse);
+  rpc RemoveUserCredentials(RemoveUserCredentialsRequest) returns (google.protobuf.Empty);
   rpc Upload(stream FileUploadRequest) returns(FileUploadResponse);
   rpc Download(FileDownloadRequest) returns(stream FileDownloadResponse);
   rpc GetFiles(GetFilesRequest) returns (GetFilesResponse);

@@ -34,7 +34,7 @@ var cardsCmd = &cobra.Command{
 	},
 }
 
-var addCmd = &cobra.Command{
+var addCardCmd = &cobra.Command{
 	Use:   "add [flags]",
 	Short: "Add a new bank card to GophKeeper",
 	Long: `This command allows you to add a new bank card to your account in GophKeeper. For example:
@@ -46,7 +46,7 @@ var addCmd = &cobra.Command{
 	},
 }
 
-var getCmd = &cobra.Command{
+var getCardCmd = &cobra.Command{
 	Use:   "get [flags]",
 	Short: "Get bank card by ID from GophKeeper",
 	Long: `This command allows you to get bank card info by ID from your account in GophKeeper. For example:
@@ -58,7 +58,7 @@ var getCmd = &cobra.Command{
 	},
 }
 
-var removeCmd = &cobra.Command{
+var removeCardCmd = &cobra.Command{
 	Use:   "remove [flags]",
 	Short: "Remove bank card by ID from GophKeeper",
 	Long: `This command allows you to remove bank card info by ID from your account in GophKeeper. For example:
@@ -70,7 +70,7 @@ var removeCmd = &cobra.Command{
 	},
 }
 
-var getAllCmd = &cobra.Command{
+var getAllCardsCmd = &cobra.Command{
 	Use:   "getAll",
 	Short: "Get all bank cards from GophKeeper",
 	Long: `This command allows you to get all bank cards from your account in GophKeeper. For example:
@@ -83,18 +83,18 @@ var getAllCmd = &cobra.Command{
 }
 
 func init() {
-	addCmd.PersistentFlags().StringVar(&card.Owner, "owner", "", "bank card owner")
-	addCmd.PersistentFlags().StringVar(&card.Cvv, "cvv", "", "bank card CVV")
-	addCmd.PersistentFlags().StringVar(&card.ExpireDate, "expire", "", "bank card expire date")
-	addCmd.PersistentFlags().StringVar(&card.Number, "number", "", "bank card number")
-	addCmd.PersistentFlags().StringVar(&card.Description, "desc", "", "bank card description")
+	addCardCmd.PersistentFlags().StringVar(&card.Owner, "owner", "", "bank card owner")
+	addCardCmd.PersistentFlags().StringVar(&card.Cvv, "cvv", "", "bank card CVV")
+	addCardCmd.PersistentFlags().StringVar(&card.ExpireDate, "expire", "", "bank card expire date")
+	addCardCmd.PersistentFlags().StringVar(&card.Number, "number", "", "bank card number")
+	addCardCmd.PersistentFlags().StringVar(&card.Description, "desc", "", "bank card description")
 
-	getCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
-	removeCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
+	getCardCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
+	removeCardCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
 
-	cardsCmd.AddCommand(getCmd)
-	cardsCmd.AddCommand(removeCmd)
-	cardsCmd.AddCommand(addCmd)
-	cardsCmd.AddCommand(getAllCmd)
+	cardsCmd.AddCommand(getCardCmd)
+	cardsCmd.AddCommand(removeCardCmd)
+	cardsCmd.AddCommand(addCardCmd)
+	cardsCmd.AddCommand(getAllCardsCmd)
 	rootCmd.AddCommand(cardsCmd)
 }

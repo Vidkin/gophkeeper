@@ -97,11 +97,11 @@ func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, con
 	return err
 }
 
-func (p *PostgresStorage) GetFile(ctx context.Context, fileID int64) (*model.File, error) {
+func (p *PostgresStorage) GetFile(ctx context.Context, id int64) (*model.File, error) {
 	row := p.Conn.QueryRowContext(
 		ctx,
 		"SELECT user_id, id, file_name, bucket_name, content_type, description, file_size, created_at id FROM files WHERE id = $1",
-		fileID)
+		id)
 
 	var f model.File
 	if err := row.Scan(&f.UserID, &f.ID, &f.FileName, &f.BucketName, &f.ContentType, &f.Description, &f.FileSize, &f.CreatedAt); err != nil {
@@ -185,8 +185,8 @@ func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) 
 	return creds, nil
 }
 
-func (p *PostgresStorage) GetUserCredential(ctx context.Context, credID int64) (*model.Credentials, error) {
-	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE id = $1", credID)
+func (p *PostgresStorage) GetUserCredential(ctx context.Context, id int64) (*model.Credentials, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE id = $1", id)
 
 	var cred model.Credentials
 	if err := row.Scan(&cred.ID, &cred.UserID, &cred.Login, &cred.Password, &cred.Description); err != nil {
@@ -194,6 +194,14 @@ func (p *PostgresStorage) GetUserCredential(ctx context.Context, credID int64) (
 	}
 
 	return &cred, nil
+}
+
+func (p *PostgresStorage) RemoveUserCredential(ctx context.Context, id int64) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM user_credentials WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
@@ -231,8 +239,8 @@ func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*mo
 	return cards, nil
 }
 
-func (p *PostgresStorage) GetBankCard(ctx context.Context, cardID int64) (*model.BankCard, error) {
-	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE id = $1", cardID)
+func (p *PostgresStorage) GetBankCard(ctx context.Context, id int64) (*model.BankCard, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE id = $1", id)
 
 	var card model.BankCard
 	if err := row.Scan(&card.ID, &card.UserID, &card.Owner, &card.Number, &card.ExpireDate, &card.CVV, &card.Description); err != nil {
@@ -242,8 +250,8 @@ func (p *PostgresStorage) GetBankCard(ctx context.Context, cardID int64) (*model
 	return &card, nil
 }
 
-func (p *PostgresStorage) RemoveBankCard(ctx context.Context, cardID int64) error {
-	_, err := p.Conn.ExecContext(ctx, "DELETE FROM bank_cards WHERE id = $1", cardID)
+func (p *PostgresStorage) RemoveBankCard(ctx context.Context, id int64) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM bank_cards WHERE id = $1", id)
 	if err != nil {
 		return err
 	}
