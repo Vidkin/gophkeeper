@@ -84,9 +84,9 @@ var removeCmd = &cobra.Command{
 			fmt.Println("You must provide a file ID")
 			os.Exit(1)
 		}
-		//if err := client.RemoveFile(fileID); err != nil {
-		//	fmt.Println(err)
-		//}
+		if err := client.RemoveFile(fileID); err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
@@ -96,9 +96,9 @@ var getAllCmd = &cobra.Command{
 	Long: `This command allows you to get all files infos from your account in GophKeeper. For example:
 	- client files getAll`,
 	Run: func(cmd *cobra.Command, args []string) {
-		//if err := client.GetAllFiles(); err != nil {
-		//	fmt.Println(err)
-		//}
+		if err := client.GetAllFiles(); err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 

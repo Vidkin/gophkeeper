@@ -33,6 +33,7 @@ const (
 	Gophkeeper_RemoveUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/RemoveUserCredentials"
 	Gophkeeper_Upload_FullMethodName                = "/gophkeeper.Gophkeeper/Upload"
 	Gophkeeper_Download_FullMethodName              = "/gophkeeper.Gophkeeper/Download"
+	Gophkeeper_RemoveFile_FullMethodName            = "/gophkeeper.Gophkeeper/RemoveFile"
 	Gophkeeper_GetFiles_FullMethodName              = "/gophkeeper.Gophkeeper/GetFiles"
 )
 
@@ -53,6 +54,7 @@ type GophkeeperClient interface {
 	RemoveUserCredentials(ctx context.Context, in *RemoveUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error)
 	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error)
+	RemoveFile(ctx context.Context, in *FileRemoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	GetFiles(ctx context.Context, in *GetFilesRequest, opts ...grpc.CallOption) (*GetFilesResponse, error)
 }
 
@@ -206,6 +208,16 @@ func (c *gophkeeperClient) Download(ctx context.Context, in *FileDownloadRequest
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_DownloadClient = grpc.ServerStreamingClient[FileDownloadResponse]
 
+func (c *gophkeeperClient) RemoveFile(ctx context.Context, in *FileRemoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_RemoveFile_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gophkeeperClient) GetFiles(ctx context.Context, in *GetFilesRequest, opts ...grpc.CallOption) (*GetFilesResponse, error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	out := new(GetFilesResponse)
@@ -233,6 +245,7 @@ type GophkeeperServer interface {
 	RemoveUserCredentials(context.Context, *RemoveUserCredentialsRequest) (*emptypb.Empty, error)
 	Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error
 	Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error
+	RemoveFile(context.Context, *FileRemoveRequest) (*emptypb.Empty, error)
 	GetFiles(context.Context, *GetFilesRequest) (*GetFilesResponse, error)
 	mustEmbedUnimplementedGophkeeperServer()
 }
@@ -282,6 +295,9 @@ func (UnimplementedGophkeeperServer) Upload(grpc.ClientStreamingServer[FileUploa
 }
 func (UnimplementedGophkeeperServer) Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Download not implemented")
+}
+func (UnimplementedGophkeeperServer) RemoveFile(context.Context, *FileRemoveRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveFile not implemented")
 }
 func (UnimplementedGophkeeperServer) GetFiles(context.Context, *GetFilesRequest) (*GetFilesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetFiles not implemented")
@@ -523,6 +539,24 @@ func _Gophkeeper_Download_Handler(srv interface{}, stream grpc.ServerStream) err
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_DownloadServer = grpc.ServerStreamingServer[FileDownloadResponse]
 
+func _Gophkeeper_RemoveFile_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(FileRemoveRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).RemoveFile(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_RemoveFile_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).RemoveFile(ctx, req.(*FileRemoveRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gophkeeper_GetFiles_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetFilesRequest)
 	if err := dec(in); err != nil {
@@ -591,6 +625,10 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveUserCredentials",
 			Handler:    _Gophkeeper_RemoveUserCredentials_Handler,
+		},
+		{
+			MethodName: "RemoveFile",
+			Handler:    _Gophkeeper_RemoveFile_Handler,
 		},
 		{
 			MethodName: "GetFiles",

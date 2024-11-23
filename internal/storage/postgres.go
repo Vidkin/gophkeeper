@@ -139,6 +139,14 @@ func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.
 	return files, nil
 }
 
+func (p *PostgresStorage) RemoveFile(ctx context.Context, id int64) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM files WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) {
 	row := p.Conn.QueryRowContext(ctx, "SELECT login, password, id FROM users WHERE login = $1", login)
 
