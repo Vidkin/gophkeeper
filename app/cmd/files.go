@@ -14,9 +14,8 @@ import (
 
 var (
 	filePath    string
+	fileName    string
 	description string
-	text        string
-	fileID      int64
 )
 
 // filesCmd represents the files management command
@@ -40,15 +39,15 @@ var downloadCmd = &cobra.Command{
 	Use:   "download [flags]",
 	Short: "Download file from GophKeeper",
 	Long: `This command allows you to download file from your account in GophKeeper. For example:
-	- client files download --id 123 --path /path/to/file`,
+	- client files download --name FileName --dir /path/to/file`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if fileID < 0 {
-			fmt.Println("You must provide a correct file ID")
+		if fileName == "" || filePath == "" {
+			fmt.Println("You must provide a correct file name and dir")
 			os.Exit(1)
 		}
-		//if err := client.DownloadFile(fileID, filePath); err != nil {
-		//	fmt.Println(err)
-		//}
+		if err := client.DownloadFile(fileName, filePath); err != nil {
+			fmt.Println(err)
+		}
 	},
 }
 
@@ -58,13 +57,8 @@ var uploadCmd = &cobra.Command{
 	Long: `This command allows you to upload file to your account in GophKeeper. For example:
 	- client files upload --path /path/to/file --desc "File description" --text "Text for text files"`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if filePath != "" && text != "" {
-			fmt.Println("You must provide either a source file path or text, not both.")
-			os.Exit(1)
-		}
-
-		if filePath == "" && text == "" {
-			fmt.Println("You must provide a source file path or text")
+		if filePath == "" {
+			fmt.Println("You must provide a source file path")
 			os.Exit(1)
 		}
 
@@ -76,15 +70,15 @@ var uploadCmd = &cobra.Command{
 
 var removeCmd = &cobra.Command{
 	Use:   "remove [flags]",
-	Short: "Remove file by ID from GophKeeper",
-	Long: `This command allows you to remove file by ID from your account in GophKeeper. For example:
-	- client files remove --id fileID`,
+	Short: "Remove file by name from GophKeeper",
+	Long: `This command allows you to remove file by name from your account in GophKeeper. For example:
+	- client files remove --name FileName`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if fileID < 0 {
-			fmt.Println("You must provide a file ID")
+		if fileName == "" {
+			fmt.Println("You must provide a file name")
 			os.Exit(1)
 		}
-		if err := client.RemoveFile(fileID); err != nil {
+		if err := client.RemoveFile(fileName); err != nil {
 			fmt.Println(err)
 		}
 	},
@@ -103,14 +97,13 @@ var getAllCmd = &cobra.Command{
 }
 
 func init() {
-	downloadCmd.PersistentFlags().StringVar(&filePath, "path", "", "path to destination file")
-	downloadCmd.PersistentFlags().Int64Var(&fileID, "id", -1, "file id to download")
+	downloadCmd.PersistentFlags().StringVar(&fileName, "name", "", "file name to download")
+	downloadCmd.PersistentFlags().StringVar(&filePath, "dir", "", "dir where to download file")
 
 	uploadCmd.PersistentFlags().StringVar(&filePath, "path", "", "path to source file")
 	uploadCmd.PersistentFlags().StringVar(&description, "desc", "", "file description")
-	uploadCmd.PersistentFlags().StringVar(&text, "text", "", "text to upload as a text file")
 
-	removeCmd.PersistentFlags().Int64Var(&fileID, "id", -1, "file id to remove")
+	removeCmd.PersistentFlags().StringVar(&fileName, "name", "", "file name to remove")
 
 	filesCmd.AddCommand(downloadCmd)
 	filesCmd.AddCommand(uploadCmd)

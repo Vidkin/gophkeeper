@@ -7,6 +7,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
+	"golang.org/x/text/unicode/norm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -43,13 +44,13 @@ func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gop
 		return status.Errorf(codes.PermissionDenied, "error parse claims")
 	}
 
-	fileID := in.Id
-	if fileID == 0 {
-		logger.Log.Error("file id is required")
-		return status.Error(codes.InvalidArgument, "file id is required")
+	fileName := norm.NFC.String(in.FileName)
+	if fileName == "" {
+		logger.Log.Error("file name is required")
+		return status.Error(codes.InvalidArgument, "file name is required")
 	}
 
-	fileInfo, err := g.Storage.GetFile(srv.Context(), fileID)
+	fileInfo, err := g.Storage.GetFile(srv.Context(), fileName)
 	if err != nil {
 		logger.Log.Error("error getting file info", zap.Error(err))
 		return status.Error(codes.Internal, "error getting file info")

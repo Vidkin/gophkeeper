@@ -8,6 +8,7 @@ import (
 	"github.com/golang-jwt/jwt/v4"
 	"github.com/minio/minio-go/v7"
 	"go.uber.org/zap"
+	"golang.org/x/text/unicode/norm"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -62,7 +63,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.Internal, "error receive file")
 	}
 
-	fileName = req.FileName
+	fileName = norm.NFC.String(req.FileName)
 	description = req.Description
 	fileSize = req.FileSize
 	if fileName == "" || fileSize == 0 {

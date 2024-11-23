@@ -9,10 +9,10 @@ import (
 	"io"
 	"os"
 	"path"
-	"strconv"
 	"time"
 
 	"github.com/spf13/viper"
+	"golang.org/x/text/unicode/norm"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
@@ -49,7 +49,7 @@ func UploadFile(filePath, description string) error {
 	file := proto.File{}
 	file.FileSize = fStat.Size()
 	file.Description = description
-	file.FileName = path.Base(filePath)
+	file.FileName = norm.NFC.String(path.Base(filePath))
 
 	client, conn, err := NewGophkeeperClient()
 	if err != nil {
@@ -100,7 +100,72 @@ func UploadFile(filePath, description string) error {
 	return err
 }
 
-func RemoveFile(fileID int64) error {
+func DownloadFile(fileName, filePath string) error {
+	tokenFile, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
+	if err != nil {
+		return fmt.Errorf("error open JWT file, need to authorize: %v", err)
+	}
+	token := string(tokenFile)
+	fmt.Println(token)
+
+	f, err := os.OpenFile(path.Join(filePath, fileName), os.O_WRONLY|os.O_CREATE, 0666)
+	if err != nil {
+		return err
+	}
+	defer func(f *os.File) {
+		err = f.Close()
+		if err != nil {
+			fmt.Println("failed to close file")
+		}
+	}(f)
+
+	client, conn, err := NewGophkeeperClient()
+	if err != nil {
+		return err
+	}
+	defer func(conn *grpc.ClientConn) {
+		err = conn.Close()
+		if err != nil {
+			fmt.Println("failed to close grpc connection")
+		}
+	}(conn)
+
+	ctx := context.Background()
+	md := metadata.New(map[string]string{"token": token})
+	ctx = metadata.NewOutgoingContext(ctx, md)
+
+	writer := bufio.NewWriter(f)
+	req := &proto.FileDownloadRequest{
+		FileName: norm.NFC.String(fileName),
+	}
+	stream, err := client.Download(ctx, req)
+	for {
+		res, err := stream.Recv()
+		if err == io.EOF {
+			break
+		}
+		if err != nil {
+			fmt.Println("error receive file")
+			return err
+		}
+
+		_, err = writer.Write(res.Chunk)
+		if err != nil {
+			fmt.Println("failed to write chunk")
+			return err
+		}
+	}
+	err = writer.Flush()
+	if err != nil {
+		fmt.Println("failed to flush file")
+		return err
+	}
+
+	fmt.Println("Successfully download file!")
+	return err
+}
+
+func RemoveFile(fileName string) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
 		return fmt.Errorf("error open JWT file, need to authorize: %v", err)
@@ -118,7 +183,7 @@ func RemoveFile(fileID int64) error {
 		}
 	}(conn)
 
-	req := &proto.FileRemoveRequest{Id: strconv.FormatInt(fileID, 10)}
+	req := &proto.FileRemoveRequest{FileName: fileName}
 
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 	defer cancel()
@@ -202,7 +267,7 @@ func GetAllFiles() error {
 
 	fmt.Println("Files:")
 	for _, file := range resp.Files {
-		fmt.Printf("id=%d, fileName=%s, size=%d, description=%s\n", file.Id, file.FileName, file.FileSize, file.Description)
+		fmt.Printf("id=%d, fileName=%s, size=%d, description=%s\n", file.Id, norm.NFC.String(file.FileName), file.FileSize, file.Description)
 	}
 	return err
 }

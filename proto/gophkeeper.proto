@@ -96,7 +96,7 @@ message FileUploadRequest {
 }
 
 message FileRemoveRequest {
-  string id = 1;
+  string file_name = 1;
 }
 
 message FileUploadResponse {
@@ -105,7 +105,7 @@ message FileUploadResponse {
 }
 
 message FileDownloadRequest {
-  int64 id = 1;
+  string file_name = 1;
 }
 
 message FileDownloadResponse {

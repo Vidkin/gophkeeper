@@ -96,11 +96,11 @@ func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, des
 	return err
 }
 
-func (p *PostgresStorage) GetFile(ctx context.Context, id int64) (*model.File, error) {
+func (p *PostgresStorage) GetFile(ctx context.Context, fileName string) (*model.File, error) {
 	row := p.Conn.QueryRowContext(
 		ctx,
-		"SELECT user_id, id, file_name, bucket_name, description, file_size, created_at id FROM files WHERE id = $1",
-		id)
+		"SELECT user_id, id, file_name, bucket_name, description, file_size, created_at FROM files WHERE file_name = $1",
+		fileName)
 
 	var f model.File
 	if err := row.Scan(&f.UserID, &f.ID, &f.FileName, &f.BucketName, &f.Description, &f.FileSize, &f.CreatedAt); err != nil {
@@ -139,8 +139,8 @@ func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.
 	return files, nil
 }
 
-func (p *PostgresStorage) RemoveFile(ctx context.Context, id int64) error {
-	_, err := p.Conn.ExecContext(ctx, "DELETE FROM files WHERE id = $1", id)
+func (p *PostgresStorage) RemoveFile(ctx context.Context, fileName string) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM files WHERE file_name = $1", fileName)
 	if err != nil {
 		return err
 	}
