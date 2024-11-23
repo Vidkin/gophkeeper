@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"context"
 	"fmt"
 	"io"
 
@@ -47,19 +48,9 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.PermissionDenied, "error parse claims")
 	}
 
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
 	pr, pw := io.Pipe()
-	defer func(pw *io.PipeWriter) {
-		err = pw.Close()
-		if err != nil {
-			logger.Log.Error("error closing pipe writer", zap.Error(err))
-		}
-	}(pw)
-	defer func(pr *io.PipeWriter) {
-		err = pr.Close()
-		if err != nil {
-			logger.Log.Error("error closing pipe reader", zap.Error(err))
-		}
-	}(pw)
 
 	req, err := stream.Recv()
 	if err == io.EOF {
@@ -78,15 +69,20 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
 	}
 	chunk := req.GetChunk()
-	resultChan := make(chan error, 1)
 	go func() {
+		defer func(pw *io.PipeWriter) {
+			err = pw.Close()
+			if err != nil {
+				logger.Log.Error("failed to close pipe writer", zap.Error(err))
+			}
+		}(pw)
 		for {
 			if chunk != nil {
 				if _, err = pw.Write(chunk); err != nil {
 					logger.Log.Error("error writing chunk to pipe", zap.Error(err))
-					resultChan <- err
 					return
 				}
+				chunk = nil
 			}
 
 			req, err = stream.Recv()
@@ -94,34 +90,20 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 				break
 			}
 			if err != nil {
-				logger.Log.Error("error receive file", zap.Error(err))
-				resultChan <- status.Errorf(codes.Internal, "error receive file")
+				logger.Log.Error("failed to receive data", zap.Error(err))
+				cancel()
+				return
 			}
 
 			chunk = req.GetChunk()
-			if _, err = pw.Write(chunk); err != nil {
-				logger.Log.Error("error writing chunk to pipe", zap.Error(err))
-				resultChan <- err
-				return
-			}
-			chunk = nil
 		}
-		resultChan <- nil
 	}()
 
-	_, err = g.Minio.PutObject(stream.Context(), storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
+	_, err = g.Minio.PutObject(ctx, storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
 		ContentType: "application/octet-stream",
 	})
 	if err != nil {
 		logger.Log.Error("failed to upload file to MinIO", zap.Error(err))
-		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
-	}
-
-	err = <-resultChan
-	if err != nil {
-		if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil {
-			logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
-		}
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
@@ -134,6 +116,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
+	logger.Log.Info("file uploaded", zap.String("fileName", fileName), zap.String("fileSize", fmt.Sprint(fileSize)))
 	return stream.SendAndClose(&proto.FileUploadResponse{
 		FileName: fileName,
 		FileSize: fileSize,

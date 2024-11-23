@@ -20,6 +20,7 @@ func UploadFile(filePath, description string) error {
 		return fmt.Errorf("error open JWT file, need to authorize: %v", err)
 	}
 	token := string(tokenFile)
+	fmt.Println(token)
 
 	f, err := os.Open(filePath)
 	if err != nil {
