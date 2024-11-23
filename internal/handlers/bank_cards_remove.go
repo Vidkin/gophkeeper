@@ -15,8 +15,8 @@ import (
 
 func (g *GophkeeperServer) RemoveBankCard(ctx context.Context, in *proto.RemoveBankCardRequest) (*emptypb.Empty, error) {
 	if in.Id == "" {
-		logger.Log.Error("you should provide card id")
-		return nil, status.Errorf(codes.InvalidArgument, "you should provide card id")
+		logger.Log.Error("you must provide card id")
+		return nil, status.Errorf(codes.InvalidArgument, "you must provide card id")
 	}
 
 	cardID, err := strconv.ParseInt(in.Id, 10, 64)

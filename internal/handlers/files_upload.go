@@ -18,7 +18,7 @@ import (
 )
 
 func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
-	var fileName, contentType, description string
+	var fileName, description string
 	var fileSize int64
 	var tokenString string
 
@@ -54,6 +54,12 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 			logger.Log.Error("error closing pipe writer", zap.Error(err))
 		}
 	}(pw)
+	defer func(pr *io.PipeWriter) {
+		err = pr.Close()
+		if err != nil {
+			logger.Log.Error("error closing pipe reader", zap.Error(err))
+		}
+	}(pw)
 
 	req, err := stream.Recv()
 	if err == io.EOF {
@@ -66,22 +72,14 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 	}
 
 	fileName = req.FileName
-	contentType = req.ContentType
 	description = req.Description
 	fileSize = req.FileSize
-	if fileName == "" || contentType == "" || fileSize == 0 {
-		return status.Errorf(codes.InvalidArgument, "filename, content-type, file-size are required")
+	if fileName == "" || fileSize == 0 {
+		return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
 	}
 	chunk := req.GetChunk()
-
 	resultChan := make(chan error, 1)
 	go func() {
-		defer func(pr *io.PipeReader) {
-			err = pr.Close()
-			if err != nil {
-				logger.Log.Error("error closing pipe reader", zap.Error(err))
-			}
-		}(pr)
 		for {
 			if chunk != nil {
 				if _, err = pw.Write(chunk); err != nil {
@@ -112,7 +110,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 	}()
 
 	_, err = g.Minio.PutObject(stream.Context(), storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
-		ContentType: contentType,
+		ContentType: "application/octet-stream",
 	})
 	if err != nil {
 		logger.Log.Error("failed to upload file to MinIO", zap.Error(err))
@@ -127,7 +125,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 		return status.Errorf(codes.Internal, "failed to upload file to MinIO")
 	}
 
-	err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, contentType, description, claims.UserID, fileSize)
+	err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, description, claims.UserID, fileSize)
 	if err != nil {
 		if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil {
 			logger.Log.Error("failed to remove file from MinIO", zap.Error(err))

@@ -16,8 +16,8 @@ import (
 
 func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) {
 	if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" {
-		logger.Log.Error("you should provide: CVV, expire date, card number, card owner")
-		return nil, status.Errorf(codes.InvalidArgument, "you should provide: CVV, expire date, card number, card owner")
+		logger.Log.Error("you must provide: CVV, expire date, card number, card owner")
+		return nil, status.Errorf(codes.InvalidArgument, "you must provide: CVV, expire date, card number, card owner")
 	}
 
 	card := &model.BankCard{

@@ -16,8 +16,8 @@ import (
 
 func (g *GophkeeperServer) AddUserCredentials(ctx context.Context, in *proto.AddUserCredentialsRequest) (*emptypb.Empty, error) {
 	if in.Credentials.Login == "" || in.Credentials.Password == "" {
-		logger.Log.Error("you should provide: login and password")
-		return nil, status.Errorf(codes.InvalidArgument, "you should provide: login and password")
+		logger.Log.Error("you must provide: login and password")
+		return nil, status.Errorf(codes.InvalidArgument, "you must provide: login and password")
 	}
 
 	cred := &model.Credentials{

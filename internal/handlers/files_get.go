@@ -27,7 +27,6 @@ func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesReques
 		protoFiles[i].Id = file.ID
 		protoFiles[i].FileName = file.FileName
 		protoFiles[i].FileSize = file.FileSize
-		protoFiles[i].ContentType = file.ContentType
 		protoFiles[i].Description = file.Description
 		protoFiles[i].CreatedAt = file.CreatedAt
 	}

@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -52,6 +53,10 @@ var getCredentialsCmd = &cobra.Command{
 	Long: `This command allows you to get user credentials by ID from your account in GophKeeper. For example:
 	- client credentials get --id 9`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if credID < 0 {
+			fmt.Println("You must provide a credential ID")
+			os.Exit(1)
+		}
 		if err := client.GetCredentials(credID); err != nil {
 			fmt.Println(err)
 		}
@@ -64,6 +69,10 @@ var removeCredentialsCmd = &cobra.Command{
 	Long: `This command allows you to remove user credentials info by ID from your account in GophKeeper. For example:
 	- client credentials remove --id 9`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if credID < 0 {
+			fmt.Println("You must provide a credential ID")
+			os.Exit(1)
+		}
 		if err := client.RemoveCredentials(credID); err != nil {
 			fmt.Println(err)
 		}

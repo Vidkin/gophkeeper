@@ -5,6 +5,7 @@ package cmd
 
 import (
 	"fmt"
+	"os"
 
 	"github.com/spf13/cobra"
 
@@ -52,6 +53,10 @@ var getCardCmd = &cobra.Command{
 	Long: `This command allows you to get bank card info by ID from your account in GophKeeper. For example:
 	- client cards get --id 9`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if cardID < 0 {
+			fmt.Println("You must provide a bank card ID")
+			os.Exit(1)
+		}
 		if err := client.GetCard(cardID); err != nil {
 			fmt.Println(err)
 		}
@@ -64,6 +69,10 @@ var removeCardCmd = &cobra.Command{
 	Long: `This command allows you to remove bank card info by ID from your account in GophKeeper. For example:
 	- client cards remove --id 9`,
 	Run: func(cmd *cobra.Command, args []string) {
+		if cardID < 0 {
+			fmt.Println("You must provide a bank card ID")
+			os.Exit(1)
+		}
 		if err := client.RemoveCard(cardID); err != nil {
 			fmt.Println(err)
 		}
@@ -90,6 +99,7 @@ func init() {
 	addCardCmd.PersistentFlags().StringVar(&card.Description, "desc", "", "bank card description")
 
 	getCardCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
+
 	removeCardCmd.PersistentFlags().Int64Var(&cardID, "id", -1, "bank card id")
 
 	cardsCmd.AddCommand(getCardCmd)

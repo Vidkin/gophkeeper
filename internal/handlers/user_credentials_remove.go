@@ -15,8 +15,8 @@ import (
 
 func (g *GophkeeperServer) RemoveUserCredentials(ctx context.Context, in *proto.RemoveUserCredentialsRequest) (*emptypb.Empty, error) {
 	if in.Id == "" {
-		logger.Log.Error("you should provide credentials id")
-		return nil, status.Errorf(codes.InvalidArgument, "you should provide credentials id")
+		logger.Log.Error("you must provide credentials id")
+		return nil, status.Errorf(codes.InvalidArgument, "you must provide credentials id")
 	}
 
 	credID, err := strconv.ParseInt(in.Id, 10, 64)

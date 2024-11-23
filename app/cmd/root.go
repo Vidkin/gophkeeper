@@ -32,7 +32,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 	} else {
-		fmt.Println("You should provide the path to config file")
+		fmt.Println("You must provide the path to config file")
 		os.Exit(1)
 	}
 
@@ -42,7 +42,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 	} else {
-		fmt.Println("You should provide the hash_key flag, see --help")
+		fmt.Println("You must provide the hash_key flag, see --help")
 		os.Exit(1)
 	}
 
@@ -52,7 +52,7 @@ func initConfig() {
 			os.Exit(1)
 		}
 	} else {
-		fmt.Println("You should provide the secret_key flag, see --help")
+		fmt.Println("You must provide the secret_key flag, see --help")
 		os.Exit(1)
 	}
 }

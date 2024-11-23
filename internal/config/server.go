@@ -88,27 +88,27 @@ func (config *ServerConfig) parseFlags() error {
 	}
 
 	if config.CryptoKeyPublic == "" || config.CryptoKeyPrivate == "" {
-		return errors.New("you should pass the path to public and private keys pem files, see --help")
+		return errors.New("you must pass the path to public and private keys pem files, see --help")
 	}
 
 	if config.DatabaseKey == "" || len(config.DatabaseKey) != 32 {
-		return errors.New("you should pass the database secret key (32-bytes), see --help")
+		return errors.New("you must pass the database secret key (32-bytes), see --help")
 	}
 
 	if config.MinioEndpoint == "" {
-		return errors.New("you should pass correct endpoint to minio service, see --help")
+		return errors.New("you must pass correct endpoint to minio service, see --help")
 	}
 
 	if config.MinioSecretAccessKey == "" {
-		return errors.New("you should pass correct minio secret access key, see --help")
+		return errors.New("you must pass correct minio secret access key, see --help")
 	}
 
 	if config.MinioAccessKeyID == "" {
-		return errors.New("you should pass correct minio access key id, see --help")
+		return errors.New("you must pass correct minio access key id, see --help")
 	}
 
 	if config.JWTKey == "" {
-		return errors.New("you should pass the JWT secret key, see --help")
+		return errors.New("you must pass the JWT secret key, see --help")
 	}
 
 	return nil
