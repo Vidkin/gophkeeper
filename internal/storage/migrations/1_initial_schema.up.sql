@@ -26,6 +26,15 @@ CREATE TABLE user_credentials (
     CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
 );
 
+CREATE TABLE notes (
+    id SERIAL PRIMARY KEY,
+    user_id INT NOT NULL,
+    text TEXT NOT NULL,
+    description VARCHAR(255),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT fk_user FOREIGN KEY(user_id) REFERENCES users(id)
+);
+
 CREATE TABLE files (
    id SERIAL PRIMARY KEY,
    user_id INT NOT NULL,

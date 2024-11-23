@@ -13,6 +13,12 @@ message Credentials {
   string description = 4;
 }
 
+message Note {
+  int64 id = 1;
+  string text = 2;
+  string description = 3;
+}
+
 message RegisterUserRequest {
   Credentials credentials = 1;
 }
@@ -42,6 +48,29 @@ message GetUserCredentialRequest {
 
 message GetUserCredentialResponse {
   Credentials credentials = 1;
+}
+
+message AddNoteRequest {
+  Note note = 1;
+}
+
+message GetNotesRequest {
+}
+
+message GetNotesResponse {
+  repeated Note notes = 1;
+}
+
+message GetNoteRequest {
+  string id = 1;
+}
+
+message GetNoteResponse {
+  Note note = 1;
+}
+
+message RemoveNoteRequest {
+  string id = 1;
 }
 
 message EchoRequest {
@@ -142,6 +171,10 @@ service Gophkeeper {
   rpc GetUserCredentials(GetUserCredentialsRequest) returns (GetUserCredentialsResponse);
   rpc GetUserCredential(GetUserCredentialRequest) returns (GetUserCredentialResponse);
   rpc RemoveUserCredentials(RemoveUserCredentialsRequest) returns (google.protobuf.Empty);
+  rpc AddNote(AddNoteRequest) returns (google.protobuf.Empty);
+  rpc GetNotes(GetNotesRequest) returns (GetNotesResponse);
+  rpc GetNote(GetNoteRequest) returns (GetNoteResponse);
+  rpc RemoveNote(RemoveNoteRequest) returns (google.protobuf.Empty);
   rpc Upload(stream FileUploadRequest) returns(FileUploadResponse);
   rpc Download(FileDownloadRequest) returns(stream FileDownloadResponse);
   rpc RemoveFile(FileRemoveRequest) returns (google.protobuf.Empty);

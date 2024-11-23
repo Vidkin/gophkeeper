@@ -31,6 +31,10 @@ const (
 	Gophkeeper_GetUserCredentials_FullMethodName    = "/gophkeeper.Gophkeeper/GetUserCredentials"
 	Gophkeeper_GetUserCredential_FullMethodName     = "/gophkeeper.Gophkeeper/GetUserCredential"
 	Gophkeeper_RemoveUserCredentials_FullMethodName = "/gophkeeper.Gophkeeper/RemoveUserCredentials"
+	Gophkeeper_AddNote_FullMethodName               = "/gophkeeper.Gophkeeper/AddNote"
+	Gophkeeper_GetNotes_FullMethodName              = "/gophkeeper.Gophkeeper/GetNotes"
+	Gophkeeper_GetNote_FullMethodName               = "/gophkeeper.Gophkeeper/GetNote"
+	Gophkeeper_RemoveNote_FullMethodName            = "/gophkeeper.Gophkeeper/RemoveNote"
 	Gophkeeper_Upload_FullMethodName                = "/gophkeeper.Gophkeeper/Upload"
 	Gophkeeper_Download_FullMethodName              = "/gophkeeper.Gophkeeper/Download"
 	Gophkeeper_RemoveFile_FullMethodName            = "/gophkeeper.Gophkeeper/RemoveFile"
@@ -52,6 +56,10 @@ type GophkeeperClient interface {
 	GetUserCredentials(ctx context.Context, in *GetUserCredentialsRequest, opts ...grpc.CallOption) (*GetUserCredentialsResponse, error)
 	GetUserCredential(ctx context.Context, in *GetUserCredentialRequest, opts ...grpc.CallOption) (*GetUserCredentialResponse, error)
 	RemoveUserCredentials(ctx context.Context, in *RemoveUserCredentialsRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	AddNote(ctx context.Context, in *AddNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	GetNotes(ctx context.Context, in *GetNotesRequest, opts ...grpc.CallOption) (*GetNotesResponse, error)
+	GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error)
+	RemoveNote(ctx context.Context, in *RemoveNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error)
 	Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error)
 	RemoveFile(ctx context.Context, in *FileRemoveRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -176,6 +184,46 @@ func (c *gophkeeperClient) RemoveUserCredentials(ctx context.Context, in *Remove
 	return out, nil
 }
 
+func (c *gophkeeperClient) AddNote(ctx context.Context, in *AddNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_AddNote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) GetNotes(ctx context.Context, in *GetNotesRequest, opts ...grpc.CallOption) (*GetNotesResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNotesResponse)
+	err := c.cc.Invoke(ctx, Gophkeeper_GetNotes_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) GetNote(ctx context.Context, in *GetNoteRequest, opts ...grpc.CallOption) (*GetNoteResponse, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(GetNoteResponse)
+	err := c.cc.Invoke(ctx, Gophkeeper_GetNote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *gophkeeperClient) RemoveNote(ctx context.Context, in *RemoveNoteRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, Gophkeeper_RemoveNote_FullMethodName, in, out, cOpts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error) {
 	cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
 	stream, err := c.cc.NewStream(ctx, &Gophkeeper_ServiceDesc.Streams[0], Gophkeeper_Upload_FullMethodName, cOpts...)
@@ -243,6 +291,10 @@ type GophkeeperServer interface {
 	GetUserCredentials(context.Context, *GetUserCredentialsRequest) (*GetUserCredentialsResponse, error)
 	GetUserCredential(context.Context, *GetUserCredentialRequest) (*GetUserCredentialResponse, error)
 	RemoveUserCredentials(context.Context, *RemoveUserCredentialsRequest) (*emptypb.Empty, error)
+	AddNote(context.Context, *AddNoteRequest) (*emptypb.Empty, error)
+	GetNotes(context.Context, *GetNotesRequest) (*GetNotesResponse, error)
+	GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error)
+	RemoveNote(context.Context, *RemoveNoteRequest) (*emptypb.Empty, error)
 	Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error
 	Download(*FileDownloadRequest, grpc.ServerStreamingServer[FileDownloadResponse]) error
 	RemoveFile(context.Context, *FileRemoveRequest) (*emptypb.Empty, error)
@@ -289,6 +341,18 @@ func (UnimplementedGophkeeperServer) GetUserCredential(context.Context, *GetUser
 }
 func (UnimplementedGophkeeperServer) RemoveUserCredentials(context.Context, *RemoveUserCredentialsRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveUserCredentials not implemented")
+}
+func (UnimplementedGophkeeperServer) AddNote(context.Context, *AddNoteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddNote not implemented")
+}
+func (UnimplementedGophkeeperServer) GetNotes(context.Context, *GetNotesRequest) (*GetNotesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNotes not implemented")
+}
+func (UnimplementedGophkeeperServer) GetNote(context.Context, *GetNoteRequest) (*GetNoteResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNote not implemented")
+}
+func (UnimplementedGophkeeperServer) RemoveNote(context.Context, *RemoveNoteRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveNote not implemented")
 }
 func (UnimplementedGophkeeperServer) Upload(grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]) error {
 	return status.Errorf(codes.Unimplemented, "method Upload not implemented")
@@ -521,6 +585,78 @@ func _Gophkeeper_RemoveUserCredentials_Handler(srv interface{}, ctx context.Cont
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Gophkeeper_AddNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(AddNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).AddNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_AddNote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).AddNote(ctx, req.(*AddNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_GetNotes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).GetNotes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_GetNotes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).GetNotes(ctx, req.(*GetNotesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_GetNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).GetNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_GetNote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).GetNote(ctx, req.(*GetNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Gophkeeper_RemoveNote_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RemoveNoteRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(GophkeeperServer).RemoveNote(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: Gophkeeper_RemoveNote_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(GophkeeperServer).RemoveNote(ctx, req.(*RemoveNoteRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error {
 	return srv.(GophkeeperServer).Upload(&grpc.GenericServerStream[FileUploadRequest, FileUploadResponse]{ServerStream: stream})
 }
@@ -625,6 +761,22 @@ var Gophkeeper_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveUserCredentials",
 			Handler:    _Gophkeeper_RemoveUserCredentials_Handler,
+		},
+		{
+			MethodName: "AddNote",
+			Handler:    _Gophkeeper_AddNote_Handler,
+		},
+		{
+			MethodName: "GetNotes",
+			Handler:    _Gophkeeper_GetNotes_Handler,
+		},
+		{
+			MethodName: "GetNote",
+			Handler:    _Gophkeeper_GetNote_Handler,
+		},
+		{
+			MethodName: "RemoveNote",
+			Handler:    _Gophkeeper_RemoveNote_Handler,
 		},
 		{
 			MethodName: "RemoveFile",

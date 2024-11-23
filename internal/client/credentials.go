@@ -215,7 +215,7 @@ func GetCredentials(credID int64) error {
 		return fmt.Errorf("failed to decrypt credentials info, check secret key, original error: %v", err)
 	}
 
-	resp.Credentials.Password, err = aes.Decrypt(viper.GetString("secret_key"), resp.Credentials.Description)
+	resp.Credentials.Description, err = aes.Decrypt(viper.GetString("secret_key"), resp.Credentials.Description)
 	if err != nil {
 		return fmt.Errorf("failed to decrypt credentials info, check secret key, original error: %v", err)
 	}

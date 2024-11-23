@@ -211,6 +211,60 @@ func (p *PostgresStorage) RemoveUserCredential(ctx context.Context, id int64) er
 	return nil
 }
 
+func (p *PostgresStorage) AddNote(ctx context.Context, note *model.Note) error {
+	_, err := p.Conn.ExecContext(
+		ctx,
+		"INSERT INTO notes (text, description, user_id) VALUES ($1, $2, $3)",
+		note.Text, note.Description, note.UserID)
+	return err
+}
+
+func (p *PostgresStorage) GetNotes(ctx context.Context, userID int64) ([]*model.Note, error) {
+	rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, text, description FROM notes WHERE user_id = $1", userID)
+	if err != nil {
+		return nil, err
+	}
+	defer func(rows *sql.Rows) {
+		err = rows.Close()
+		if err != nil {
+			logger.Log.Error("error close rows", zap.Error(err))
+		}
+	}(rows)
+
+	var notes []*model.Note
+	for rows.Next() {
+		var n model.Note
+		if err = rows.Scan(&n.ID, &n.UserID, &n.Text, &n.Description); err != nil {
+			return nil, err
+		}
+		notes = append(notes, &n)
+	}
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return notes, nil
+}
+
+func (p *PostgresStorage) GetNote(ctx context.Context, id int64) (*model.Note, error) {
+	row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, text, description FROM notes WHERE id = $1", id)
+
+	var note model.Note
+	if err := row.Scan(&note.ID, &note.UserID, &note.Text, &note.Description); err != nil {
+		return nil, err
+	}
+
+	return &note, nil
+}
+
+func (p *PostgresStorage) RemoveNote(ctx context.Context, id int64) error {
+	_, err := p.Conn.ExecContext(ctx, "DELETE FROM notes WHERE id = $1", id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error {
 	_, err := p.Conn.ExecContext(
 		ctx,
