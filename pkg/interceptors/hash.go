@@ -1,3 +1,7 @@
+// Package interceptors provides gRPC interceptors for handling requests and responses.
+//
+// This package includes the HashInterceptor function, which verifies the integrity of
+// incoming requests by comparing a provided hash with a computed hash of the request data.
 package interceptors
 
 import (
@@ -16,6 +20,21 @@ import (
 	"github.com/Vidkin/gophkeeper/pkg/hash"
 )
 
+// HashInterceptor returns a gRPC unary server interceptor that verifies the SHA-256 hash
+// of incoming requests against a provided key.
+//
+// Parameters:
+//   - key: A string representing the key used for hash computation. If the key is empty,
+//     the interceptor will skip hash verification.
+//
+// The interceptor extracts the "HashSHA256" metadata from the incoming context and decodes
+// it from a base64 string. It then marshals the request into a byte slice and computes
+// the SHA-256 hash using the provided key. If the computed hash does not match the
+// provided hash, an error is returned, indicating that the hashes do not match.
+//
+// Returns:
+//   - A function that implements the gRPC UnaryHandler signature, which processes the
+//     request if the hash verification is successful, or returns an error if it fails.
 func HashInterceptor(key string) func(context.Context, interface{}, *grpc.UnaryServerInfo, grpc.UnaryHandler) (interface{}, error) {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if key == "" {

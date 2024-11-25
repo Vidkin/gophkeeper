@@ -12,6 +12,20 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// GetUserCredentials retrieves all user credentials associated with the user from the storage.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - _: A pointer to the proto.GetUserCredentialsRequest structure (not used in this method).
+//
+// Returns:
+//   - A pointer to the proto.GetUserCredentialsResponse containing the list of user credentials.
+//   - An error if the operation fails, for example, if there is an internal error while retrieving the
+//     credentials from the database.
+//
+// The function fetches the user's credentials from the storage using the user ID extracted from the context.
+// If an error occurs during the retrieval, it logs the error and returns an Internal status. If the
+// operation is successful, it constructs a response containing the credentials and returns it.
 func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, _ *proto.GetUserCredentialsRequest) (*proto.GetUserCredentialsResponse, error) {
 	var response proto.GetUserCredentialsResponse
 

@@ -17,6 +17,20 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// Download streams a file to the client.
+//
+// Parameters:
+//   - in: A pointer to the proto.FileDownloadRequest structure containing the name of the file to download.
+//   - srv: A proto.Gophkeeper_DownloadServer interface for sending the file chunks back to the client.
+//
+// Returns:
+//   - An error if the operation fails, for example, if the token is missing, invalid, or if there are
+//     issues retrieving the file from storage or MinIO.
+//
+// The function first retrieves the JWT token from the incoming context metadata. It then parses the
+// token and validates it. If the token is valid, it retrieves the file information from the storage
+// and streams the file in chunks to the client. If any errors occur during these processes, they are
+// logged, and appropriate gRPC status codes are returned.
 func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error {
 	var tokenString string
 	if md, ok := metadata.FromIncomingContext(srv.Context()); ok {

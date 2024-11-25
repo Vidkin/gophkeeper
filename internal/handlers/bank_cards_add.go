@@ -14,6 +14,19 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// AddBankCard adds a new bank card for the user.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - in: A pointer to the proto.AddBankCardRequest structure containing the bank card details.
+//
+// Returns:
+//   - An empty response (emptypb.Empty) if the operation is successful.
+//   - An error if the operation fails, for example, if required fields are missing or if
+//     there is an internal error while adding the card to the storage.
+//
+// The function validates the input fields and logs an error if any required field is missing.
+// It then creates a model.BankCard instance and attempts to add it to the storage.
 func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) {
 	if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" {
 		logger.Log.Error("you must provide: CVV, expire date, card number, card owner")

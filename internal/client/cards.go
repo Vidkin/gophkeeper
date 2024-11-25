@@ -22,6 +22,13 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// AddCard adds a new bank card to the GophKeeper server after encrypting its sensitive information.
+//
+// Parameters:
+//   - card: A pointer to the proto.BankCard struct containing the card details to be added.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, encryption, or gRPC communication.
 func AddCard(card *proto.BankCard) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -97,6 +104,10 @@ func AddCard(card *proto.BankCard) error {
 	return err
 }
 
+// GetAllCards retrieves all bank cards from the GophKeeper server and decrypts their information for display.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or decryption.
 func GetAllCards() error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -172,6 +183,13 @@ func GetAllCards() error {
 	return err
 }
 
+// GetCard retrieves a specific bank card by its ID from the GophKeeper server and decrypts its information for display.
+//
+// Parameters:
+//   - cardID: The ID of the bank card to retrieve.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or decryption.
 func GetCard(cardID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -247,6 +265,13 @@ func GetCard(cardID int64) error {
 	return err
 }
 
+// RemoveCard removes a bank card from the GophKeeper server by its ID.
+//
+// Parameters:
+//   - cardID: The ID of the bank card to remove.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or authorization issues.
 func RemoveCard(cardID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {

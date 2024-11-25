@@ -19,6 +19,17 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// Upload handles the streaming upload of a file to MinIO and records its metadata in the database.
+//
+// This function implements the gRPC server-side streaming method for uploading files. It expects a stream of
+// `proto.FileUploadRequest` messages containing file chunks and metadata. The function performs the following
+//
+// Parameters:
+//   - stream: The gRPC server-side stream for uploading the file, which provides methods to receive file
+//     upload requests and send responses.
+//
+// Returns:
+//   - An error if any step in the upload process fails, indicating the type of error encountered.
 func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 	var fileName, description string
 	var fileSize int64

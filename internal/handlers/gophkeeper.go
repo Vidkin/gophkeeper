@@ -7,6 +7,8 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// GophkeeperServer struct implements the methods defined in the proto.GophkeeperServer interface and serves as the
+// main entry point for handling file-related operations.
 type GophkeeperServer struct {
 	proto.UnimplementedGophkeeperServer
 	Storage     *storage.PostgresStorage // Repository for storing data

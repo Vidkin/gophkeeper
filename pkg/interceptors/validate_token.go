@@ -1,3 +1,7 @@
+// Package interceptors provides gRPC interceptors for handling requests and responses.
+//
+// This package includes the ValidateToken function, which validates JWT tokens for
+// incoming requests to secure gRPC methods.
 package interceptors
 
 import (
@@ -24,6 +28,23 @@ const (
 	UserID                 contextKey = "UserID"
 )
 
+// ValidateToken returns a gRPC unary server interceptor that validates JWT tokens
+// for incoming requests, allowing access to secured methods based on the token's validity.
+//
+// Parameters:
+//   - key: A string representing the secret key used for signing the JWT tokens.
+//
+// The interceptor checks if the incoming request's method is one of the public methods
+// (RegisterUser, Authorize, or Echo). If it is, or if the key is empty, the interceptor
+// allows the request to proceed without validation. Otherwise, it extracts the token from
+// the metadata of the incoming context and attempts to parse it using the provided key.
+//
+// Returns:
+//   - A function that implements the gRPC UnaryHandler signature, which processes the
+//     request if the token is valid, or returns an error if the token is missing or invalid.
+//
+// If the token is successfully parsed and validated, the interceptor extracts the UserID
+// from the claims and stores it in the context for further use in the request handling.
 func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnaryServerInfo, grpc.UnaryHandler) (interface{}, error) {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		if info.FullMethod == GrpcRegisterUserMethod ||

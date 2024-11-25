@@ -22,6 +22,13 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// AddCredentials adds new user credentials to the GophKeeper server after encrypting sensitive information.
+//
+// Parameters:
+//   - credentials: A pointer to the proto.Credentials struct containing the login, password, and description.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, encryption, or gRPC communication.
 func AddCredentials(credentials *proto.Credentials) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -89,6 +96,10 @@ func AddCredentials(credentials *proto.Credentials) error {
 	return err
 }
 
+// GetAllCredentials retrieves all user credentials from the GophKeeper server and decrypts their information for display.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or decryption.
 func GetAllCredentials() error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -156,6 +167,13 @@ func GetAllCredentials() error {
 	return err
 }
 
+// GetCredentials retrieves a specific user credential by its ID from the GophKeeper server and decrypts its information for display.
+//
+// Parameters:
+//   - credID: The ID of the user credential to retrieve.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or decryption.
 func GetCredentials(credID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -226,6 +244,13 @@ func GetCredentials(credID int64) error {
 	return err
 }
 
+// RemoveCredentials removes user credentials from the GophKeeper server by its ID.
+//
+// Parameters:
+//   - credID: The ID of the user credential to remove.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication, or authorization issues.
 func RemoveCredentials(credID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {

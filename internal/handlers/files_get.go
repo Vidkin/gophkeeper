@@ -12,6 +12,20 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// GetFiles retrieves all files associated with the user.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - _: A pointer to the proto.GetFilesRequest structure (not used in this method).
+//
+// Returns:
+//   - A pointer to the proto.GetFilesResponse containing the list of files.
+//   - An error if the operation fails, for example, if there is an internal error while
+//     retrieving the files from the storage.
+//
+// The function fetches the user's files from the storage and constructs a response
+// containing the file details. If an error occurs during the retrieval, it logs the error
+// and returns an appropriate gRPC status code.
 func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesRequest) (*proto.GetFilesResponse, error) {
 	var response proto.GetFilesResponse
 

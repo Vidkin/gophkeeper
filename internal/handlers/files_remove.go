@@ -14,6 +14,23 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// RemoveFile removes a file associated with the user from both the storage and MinIO.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - in: A pointer to the proto.FileRemoveRequest structure, which contains the name of the file to be removed.
+//
+// Returns:
+//   - A pointer to an empty proto.Empty response indicating successful removal of the file.
+//   - An error if the operation fails, for example, if the file name is not provided, if the file is not found,
+//     or if there is an internal error while removing the file from MinIO or the database.
+//
+// The function first checks if the file name is provided in the request. If not, it logs an error and returns
+// an InvalidArgument status. It then attempts to retrieve the file from the storage. If the file is not found,
+// it logs the error and returns a NotFound status. If the file is found, it proceeds to remove the file from
+// MinIO. If an error occurs during the removal from MinIO, it logs the error and returns an Internal status.
+// Finally, it attempts to remove the file from the database, logging any errors that occur and returning an
+// Internal status if the operation fails. If all operations are successful, it returns an empty response.
 func (g *GophkeeperServer) RemoveFile(ctx context.Context, in *proto.FileRemoveRequest) (*emptypb.Empty, error) {
 	if in.FileName == "" {
 		logger.Log.Error("you must provide file name")

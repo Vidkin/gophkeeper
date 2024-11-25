@@ -22,6 +22,12 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// AddNote adds a new note to the GophKeeper server.
+//
+// Parameters:
+//   - note: A pointer to the proto.Note structure containing the text and description of the note.
+//
+// Returns an error if the operation fails, for example, if re-authorization is required.
 func AddNote(note *proto.Note) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -85,6 +91,9 @@ func AddNote(note *proto.Note) error {
 	return err
 }
 
+// GetAllNotes retrieves all user notes from the GophKeeper server.
+//
+// Returns an error if the operation fails, for example, if re-authorization is required.
 func GetAllNotes() error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -148,6 +157,12 @@ func GetAllNotes() error {
 	return err
 }
 
+// GetNote retrieves a note by its ID from the GophKeeper server.
+//
+// Parameters:
+//   - noteID: The ID of the note to retrieve.
+//
+// Returns an error if the operation fails, for example, if re-authorization is required.
 func GetNote(noteID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -213,6 +228,12 @@ func GetNote(noteID int64) error {
 	return err
 }
 
+// RemoveNote removes a note by its ID from the GophKeeper server.
+//
+// Parameters:
+//   - noteID: The ID of the note to remove.
+//
+// Returns an error if the operation fails, for example, if re-authorization is required.
 func RemoveNote(noteID int64) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {

@@ -15,6 +15,15 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// Register registers a new user with the GophKeeper server.
+//
+// Parameters:
+//   - login: The login name of the user.
+//   - password: The password for the user account.
+//
+// Returns an error if the registration fails, for example, if the user already exists
+// or if there is a connection issue with the server. If successful, a confirmation message
+// is printed to the console.
 func Register(login, password string) error {
 	client, conn, err := NewGophkeeperClient()
 	if err != nil {

@@ -12,6 +12,22 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// GetUserCredential retrieves a specific user credential associated with the user from the storage.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - in: A pointer to the proto.GetUserCredentialRequest structure, which contains the ID of the credential
+//     to be retrieved.
+//
+// Returns:
+//   - A pointer to the proto.GetUserCredentialResponse containing the requested user credential.
+//   - An error if the operation fails, for example, if the credential ID is invalid or if there is an
+//     internal error while retrieving the credential from the database.
+//
+// The function first attempts to convert the credential ID from a string to an integer. If the conversion
+// fails, it returns an InvalidArgument error. It then retrieves the credential from the storage using the
+// credential ID. If an error occurs during the retrieval, it logs the error and returns an Internal status.
+// If the operation is successful, it constructs a response containing the credential and returns it.
 func (g *GophkeeperServer) GetUserCredential(ctx context.Context, in *proto.GetUserCredentialRequest) (*proto.GetUserCredentialResponse, error) {
 	credID, err := strconv.Atoi(in.Id)
 	if err != nil {

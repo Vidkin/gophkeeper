@@ -13,6 +13,20 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// RemoveBankCard removes a bank card associated with the user by its ID.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - in: A pointer to the proto.RemoveBankCardRequest structure containing the ID of the bank card to remove.
+//
+// Returns:
+//   - An empty response (emptypb.Empty) if the operation is successful.
+//   - An error if the operation fails, for example, if the provided ID is missing or invalid,
+//     or if there is an internal error while removing the card from the storage.
+//
+// The function validates the input ID, converts it to an integer, and attempts to remove the
+// corresponding bank card from the storage. If an error occurs during the removal, it logs the
+// error and returns an appropriate gRPC status code.
 func (g *GophkeeperServer) RemoveBankCard(ctx context.Context, in *proto.RemoveBankCardRequest) (*emptypb.Empty, error) {
 	if in.Id == "" {
 		logger.Log.Error("you must provide card id")

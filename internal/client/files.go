@@ -23,6 +23,15 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// UploadFile uploads a file to the GophKeeper server with an optional description.
+//
+// Parameters:
+//   - filePath: The path to the file to be uploaded.
+//   - description: A description of the file being uploaded.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, file opening,
+//     gRPC communication, or streaming errors.
 func UploadFile(filePath, description string) error {
 	tokenFile, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -99,6 +108,15 @@ func UploadFile(filePath, description string) error {
 	return err
 }
 
+// DownloadFile downloads a file from the GophKeeper server and saves it to the specified path.
+//
+// Parameters:
+//   - fileName: The name of the file to download from the server.
+//   - filePath: The local path where the file will be saved.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, file creation,
+//     gRPC communication, or streaming errors.
 func DownloadFile(fileName, filePath string) error {
 	tokenFile, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -163,6 +181,14 @@ func DownloadFile(fileName, filePath string) error {
 	return err
 }
 
+// RemoveFile removes a file from the GophKeeper server by its name.
+//
+// Parameters:
+//   - fileName: The name of the file to be removed from the server.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication,
+//     or authorization issues.
 func RemoveFile(fileName string) error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {
@@ -215,6 +241,11 @@ func RemoveFile(fileName string) error {
 	return err
 }
 
+// GetAllFiles retrieves a list of all files stored on the GophKeeper server and displays their details.
+//
+// Returns:
+//   - An error if any step in the process fails, including JWT file access, gRPC communication,
+//     or errors in retrieving the file list.
 func GetAllFiles() error {
 	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
 	if err != nil {

@@ -17,6 +17,15 @@ import (
 	"github.com/Vidkin/gophkeeper/proto"
 )
 
+// Auth authenticates a user with the GophKeeper server using the provided login and password.
+//
+// Parameters:
+//   - login: The user's login name.
+//   - password: The user's password.
+//
+// Returns:
+//   - An error if any step in the process fails, including gRPC connection issues,
+//     marshaling errors, or file operations related to the JWT token.
 func Auth(login, password string) error {
 	client, conn, err := NewGophkeeperClient()
 	if err != nil {
@@ -36,6 +45,7 @@ func Auth(login, password string) error {
 	req := &proto.AuthorizeRequest{
 		Credentials: &cred,
 	}
+
 	ctxTimeout, cancel := context.WithTimeout(context.Background(), 200*time.Millisecond)
 	defer cancel()
 
@@ -51,7 +61,6 @@ func Auth(login, password string) error {
 	}
 
 	resp, err := client.Authorize(ctxTimeout, req)
-
 	if err != nil {
 		return err
 	}
@@ -79,6 +88,5 @@ func Auth(login, password string) error {
 	}
 
 	fmt.Println("Successfully authorized!")
-
-	return err
+	return nil
 }
