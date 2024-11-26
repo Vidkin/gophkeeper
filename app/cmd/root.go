@@ -29,31 +29,30 @@ func initConfig() {
 		viper.SetConfigFile(cfgFilePath)
 		if err := viper.ReadInConfig(); err != nil {
 			fmt.Println("Can't read config:", err)
-			os.Exit(1)
+			panic("Can't read config")
 		}
 	} else {
 		fmt.Println("You must provide the path to config file")
-		os.Exit(1)
+		panic("You must provide the path to config file")
 	}
-
 	if hashKey != "" {
 		if err := viper.BindPFlag("hash_key", rootCmd.PersistentFlags().Lookup("hash_key")); err != nil {
 			fmt.Println("Can't bind hash key flag to viper: ", err)
-			os.Exit(1)
+			panic("Can't bind hash key flag to viper")
 		}
 	} else {
 		fmt.Println("You must provide the hash_key flag, see --help")
-		os.Exit(1)
+		panic("You must provide the hash_key flag, see --help")
 	}
 
 	if secretKey != "" {
 		if err := viper.BindPFlag("secret_key", rootCmd.PersistentFlags().Lookup("secret_key")); err != nil {
 			fmt.Println("Can't bind secret key flag to viper: ", err)
-			os.Exit(1)
+			panic("Can't bind secret key flag to viper")
 		}
 	} else {
 		fmt.Println("You must provide the secret_key flag, see --help")
-		os.Exit(1)
+		panic("You must provide the secret_key flag, see --help")
 	}
 }
 

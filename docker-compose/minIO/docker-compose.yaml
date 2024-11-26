@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  minio:
+    image: minio/minio
+    container_name: minio
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ACCESS_KEY: minioadmin
+      MINIO_SECRET_KEY: minioadmin
+    volumes:
+      - ./private.key:/root/.minio/private.key # укажите тут путь к private.key, если он отличается от текущего каталога
+      - ./public.crt:/root/.minio/public.crt # укажите тут путь к public.crt, если он отличается от текущего каталога
+      - minio_data:/data
+    command: server /data --console-address ":9001" --certs-dir /root/.minio
+
+volumes:
+  minio_data:
