@@ -101,8 +101,8 @@ func getTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
 	if err != nil {
 		return nil, err
 	}
-	config := &tls.Config{Certificates: []tls.Certificate{cert}}
-	return tls.Listen("tcp", addr, config)
+	cfg := &tls.Config{Certificates: []tls.Certificate{cert}}
+	return tls.Listen("tcp", addr, cfg)
 }
 
 // Run starts the gRPC server on the configured listener and handles graceful shutdown.
