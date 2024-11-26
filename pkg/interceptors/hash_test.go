@@ -5,13 +5,13 @@ import (
 	"encoding/base64"
 	"testing"
 
-	"github.com/golang/protobuf/proto"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/proto"
 
 	"github.com/Vidkin/gophkeeper/pkg/hash"
 	gkProto "github.com/Vidkin/gophkeeper/proto"
