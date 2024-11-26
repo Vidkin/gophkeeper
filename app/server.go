@@ -101,7 +101,9 @@ func getTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
 	if err != nil {
 		return nil, err
 	}
-	cfg := &tls.Config{Certificates: []tls.Certificate{cert}}
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		NextProtos:   []string{"h2"}}
 	return tls.Listen("tcp", addr, cfg)
 }
 
