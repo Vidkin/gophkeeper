@@ -17,10 +17,10 @@ jobs:
         run: go mod verify
 
       - name: Build server
-        run: go build -o gophkeeper-server -v ./cmd/server/
+        run: go build -o gophkeeper-server -v ./cmd/server/ -ldflags "-X main.buildVersion=v1.0.0 -X 'main.buildDate=$(date +'%Y/%m/%d %H:%M:%S')'"
 
       - name: Build client
-        run: go build -o gophkeeper-client -v ./cmd/client/
+        run: go build -o gophkeeper-client -v ./cmd/client/ -ldflags "-X main.buildVersion=v1.0.0 -X 'main.buildDate=$(date +'%Y/%m/%d %H:%M:%S')'"
 
       - name: Archive server artifact
         uses: actions/upload-artifact@v4.4.3
