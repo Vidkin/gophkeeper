@@ -36,23 +36,24 @@ func AddCard(card *proto.BankCard) error {
 	}
 	token := string(f)
 
-	card.Cvv, err = aes.Encrypt(viper.GetString("secret_key"), card.Cvv)
+	secretKey := viper.GetString("secret_key")
+	card.Cvv, err = aes.Encrypt(secretKey, card.Cvv)
 	if err != nil {
 		return err
 	}
-	card.Owner, err = aes.Encrypt(viper.GetString("secret_key"), card.Owner)
+	card.Owner, err = aes.Encrypt(secretKey, card.Owner)
 	if err != nil {
 		return err
 	}
-	card.Number, err = aes.Encrypt(viper.GetString("secret_key"), card.Number)
+	card.Number, err = aes.Encrypt(secretKey, card.Number)
 	if err != nil {
 		return err
 	}
-	card.Description, err = aes.Encrypt(viper.GetString("secret_key"), card.Description)
+	card.Description, err = aes.Encrypt(secretKey, card.Description)
 	if err != nil {
 		return err
 	}
-	card.ExpireDate, err = aes.Encrypt(viper.GetString("secret_key"), card.ExpireDate)
+	card.ExpireDate, err = aes.Encrypt(secretKey, card.ExpireDate)
 	if err != nil {
 		return err
 	}

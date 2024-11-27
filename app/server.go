@@ -73,7 +73,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 		DatabaseKey: cfg.DatabaseKey,
 		JWTKey:      cfg.JWTKey,
 	})
-	listener, err := getTLSListener(cfg.ServerAddress.Address, cfg.CryptoKeyPublic, cfg.CryptoKeyPrivate)
+	listener, err := GetTLSListener(cfg.ServerAddress.Address, cfg.CryptoKeyPublic, cfg.CryptoKeyPrivate)
 	if err != nil {
 		logger.Log.Fatal("failed to create TLS listener", zap.Error(err))
 		return nil, err
@@ -86,7 +86,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 	}, nil
 }
 
-// getTLSListener creates a TLS listener on the specified address using provided public and private keys.
+// GetTLSListener creates a TLS listener on the specified address using provided public and private keys.
 //
 // Parameters:
 //   - addr: The network address to listen on.
@@ -96,7 +96,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 // Returns:
 //   - A net.Listener instance configured for TLS.
 //   - An error if the listener creation fails.
-func getTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
+func GetTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
 	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
 	if err != nil {
 		return nil, err
