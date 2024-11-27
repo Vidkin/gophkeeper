@@ -3,10 +3,10 @@ module github.com/Vidkin/gophkeeper
 go 1.23.2
 
 require (
+	github.com/DATA-DOG/go-sqlmock v1.5.2
 	github.com/caarlos0/env/v6 v6.10.1
 	github.com/golang-jwt/jwt/v4 v4.5.1
 	github.com/golang-migrate/migrate/v4 v4.18.1
-	github.com/golang/protobuf v1.5.4
 	github.com/jackc/pgx/v5 v5.7.1
 	github.com/minio/minio-go/v7 v7.0.80
 	github.com/spf13/cobra v1.8.1

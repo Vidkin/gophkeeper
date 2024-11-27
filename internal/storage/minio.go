@@ -6,6 +6,7 @@ package storage
 import (
 	"context"
 	"crypto/tls"
+	"io"
 	"net/http"
 
 	"github.com/minio/minio-go/v7"
@@ -15,6 +16,16 @@ import (
 )
 
 const MinioBucketName = "gophkeeper"
+
+type MinioClientInterface interface {
+	MakeBucket(ctx context.Context, bucketName string, opts minio.MakeBucketOptions) error
+	BucketExists(ctx context.Context, bucketName string) (bool, error)
+	GetObject(ctx context.Context, bucketName, objectName string, opts minio.GetObjectOptions) (*minio.Object, error)
+	RemoveObject(ctx context.Context, bucketName, objectName string, opts minio.RemoveObjectOptions) error
+	PutObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+}
+
+var s minio.Client
 
 // NewMinioStorage initializes a new MinIO client and creates a bucket if it does not already exist.
 //
@@ -31,22 +42,25 @@ const MinioBucketName = "gophkeeper"
 // It then attempts to create a bucket with the name defined by MinioBucketName. If the bucket
 // already exists, it logs an informational message. If the bucket creation fails for any other
 // reason, it returns an error. If successful, it returns the MinIO client instance.
-func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string) (*minio.Client, error) {
+func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface) (MinioClientInterface, error) {
 	ctx := context.Background()
-	minioClient, err := minio.New(endpoint, &minio.Options{
-		Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-		Secure: true,
-		Transport: &http.Transport{
-			TLSClientConfig: &tls.Config{
-				InsecureSkipVerify: true,
+	if minioClient == nil {
+		var err error
+		minioClient, err = minio.New(endpoint, &minio.Options{
+			Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+			Secure: true,
+			Transport: &http.Transport{
+				TLSClientConfig: &tls.Config{
+					InsecureSkipVerify: true,
+				},
 			},
-		},
-	})
-	if err != nil {
-		return nil, err
+		})
+		if err != nil {
+			return nil, err
+		}
 	}
 
-	err = minioClient.MakeBucket(ctx, MinioBucketName, minio.MakeBucketOptions{})
+	err := minioClient.MakeBucket(ctx, MinioBucketName, minio.MakeBucketOptions{})
 	if err != nil {
 		exists, errBucketExists := minioClient.BucketExists(ctx, MinioBucketName)
 		if errBucketExists == nil && exists {

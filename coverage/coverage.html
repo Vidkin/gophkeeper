@@ -135,13 +135,13 @@
 				
 				<option value="file39">github.com/Vidkin/gophkeeper/internal/logger/logger.go (0.0%)</option>
 				
-				<option value="file40">github.com/Vidkin/gophkeeper/internal/storage/minio.go (0.0%)</option>
+				<option value="file40">github.com/Vidkin/gophkeeper/internal/storage/minio.go (71.4%)</option>
 				
-				<option value="file41">github.com/Vidkin/gophkeeper/internal/storage/postgres.go (0.0%)</option>
+				<option value="file41">github.com/Vidkin/gophkeeper/internal/storage/postgres.go (79.2%)</option>
 				
-				<option value="file42">github.com/Vidkin/gophkeeper/pkg/aes/decrypt.go (0.0%)</option>
+				<option value="file42">github.com/Vidkin/gophkeeper/pkg/aes/decrypt.go (82.4%)</option>
 				
-				<option value="file43">github.com/Vidkin/gophkeeper/pkg/aes/encrypt.go (0.0%)</option>
+				<option value="file43">github.com/Vidkin/gophkeeper/pkg/aes/encrypt.go (81.8%)</option>
 				
 				<option value="file44">github.com/Vidkin/gophkeeper/pkg/cert/x509.go (83.9%)</option>
 				
@@ -810,7 +810,7 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) <span class="cov
                 logger.Log.Error("error init postgres storage", zap.Error(err))
                 return nil, err
         }</span>
-        <span class="cov0" title="0">minioClient, err := storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey)
+        <span class="cov0" title="0">minioClient, err := storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey, nil)
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error init minio storage", zap.Error(err))
                 return nil, err
@@ -857,8 +857,10 @@ func getTLSListener(addr, certFile, keyFile string) (net.Listener, error) <span 
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">config := &amp;tls.Config{Certificates: []tls.Certificate{cert}}
-        return tls.Listen("tcp", addr, config)</span>
+        <span class="cov0" title="0">cfg := &amp;tls.Config{
+                Certificates: []tls.Certificate{cert},
+                NextProtos:   []string{"h2"}}
+        return tls.Listen("tcp", addr, cfg)</span>
 }
 
 // Run starts the gRPC server on the configured listener and handles graceful shutdown.
@@ -3916,6 +3918,7 @@ package storage
 import (
         "context"
         "crypto/tls"
+        "io"
         "net/http"
 
         "github.com/minio/minio-go/v7"
@@ -3925,6 +3928,16 @@ import (
 )
 
 const MinioBucketName = "gophkeeper"
+
+type MinioClientInterface interface {
+        MakeBucket(ctx context.Context, bucketName string, opts minio.MakeBucketOptions) error
+        BucketExists(ctx context.Context, bucketName string) (bool, error)
+        GetObject(ctx context.Context, bucketName, objectName string, opts minio.GetObjectOptions) (*minio.Object, error)
+        RemoveObject(ctx context.Context, bucketName, objectName string, opts minio.RemoveObjectOptions) error
+        PutObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
+}
+
+var s minio.Client
 
 // NewMinioStorage initializes a new MinIO client and creates a bucket if it does not already exist.
 //
@@ -3941,34 +3954,37 @@ const MinioBucketName = "gophkeeper"
 // It then attempts to create a bucket with the name defined by MinioBucketName. If the bucket
 // already exists, it logs an informational message. If the bucket creation fails for any other
 // reason, it returns an error. If successful, it returns the MinIO client instance.
-func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string) (*minio.Client, error) <span class="cov0" title="0">{
+func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface) (MinioClientInterface, error) <span class="cov8" title="1">{
         ctx := context.Background()
-        minioClient, err := minio.New(endpoint, &amp;minio.Options{
-                Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
-                Secure: true,
-                Transport: &amp;http.Transport{
-                        TLSClientConfig: &amp;tls.Config{
-                                InsecureSkipVerify: true,
+        if minioClient == nil </span><span class="cov0" title="0">{
+                var err error
+                minioClient, err = minio.New(endpoint, &amp;minio.Options{
+                        Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
+                        Secure: true,
+                        Transport: &amp;http.Transport{
+                                TLSClientConfig: &amp;tls.Config{
+                                        InsecureSkipVerify: true,
+                                },
                         },
-                },
-        })
-        if err != nil </span><span class="cov0" title="0">{
-                return nil, err
-        }</span>
-
-        <span class="cov0" title="0">err = minioClient.MakeBucket(ctx, MinioBucketName, minio.MakeBucketOptions{})
-        if err != nil </span><span class="cov0" title="0">{
-                exists, errBucketExists := minioClient.BucketExists(ctx, MinioBucketName)
-                if errBucketExists == nil &amp;&amp; exists </span><span class="cov0" title="0">{
-                        logger.Log.Info("bucket already created")
-                }</span> else<span class="cov0" title="0"> {
+                })
+                if err != nil </span><span class="cov0" title="0">{
                         return nil, err
                 }</span>
-        } else<span class="cov0" title="0"> {
+        }
+
+        <span class="cov8" title="1">err := minioClient.MakeBucket(ctx, MinioBucketName, minio.MakeBucketOptions{})
+        if err != nil </span><span class="cov8" title="1">{
+                exists, errBucketExists := minioClient.BucketExists(ctx, MinioBucketName)
+                if errBucketExists == nil &amp;&amp; exists </span><span class="cov8" title="1">{
+                        logger.Log.Info("bucket already created")
+                }</span> else<span class="cov8" title="1"> {
+                        return nil, err
+                }</span>
+        } else<span class="cov8" title="1"> {
                 logger.Log.Info("successfully created bucket")
         }</span>
 
-        <span class="cov0" title="0">return minioClient, nil</span>
+        <span class="cov8" title="1">return minioClient, nil</span>
 }
 </pre>
 		
@@ -4014,7 +4030,7 @@ type PostgresStorage struct {
 //
 // The function opens a connection to the PostgreSQL database, creates a migration instance, and applies
 // any pending migrations. If successful, it returns a PostgresStorage instance with an active database connection.
-func NewPostgresStorage(dbDSN string) (*PostgresStorage, error) <span class="cov0" title="0">{
+func NewPostgresStorage(dbDSN string) (*PostgresStorage, error) <span class="cov8" title="1">{
         var p PostgresStorage
         db, err := sql.Open("pgx", dbDSN)
         if err != nil </span><span class="cov0" title="0">{
@@ -4022,29 +4038,29 @@ func NewPostgresStorage(dbDSN string) (*PostgresStorage, error) <span class="cov
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">driver, err := postgres.WithInstance(db, &amp;postgres.Config{})
+        <span class="cov8" title="1">driver, err := postgres.WithInstance(db, &amp;postgres.Config{})
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Fatal("can't create postgres driver for migrations", zap.Error(err))
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">d, err := iofs.New(Migrations, "migrations")
+        <span class="cov8" title="1">d, err := iofs.New(Migrations, "migrations")
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Fatal("can't get migrations from FS", zap.Error(err))
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">m, err := migrate.NewWithInstance("iofs", d, "postgres", driver)
+        <span class="cov8" title="1">m, err := migrate.NewWithInstance("iofs", d, "postgres", driver)
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Fatal("can't create new migrate instance", zap.Error(err))
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">if err := m.Up(); err != nil &amp;&amp; !errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := m.Up(); err != nil &amp;&amp; !errors.Is(err, migrate.ErrNoChange) </span><span class="cov0" title="0">{
                 logger.Log.Fatal("can't exec migrations", zap.Error(err))
                 return nil, err
         }</span>
-        <span class="cov0" title="0">p.Conn = db
+        <span class="cov8" title="1">p.Conn = db
         return &amp;p, nil</span>
 }
 
@@ -4055,7 +4071,7 @@ func NewPostgresStorage(dbDSN string) (*PostgresStorage, error) <span class="cov
 //
 // Returns:
 //   - An error if the connection is not alive or if there is an issue with the database.
-func (p *PostgresStorage) Ping(ctx context.Context) error <span class="cov0" title="0">{
+func (p *PostgresStorage) Ping(ctx context.Context) error <span class="cov8" title="1">{
         return p.Conn.PingContext(ctx)
 }</span>
 
@@ -4063,7 +4079,7 @@ func (p *PostgresStorage) Ping(ctx context.Context) error <span class="cov0" tit
 //
 // Returns:
 //   - An error if there is an issue closing the connection.
-func (p *PostgresStorage) Close() error <span class="cov0" title="0">{
+func (p *PostgresStorage) Close() error <span class="cov8" title="1">{
         return p.Conn.Close()
 }</span>
 
@@ -4076,7 +4092,7 @@ func (p *PostgresStorage) Close() error <span class="cov0" title="0">{
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) error <span class="cov0" title="0">{
+func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(ctx, "INSERT INTO users (login, password) VALUES ($1, $2)", login, password)
         return err
 }</span>
@@ -4093,25 +4109,24 @@ func (p *PostgresStorage) AddUser(ctx context.Context, login, password string) e
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, description string, userID int64, fileSize int64) error <span class="cov0" title="0">{
+func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, description string, userID int64, fileSize int64) error <span class="cov8" title="1">{
         var count int
         row := p.Conn.QueryRowContext(
                 ctx,
                 "SELECT count(*) FROM files WHERE file_name=$1 and user_id=$2",
                 fileName, userID)
-        err := row.Scan(&amp;count)
-        if err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;count); err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">if count &gt; 0 </span><span class="cov0" title="0">{
-                _, err = p.Conn.ExecContext(
+        <span class="cov8" title="1">if count &gt; 0 </span><span class="cov8" title="1">{
+                _, err := p.Conn.ExecContext(
                         ctx,
                         "UPDATE files SET file_size=$1, description=$2 WHERE file_name=$3", fileSize, description, fileName)
                 return err
         }</span>
 
-        <span class="cov0" title="0">_, err = p.Conn.ExecContext(
+        <span class="cov8" title="1">_, err := p.Conn.ExecContext(
                 ctx,
                 "INSERT INTO files (user_id, bucket_name, file_name, file_size, description) VALUES ($1, $2, $3, $4, $5)",
                 userID, bucketName, fileName, fileSize, description)
@@ -4127,17 +4142,17 @@ func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, des
 // Returns:
 //   - A pointer to a model.File instance containing the file information.
 //   - An error if the operation fails or if the file is not found.
-func (p *PostgresStorage) GetFile(ctx context.Context, fileName string) (*model.File, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetFile(ctx context.Context, fileName string) (*model.File, error) <span class="cov8" title="1">{
         row := p.Conn.QueryRowContext(
                 ctx,
                 "SELECT user_id, id, file_name, bucket_name, description, file_size, created_at FROM files WHERE file_name = $1",
                 fileName)
 
         var f model.File
-        if err := row.Scan(&amp;f.UserID, &amp;f.ID, &amp;f.FileName, &amp;f.BucketName, &amp;f.Description, &amp;f.FileSize, &amp;f.CreatedAt); err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;f.UserID, &amp;f.ID, &amp;f.FileName, &amp;f.BucketName, &amp;f.Description, &amp;f.FileSize, &amp;f.CreatedAt); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return &amp;f, nil</span>
+        <span class="cov8" title="1">return &amp;f, nil</span>
 }
 
 // GetFiles retrieves all files associated with a user.
@@ -4149,7 +4164,7 @@ func (p *PostgresStorage) GetFile(ctx context.Context, fileName string) (*model.
 // Returns:
 //   - A slice of pointers to model.File instances containing the user's files.
 //   - An error if the operation fails.
-func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.File, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.File, error) <span class="cov8" title="1">{
         rows, err := p.Conn.QueryContext(
                 ctx,
                 "SELECT user_id, id, file_name, bucket_name, description, file_size, created_at id FROM files WHERE user_id = $1",
@@ -4157,26 +4172,26 @@ func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">defer func(rows *sql.Rows) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(rows *sql.Rows) </span><span class="cov8" title="1">{
                 err = rows.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error close rows", zap.Error(err))
                 }</span>
         }(rows)
 
-        <span class="cov0" title="0">var files []*model.File
-        for rows.Next() </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">var files []*model.File
+        for rows.Next() </span><span class="cov8" title="1">{
                 var f model.File
                 if err = rows.Scan(&amp;f.UserID, &amp;f.ID, &amp;f.FileName, &amp;f.BucketName, &amp;f.Description, &amp;f.FileSize, &amp;f.CreatedAt); err != nil </span><span class="cov0" title="0">{
                         return nil, err
                 }</span>
-                <span class="cov0" title="0">files = append(files, &amp;f)</span>
+                <span class="cov8" title="1">files = append(files, &amp;f)</span>
         }
-        <span class="cov0" title="0">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return files, nil</span>
+        <span class="cov8" title="1">return files, nil</span>
 }
 
 // RemoveFile deletes a file from the database by its name.
@@ -4187,13 +4202,10 @@ func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) RemoveFile(ctx context.Context, fileName string) error <span class="cov0" title="0">{
+func (p *PostgresStorage) RemoveFile(ctx context.Context, fileName string) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(ctx, "DELETE FROM files WHERE file_name = $1", fileName)
-        if err != nil </span><span class="cov0" title="0">{
-                return err
-        }</span>
-        <span class="cov0" title="0">return nil</span>
-}
+        return err
+}</span>
 
 // GetUser retrieves a user by their login from the database.
 //
@@ -4204,14 +4216,14 @@ func (p *PostgresStorage) RemoveFile(ctx context.Context, fileName string) error
 // Returns:
 //   - A pointer to a model.User instance containing the user information.
 //   - An error if the operation fails or if the user is not found.
-func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.User, error) <span class="cov8" title="1">{
         row := p.Conn.QueryRowContext(ctx, "SELECT login, password, id FROM users WHERE login = $1", login)
 
         var u model.User
-        if err := row.Scan(&amp;u.Login, &amp;u.Password, &amp;u.ID); err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;u.Login, &amp;u.Password, &amp;u.ID); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return &amp;u, nil</span>
+        <span class="cov8" title="1">return &amp;u, nil</span>
 }
 
 // AddUserCredentials adds new user credentials to the database.
@@ -4222,7 +4234,7 @@ func (p *PostgresStorage) GetUser(ctx context.Context, login string) (*model.Use
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) AddUserCredentials(ctx context.Context, cred *model.Credentials) error <span class="cov0" title="0">{
+func (p *PostgresStorage) AddUserCredentials(ctx context.Context, cred *model.Credentials) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(
                 ctx,
                 "INSERT INTO user_credentials (login, password, description, user_id) VALUES ($1, $2, $3, $4)",
@@ -4239,31 +4251,31 @@ func (p *PostgresStorage) AddUserCredentials(ctx context.Context, cred *model.Cr
 // Returns:
 //   - A slice of pointers to model.Credentials instances containing the user's credentials.
 //   - An error if the operation fails.
-func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) ([]*model.Credentials, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) ([]*model.Credentials, error) <span class="cov8" title="1">{
         rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE user_id = $1", userID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">defer func(rows *sql.Rows) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(rows *sql.Rows) </span><span class="cov8" title="1">{
                 err = rows.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error close rows", zap.Error(err))
                 }</span>
         }(rows)
 
-        <span class="cov0" title="0">var creds []*model.Credentials
-        for rows.Next() </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">var creds []*model.Credentials
+        for rows.Next() </span><span class="cov8" title="1">{
                 var c model.Credentials
                 if err = rows.Scan(&amp;c.ID, &amp;c.UserID, &amp;c.Login, &amp;c.Password, &amp;c.Description); err != nil </span><span class="cov0" title="0">{
                         return nil, err
                 }</span>
-                <span class="cov0" title="0">creds = append(creds, &amp;c)</span>
+                <span class="cov8" title="1">creds = append(creds, &amp;c)</span>
         }
-        <span class="cov0" title="0">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return creds, nil</span>
+        <span class="cov8" title="1">return creds, nil</span>
 }
 
 // GetUserCredential retrieves a specific user credential by its ID.
@@ -4275,15 +4287,15 @@ func (p *PostgresStorage) GetUserCredentials(ctx context.Context, userID int64) 
 // Returns:
 //   - A pointer to a model.Credentials instance containing the credential information.
 //   - An error if the operation fails or if the credential is not found.
-func (p *PostgresStorage) GetUserCredential(ctx context.Context, id int64) (*model.Credentials, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetUserCredential(ctx context.Context, id int64) (*model.Credentials, error) <span class="cov8" title="1">{
         row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, login, password, description FROM user_credentials WHERE id = $1", id)
 
         var cred model.Credentials
-        if err := row.Scan(&amp;cred.ID, &amp;cred.UserID, &amp;cred.Login, &amp;cred.Password, &amp;cred.Description); err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;cred.ID, &amp;cred.UserID, &amp;cred.Login, &amp;cred.Password, &amp;cred.Description); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return &amp;cred, nil</span>
+        <span class="cov8" title="1">return &amp;cred, nil</span>
 }
 
 // RemoveUserCredential deletes a user credential from the database by its ID.
@@ -4294,12 +4306,12 @@ func (p *PostgresStorage) GetUserCredential(ctx context.Context, id int64) (*mod
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) RemoveUserCredential(ctx context.Context, id int64) error <span class="cov0" title="0">{
+func (p *PostgresStorage) RemoveUserCredential(ctx context.Context, id int64) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(ctx, "DELETE FROM user_credentials WHERE id = $1", id)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
 // AddNote adds a new note to the database.
@@ -4310,7 +4322,7 @@ func (p *PostgresStorage) RemoveUserCredential(ctx context.Context, id int64) er
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) AddNote(ctx context.Context, note *model.Note) error <span class="cov0" title="0">{
+func (p *PostgresStorage) AddNote(ctx context.Context, note *model.Note) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(
                 ctx,
                 "INSERT INTO notes (text, description, user_id) VALUES ($1, $2, $3)",
@@ -4327,31 +4339,31 @@ func (p *PostgresStorage) AddNote(ctx context.Context, note *model.Note) error <
 // Returns:
 //   - A slice of pointers to model.Note instances containing the user's notes.
 //   - An error if the operation fails.
-func (p *PostgresStorage) GetNotes(ctx context.Context, userID int64) ([]*model.Note, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetNotes(ctx context.Context, userID int64) ([]*model.Note, error) <span class="cov8" title="1">{
         rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, text, description FROM notes WHERE user_id = $1", userID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">defer func(rows *sql.Rows) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(rows *sql.Rows) </span><span class="cov8" title="1">{
                 err = rows.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error close rows", zap.Error(err))
                 }</span>
         }(rows)
 
-        <span class="cov0" title="0">var notes []*model.Note
-        for rows.Next() </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">var notes []*model.Note
+        for rows.Next() </span><span class="cov8" title="1">{
                 var n model.Note
                 if err = rows.Scan(&amp;n.ID, &amp;n.UserID, &amp;n.Text, &amp;n.Description); err != nil </span><span class="cov0" title="0">{
                         return nil, err
                 }</span>
-                <span class="cov0" title="0">notes = append(notes, &amp;n)</span>
+                <span class="cov8" title="1">notes = append(notes, &amp;n)</span>
         }
-        <span class="cov0" title="0">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return notes, nil</span>
+        <span class="cov8" title="1">return notes, nil</span>
 }
 
 // GetNote retrieves a specific note by its ID from the database.
@@ -4363,15 +4375,15 @@ func (p *PostgresStorage) GetNotes(ctx context.Context, userID int64) ([]*model.
 // Returns:
 //   - A pointer to a model.Note instance containing the note information.
 //   - An error if the operation fails or if the note is not found.
-func (p *PostgresStorage) GetNote(ctx context.Context, id int64) (*model.Note, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetNote(ctx context.Context, id int64) (*model.Note, error) <span class="cov8" title="1">{
         row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, text, description FROM notes WHERE id = $1", id)
 
         var note model.Note
-        if err := row.Scan(&amp;note.ID, &amp;note.UserID, &amp;note.Text, &amp;note.Description); err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;note.ID, &amp;note.UserID, &amp;note.Text, &amp;note.Description); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return &amp;note, nil</span>
+        <span class="cov8" title="1">return &amp;note, nil</span>
 }
 
 // RemoveNote deletes a note from the database by its ID.
@@ -4382,12 +4394,12 @@ func (p *PostgresStorage) GetNote(ctx context.Context, id int64) (*model.Note, e
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) RemoveNote(ctx context.Context, id int64) error <span class="cov0" title="0">{
+func (p *PostgresStorage) RemoveNote(ctx context.Context, id int64) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(ctx, "DELETE FROM notes WHERE id = $1", id)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 
 // AddCard adds a new bank card to the database.
@@ -4398,7 +4410,7 @@ func (p *PostgresStorage) RemoveNote(ctx context.Context, id int64) error <span 
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error <span class="cov0" title="0">{
+func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(
                 ctx,
                 "INSERT INTO bank_cards (user_id, card_number, expiration_date, cvv, owner, description) "+
@@ -4415,31 +4427,31 @@ func (p *PostgresStorage) AddCard(ctx context.Context, card *model.BankCard) err
 // Returns:
 //   - A slice of pointers to model.BankCard instances containing the user's bank cards.
 //   - An error if the operation fails.
-func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*model.BankCard, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*model.BankCard, error) <span class="cov8" title="1">{
         rows, err := p.Conn.QueryContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE user_id = $1", userID)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">defer func(rows *sql.Rows) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(rows *sql.Rows) </span><span class="cov8" title="1">{
                 err = rows.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error close rows", zap.Error(err))
                 }</span>
         }(rows)
 
-        <span class="cov0" title="0">var cards []*model.BankCard
-        for rows.Next() </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">var cards []*model.BankCard
+        for rows.Next() </span><span class="cov8" title="1">{
                 var b model.BankCard
                 if err = rows.Scan(&amp;b.ID, &amp;b.UserID, &amp;b.Owner, &amp;b.Number, &amp;b.ExpireDate, &amp;b.CVV, &amp;b.Description); err != nil </span><span class="cov0" title="0">{
                         return nil, err
                 }</span>
-                <span class="cov0" title="0">cards = append(cards, &amp;b)</span>
+                <span class="cov8" title="1">cards = append(cards, &amp;b)</span>
         }
-        <span class="cov0" title="0">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = rows.Err(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return cards, nil</span>
+        <span class="cov8" title="1">return cards, nil</span>
 }
 
 // GetBankCard retrieves a specific bank card by its ID from the database.
@@ -4451,15 +4463,15 @@ func (p *PostgresStorage) GetBankCards(ctx context.Context, userID int64) ([]*mo
 // Returns:
 //   - A pointer to a model.BankCard instance containing the bank card information.
 //   - An error if the operation fails or if the bank card is not found.
-func (p *PostgresStorage) GetBankCard(ctx context.Context, id int64) (*model.BankCard, error) <span class="cov0" title="0">{
+func (p *PostgresStorage) GetBankCard(ctx context.Context, id int64) (*model.BankCard, error) <span class="cov8" title="1">{
         row := p.Conn.QueryRowContext(ctx, "SELECT id, user_id, owner, card_number, expiration_date, cvv, description FROM bank_cards WHERE id = $1", id)
 
         var card model.BankCard
-        if err := row.Scan(&amp;card.ID, &amp;card.UserID, &amp;card.Owner, &amp;card.Number, &amp;card.ExpireDate, &amp;card.CVV, &amp;card.Description); err != nil </span><span class="cov0" title="0">{
+        if err := row.Scan(&amp;card.ID, &amp;card.UserID, &amp;card.Owner, &amp;card.Number, &amp;card.ExpireDate, &amp;card.CVV, &amp;card.Description); err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
 
-        <span class="cov0" title="0">return &amp;card, nil</span>
+        <span class="cov8" title="1">return &amp;card, nil</span>
 }
 
 // RemoveBankCard deletes a bank card from the database by its ID.
@@ -4470,12 +4482,12 @@ func (p *PostgresStorage) GetBankCard(ctx context.Context, id int64) (*model.Ban
 //
 // Returns:
 //   - An error if the operation fails.
-func (p *PostgresStorage) RemoveBankCard(ctx context.Context, id int64) error <span class="cov0" title="0">{
+func (p *PostgresStorage) RemoveBankCard(ctx context.Context, id int64) error <span class="cov8" title="1">{
         _, err := p.Conn.ExecContext(ctx, "DELETE FROM bank_cards WHERE id = $1", id)
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
@@ -4510,34 +4522,34 @@ import (
 // The function extracts the nonce from the beginning of the decoded data and separates the
 // ciphertext. Finally, it attempts to decrypt the ciphertext using the nonce and returns the
 // resulting plaintext. If any step fails, an appropriate error is returned.
-func Decrypt(key, src string) (string, error) <span class="cov0" title="0">{
+func Decrypt(key, src string) (string, error) <span class="cov8" title="1">{
         data, err := base64.StdEncoding.DecodeString(src)
+        if err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">block, err := aes.NewCipher([]byte(key))
+        if err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">gcm, err := cipher.NewGCM(block)
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
 
-        <span class="cov0" title="0">block, err := aes.NewCipher([]byte(key))
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
-
-        <span class="cov0" title="0">gcm, err := cipher.NewGCM(block)
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
-
-        <span class="cov0" title="0">nonceSize := gcm.NonceSize()
+        <span class="cov8" title="1">nonceSize := gcm.NonceSize()
         if len(data) &lt; nonceSize </span><span class="cov0" title="0">{
                 return "", fmt.Errorf("can't extract nonce")
         }</span>
-        <span class="cov0" title="0">nonce, cipherText := data[:nonceSize], data[nonceSize:]
+        <span class="cov8" title="1">nonce, cipherText := data[:nonceSize], data[nonceSize:]
 
         res, err := gcm.Open(nil, nonce, cipherText, nil)
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
 
-        <span class="cov0" title="0">return string(res), nil</span>
+        <span class="cov8" title="1">return string(res), nil</span>
 }
 </pre>
 		
@@ -4572,23 +4584,23 @@ import (
 // (Galois/Counter Mode) cipher for encryption. It generates a random nonce of the appropriate
 // size and uses it to encrypt the plaintext. The resulting ciphertext, which includes the nonce,
 // is then base64-encoded and returned. If any step fails, an appropriate error is returned.
-func Encrypt(key, src string) (string, error) <span class="cov0" title="0">{
+func Encrypt(key, src string) (string, error) <span class="cov8" title="1">{
         block, err := aes.NewCipher([]byte(key))
+        if err != nil </span><span class="cov8" title="1">{
+                return "", err
+        }</span>
+
+        <span class="cov8" title="1">gcm, err := cipher.NewGCM(block)
         if err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
 
-        <span class="cov0" title="0">gcm, err := cipher.NewGCM(block)
-        if err != nil </span><span class="cov0" title="0">{
-                return "", err
-        }</span>
-
-        <span class="cov0" title="0">nonce := make([]byte, gcm.NonceSize())
+        <span class="cov8" title="1">nonce := make([]byte, gcm.NonceSize())
         if _, err := io.ReadFull(rand.Reader, nonce); err != nil </span><span class="cov0" title="0">{
                 return "", err
         }</span>
 
-        <span class="cov0" title="0">cipherText := gcm.Seal(nonce, nonce, []byte(src), nil)
+        <span class="cov8" title="1">cipherText := gcm.Seal(nonce, nonce, []byte(src), nil)
         return base64.StdEncoding.EncodeToString(cipherText), nil</span>
 }
 </pre>

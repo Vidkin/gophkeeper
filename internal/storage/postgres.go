@@ -125,19 +125,18 @@ func (p *PostgresStorage) AddFile(ctx context.Context, bucketName, fileName, des
 		ctx,
 		"SELECT count(*) FROM files WHERE file_name=$1 and user_id=$2",
 		fileName, userID)
-	err := row.Scan(&count)
-	if err != nil {
+	if err := row.Scan(&count); err != nil {
 		return err
 	}
 
 	if count > 0 {
-		_, err = p.Conn.ExecContext(
+		_, err := p.Conn.ExecContext(
 			ctx,
 			"UPDATE files SET file_size=$1, description=$2 WHERE file_name=$3", fileSize, description, fileName)
 		return err
 	}
 
-	_, err = p.Conn.ExecContext(
+	_, err := p.Conn.ExecContext(
 		ctx,
 		"INSERT INTO files (user_id, bucket_name, file_name, file_size, description) VALUES ($1, $2, $3, $4, $5)",
 		userID, bucketName, fileName, fileSize, description)
@@ -215,10 +214,7 @@ func (p *PostgresStorage) GetFiles(ctx context.Context, userID int64) ([]*model.
 //   - An error if the operation fails.
 func (p *PostgresStorage) RemoveFile(ctx context.Context, fileName string) error {
 	_, err := p.Conn.ExecContext(ctx, "DELETE FROM files WHERE file_name = $1", fileName)
-	if err != nil {
-		return err
-	}
-	return nil
+	return err
 }
 
 // GetUser retrieves a user by their login from the database.
