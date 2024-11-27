@@ -19,7 +19,7 @@ func setupTestDB(t *testing.T) (*PostgresStorage, string) {
 	tempDBName := "test_db"
 	_, err = db.Exec("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = $1", tempDBName)
 	require.NoError(t, err)
-	_, err = db.Exec("DROP DATABASE " + tempDBName)
+	db.Exec("DROP DATABASE " + tempDBName)
 	_, err = db.Exec("CREATE DATABASE " + tempDBName)
 	require.NoError(t, err)
 
