@@ -83,7 +83,7 @@
 				
 				<option value="file13">github.com/Vidkin/gophkeeper/internal/client/credentials.go (87.3%)</option>
 				
-				<option value="file14">github.com/Vidkin/gophkeeper/internal/client/files.go (37.3%)</option>
+				<option value="file14">github.com/Vidkin/gophkeeper/internal/client/files.go (85.0%)</option>
 				
 				<option value="file15">github.com/Vidkin/gophkeeper/internal/client/notes.go (88.6%)</option>
 				
@@ -105,13 +105,13 @@
 				
 				<option value="file24">github.com/Vidkin/gophkeeper/internal/handlers/echo.go (0.0%)</option>
 				
-				<option value="file25">github.com/Vidkin/gophkeeper/internal/handlers/files_download.go (0.0%)</option>
+				<option value="file25">github.com/Vidkin/gophkeeper/internal/handlers/files_download.go (62.0%)</option>
 				
 				<option value="file26">github.com/Vidkin/gophkeeper/internal/handlers/files_get.go (46.7%)</option>
 				
-				<option value="file27">github.com/Vidkin/gophkeeper/internal/handlers/files_remove.go (33.3%)</option>
+				<option value="file27">github.com/Vidkin/gophkeeper/internal/handlers/files_remove.go (60.0%)</option>
 				
-				<option value="file28">github.com/Vidkin/gophkeeper/internal/handlers/files_upload.go (0.0%)</option>
+				<option value="file28">github.com/Vidkin/gophkeeper/internal/handlers/files_upload.go (63.1%)</option>
 				
 				<option value="file29">github.com/Vidkin/gophkeeper/internal/handlers/note_remove.go (45.5%)</option>
 				
@@ -155,9 +155,9 @@
 				
 				<option value="file49">github.com/Vidkin/gophkeeper/pkg/jwt/jwt.go (80.0%)</option>
 				
-				<option value="file50">github.com/Vidkin/gophkeeper/proto/gophkeeper.pb.go (44.0%)</option>
+				<option value="file50">github.com/Vidkin/gophkeeper/proto/gophkeeper.pb.go (50.9%)</option>
 				
-				<option value="file51">github.com/Vidkin/gophkeeper/proto/gophkeeper_grpc.pb.go (70.6%)</option>
+				<option value="file51">github.com/Vidkin/gophkeeper/proto/gophkeeper_grpc.pb.go (76.3%)</option>
 				
 				</select>
 			</div>
@@ -1787,29 +1787,29 @@ import (
 // Returns:
 //   - An error if any step in the process fails, including JWT file access, file opening,
 //     gRPC communication, or streaming errors.
-func UploadFile(filePath, description string) error <span class="cov0" title="0">{
+func UploadFile(filePath, description string) error <span class="cov8" title="1">{
         tokenFile, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
         if err != nil </span><span class="cov0" title="0">{
                 return fmt.Errorf("error open JWT file, need to authorize: %v", err)
         }</span>
-        <span class="cov0" title="0">token := string(tokenFile)
+        <span class="cov8" title="1">token := string(tokenFile)
 
         f, err := os.Open(filePath)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
-        <span class="cov0" title="0">defer func(f *os.File) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(f *os.File) </span><span class="cov8" title="1">{
                 err = f.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("failed to close file")
                 }</span>
         }(f)
-        <span class="cov0" title="0">fStat, err := f.Stat()
+        <span class="cov8" title="1">fStat, err := f.Stat()
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">file := proto.File{}
+        <span class="cov8" title="1">file := proto.File{}
         file.FileSize = fStat.Size()
         file.Description = description
         file.FileName = norm.NFC.String(path.Base(filePath))
@@ -1818,14 +1818,14 @@ func UploadFile(filePath, description string) error <span class="cov0" title="0"
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">defer func(conn *grpc.ClientConn) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(conn *grpc.ClientConn) </span><span class="cov8" title="1">{
                 err = conn.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("failed to close grpc connection")
                 }</span>
         }(conn)
 
-        <span class="cov0" title="0">ctx := context.Background()
+        <span class="cov8" title="1">ctx := context.Background()
         md := metadata.New(map[string]string{"token": token})
         ctx = metadata.NewOutgoingContext(ctx, md)
 
@@ -1833,16 +1833,16 @@ func UploadFile(filePath, description string) error <span class="cov0" title="0"
         buffer := make([]byte, 1024*1024)
 
         stream, err := client.Upload(ctx)
-        for </span><span class="cov0" title="0">{
+        for </span><span class="cov8" title="1">{
                 n, err := reader.Read(buffer)
-                if err == io.EOF </span><span class="cov0" title="0">{
+                if err == io.EOF </span><span class="cov8" title="1">{
                         break</span>
                 }
-                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                         return err
                 }</span>
 
-                <span class="cov0" title="0">req := &amp;proto.FileUploadRequest{
+                <span class="cov8" title="1">req := &amp;proto.FileUploadRequest{
                         FileName:    file.FileName,
                         Description: file.Description,
                         FileSize:    file.FileSize,
@@ -1854,12 +1854,12 @@ func UploadFile(filePath, description string) error <span class="cov0" title="0"
                 }</span>
         }
 
-        <span class="cov0" title="0">_, err = stream.CloseAndRecv()
+        <span class="cov8" title="1">_, err = stream.CloseAndRecv()
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
 
-        <span class="cov0" title="0">fmt.Println("Successfully upload file!")
+        <span class="cov8" title="1">fmt.Println("Successfully upload file!")
         return err</span>
 }
 
@@ -1872,36 +1872,36 @@ func UploadFile(filePath, description string) error <span class="cov0" title="0"
 // Returns:
 //   - An error if any step in the process fails, including JWT file access, file creation,
 //     gRPC communication, or streaming errors.
-func DownloadFile(fileName, filePath string) error <span class="cov0" title="0">{
+func DownloadFile(fileName, filePath string) error <span class="cov8" title="1">{
         tokenFile, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
         if err != nil </span><span class="cov0" title="0">{
                 return fmt.Errorf("error open JWT file, need to authorize: %v", err)
         }</span>
-        <span class="cov0" title="0">token := string(tokenFile)
+        <span class="cov8" title="1">token := string(tokenFile)
 
         f, err := os.OpenFile(path.Join(filePath, fileName), os.O_WRONLY|os.O_CREATE, 0666)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return err
         }</span>
-        <span class="cov0" title="0">defer func(f *os.File) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(f *os.File) </span><span class="cov8" title="1">{
                 err = f.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("failed to close file")
                 }</span>
         }(f)
 
-        <span class="cov0" title="0">client, conn, err := NewGophkeeperClient()
+        <span class="cov8" title="1">client, conn, err := NewGophkeeperClient()
         if err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">defer func(conn *grpc.ClientConn) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">defer func(conn *grpc.ClientConn) </span><span class="cov8" title="1">{
                 err = conn.Close()
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("failed to close grpc connection")
                 }</span>
         }(conn)
 
-        <span class="cov0" title="0">ctx := context.Background()
+        <span class="cov8" title="1">ctx := context.Background()
         md := metadata.New(map[string]string{"token": token})
         ctx = metadata.NewOutgoingContext(ctx, md)
 
@@ -1910,29 +1910,29 @@ func DownloadFile(fileName, filePath string) error <span class="cov0" title="0">
                 FileName: norm.NFC.String(fileName),
         }
         stream, err := client.Download(ctx, req)
-        for </span><span class="cov0" title="0">{
+        for </span><span class="cov8" title="1">{
                 res, err := stream.Recv()
-                if err == io.EOF </span><span class="cov0" title="0">{
+                if err == io.EOF </span><span class="cov8" title="1">{
                         break</span>
                 }
-                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if err != nil </span><span class="cov8" title="1">{
                         fmt.Println("error receive file")
                         return err
                 }</span>
 
-                <span class="cov0" title="0">_, err = writer.Write(res.Chunk)
+                <span class="cov8" title="1">_, err = writer.Write(res.Chunk)
                 if err != nil </span><span class="cov0" title="0">{
                         fmt.Println("failed to write chunk")
                         return err
                 }</span>
         }
-        <span class="cov0" title="0">err = writer.Flush()
+        <span class="cov8" title="1">err = writer.Flush()
         if err != nil </span><span class="cov0" title="0">{
                 fmt.Println("failed to flush file")
                 return err
         }</span>
 
-        <span class="cov0" title="0">fmt.Println("Successfully download file!")
+        <span class="cov8" title="1">fmt.Println("Successfully download file!")
         return err</span>
 }
 
@@ -1992,7 +1992,7 @@ func RemoveFile(fileName string) error <span class="cov8" title="1">{
                 <span class="cov8" title="1">return err</span>
         }
 
-        <span class="cov0" title="0">fmt.Println("File has been successfully removed")
+        <span class="cov8" title="1">fmt.Println("File has been successfully removed")
         return err</span>
 }
 
@@ -2991,58 +2991,58 @@ import (
 // token and validates it. If the token is valid, it retrieves the file information from the storage
 // and streams the file in chunks to the client. If any errors occur during these processes, they are
 // logged, and appropriate gRPC status codes are returned.
-func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error <span class="cov0" title="0">{
+func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error <span class="cov8" title="1">{
         var tokenString string
-        if md, ok := metadata.FromIncomingContext(srv.Context()); ok </span><span class="cov0" title="0">{
+        if md, ok := metadata.FromIncomingContext(srv.Context()); ok </span><span class="cov8" title="1">{
                 values := md.Get("token")
-                if len(values) &gt; 0 </span><span class="cov0" title="0">{
+                if len(values) &gt; 0 </span><span class="cov8" title="1">{
                         tokenString = values[0]
                 }</span>
         }
-        <span class="cov0" title="0">if len(tokenString) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(tokenString) == 0 </span><span class="cov0" title="0">{
                 return status.Error(codes.PermissionDenied, "missing token")
         }</span>
 
-        <span class="cov0" title="0">claims := &amp;jwtPKG.Claims{}
+        <span class="cov8" title="1">claims := &amp;jwtPKG.Claims{}
         token, err := jwt.ParseWithClaims(tokenString, claims,
-                func(t *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                func(t *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
                         if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
                                 logger.Log.Error("unexpected signing method")
                                 return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
                         }</span>
-                        <span class="cov0" title="0">return []byte(g.JWTKey), nil</span>
+                        <span class="cov8" title="1">return []byte(g.JWTKey), nil</span>
                 })
 
-        <span class="cov0" title="0">if err != nil || !token.Valid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil || !token.Valid </span><span class="cov0" title="0">{
                 logger.Log.Error("error parse claims", zap.Error(err))
                 return status.Errorf(codes.PermissionDenied, "error parse claims")
         }</span>
 
-        <span class="cov0" title="0">fileName := norm.NFC.String(in.FileName)
+        <span class="cov8" title="1">fileName := norm.NFC.String(in.FileName)
         if fileName == "" </span><span class="cov0" title="0">{
                 logger.Log.Error("file name is required")
                 return status.Error(codes.InvalidArgument, "file name is required")
         }</span>
 
-        <span class="cov0" title="0">fileInfo, err := g.Storage.GetFile(srv.Context(), fileName)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">fileInfo, err := g.Storage.GetFile(srv.Context(), fileName)
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("error getting file info", zap.Error(err))
                 return status.Error(codes.Internal, "error getting file info")
         }</span>
 
-        <span class="cov0" title="0">object, err := g.Minio.GetObject(srv.Context(), fileInfo.BucketName, fileInfo.FileName, minio.GetObjectOptions{})
+        <span class="cov8" title="1">object, err := g.Minio.GetObject(srv.Context(), fileInfo.BucketName, fileInfo.FileName, minio.GetObjectOptions{})
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error getting object from MinIO", zap.Error(err))
                 return status.Error(codes.Internal, "error getting object from MinIO")
         }</span>
 
-        <span class="cov0" title="0">var totalSize int64
+        <span class="cov8" title="1">var totalSize int64
         chunk := make([]byte, 1024)
-        for </span><span class="cov0" title="0">{
+        for </span><span class="cov8" title="1">{
                 clear(chunk)
                 n, err := object.Read(chunk)
-                if err == io.EOF </span><span class="cov0" title="0">{
-                        if n != 0 </span><span class="cov0" title="0">{
+                if err == io.EOF </span><span class="cov8" title="1">{
+                        if n != 0 </span><span class="cov8" title="1">{
                                 totalSize += int64(n)
 
                                 resp := proto.FileDownloadResponse{
@@ -3057,7 +3057,7 @@ func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gop
                                         return err
                                 }</span>
                         }
-                        <span class="cov0" title="0">break</span>
+                        <span class="cov8" title="1">break</span>
                 }
                 <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error reading object", zap.Error(err))
@@ -3077,7 +3077,7 @@ func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gop
                         return err
                 }</span>
         }
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
@@ -3177,17 +3177,17 @@ func (g *GophkeeperServer) RemoveFile(ctx context.Context, in *proto.FileRemoveR
                 return nil, status.Errorf(codes.NotFound, "file not found")
         }</span>
 
-        <span class="cov0" title="0">err = g.Minio.RemoveObject(ctx, storage.MinioBucketName, file.FileName, minio.RemoveObjectOptions{ForceDelete: true})
+        <span class="cov8" title="1">err = g.Minio.RemoveObject(ctx, storage.MinioBucketName, file.FileName, minio.RemoveObjectOptions{ForceDelete: true})
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove file from minio", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove file from minio")
         }</span>
 
-        <span class="cov0" title="0">if err = g.Storage.RemoveFile(ctx, in.FileName); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = g.Storage.RemoveFile(ctx, in.FileName); err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove file from DB", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove file from DB")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -3223,37 +3223,37 @@ import (
 //
 // Returns:
 //   - An error if any step in the upload process fails, indicating the type of error encountered.
-func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <span class="cov0" title="0">{
+func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <span class="cov8" title="1">{
         var fileName, description string
         var fileSize int64
         var tokenString string
 
-        if md, ok := metadata.FromIncomingContext(stream.Context()); ok </span><span class="cov0" title="0">{
+        if md, ok := metadata.FromIncomingContext(stream.Context()); ok </span><span class="cov8" title="1">{
                 values := md.Get("token")
-                if len(values) &gt; 0 </span><span class="cov0" title="0">{
+                if len(values) &gt; 0 </span><span class="cov8" title="1">{
                         tokenString = values[0]
                 }</span>
         }
-        <span class="cov0" title="0">if len(tokenString) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(tokenString) == 0 </span><span class="cov0" title="0">{
                 return status.Error(codes.PermissionDenied, "missing token")
         }</span>
 
-        <span class="cov0" title="0">claims := &amp;jwtPKG.Claims{}
+        <span class="cov8" title="1">claims := &amp;jwtPKG.Claims{}
         token, err := jwt.ParseWithClaims(tokenString, claims,
-                func(t *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                func(t *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
                         if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
                                 logger.Log.Error("unexpected signing method")
                                 return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
                         }</span>
-                        <span class="cov0" title="0">return []byte(g.JWTKey), nil</span>
+                        <span class="cov8" title="1">return []byte(g.JWTKey), nil</span>
                 })
 
-        <span class="cov0" title="0">if err != nil || !token.Valid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil || !token.Valid </span><span class="cov0" title="0">{
                 logger.Log.Error("error parse claims", zap.Error(err))
                 return status.Errorf(codes.PermissionDenied, "error parse claims")
         }</span>
 
-        <span class="cov0" title="0">ctx, cancel := context.WithCancel(context.Background())
+        <span class="cov8" title="1">ctx, cancel := context.WithCancel(context.Background())
         defer cancel()
         pr, pw := io.Pipe()
 
@@ -3262,36 +3262,36 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 logger.Log.Error("empty file")
                 return status.Errorf(codes.FailedPrecondition, "empty file")
         }</span>
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error receive file", zap.Error(err))
                 return status.Errorf(codes.Internal, "error receive file")
         }</span>
 
-        <span class="cov0" title="0">fileName = norm.NFC.String(req.FileName)
+        <span class="cov8" title="1">fileName = norm.NFC.String(req.FileName)
         description = req.Description
         fileSize = req.FileSize
         if fileName == "" || fileSize == 0 </span><span class="cov0" title="0">{
                 return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
         }</span>
-        <span class="cov0" title="0">chunk := req.GetChunk()
-        go func() </span><span class="cov0" title="0">{
-                defer func(pw *io.PipeWriter) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">chunk := req.GetChunk()
+        go func() </span><span class="cov8" title="1">{
+                defer func(pw *io.PipeWriter) </span><span class="cov8" title="1">{
                         err = pw.Close()
                         if err != nil </span><span class="cov0" title="0">{
                                 logger.Log.Error("failed to close pipe writer", zap.Error(err))
                         }</span>
                 }(pw)
-                <span class="cov0" title="0">for </span><span class="cov0" title="0">{
-                        if chunk != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">for </span><span class="cov8" title="1">{
+                        if chunk != nil </span><span class="cov8" title="1">{
                                 if _, err = pw.Write(chunk); err != nil </span><span class="cov0" title="0">{
                                         logger.Log.Error("error writing chunk to pipe", zap.Error(err))
                                         return
                                 }</span>
-                                <span class="cov0" title="0">chunk = nil</span>
+                                <span class="cov8" title="1">chunk = nil</span>
                         }
 
-                        <span class="cov0" title="0">req, err = stream.Recv()
-                        if err == io.EOF </span><span class="cov0" title="0">{
+                        <span class="cov8" title="1">req, err = stream.Recv()
+                        if err == io.EOF </span><span class="cov8" title="1">{
                                 break</span>
                         }
                         <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
@@ -3304,7 +3304,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 }
         }()
 
-        <span class="cov0" title="0">_, err = g.Minio.PutObject(ctx, storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
+        <span class="cov8" title="1">_, err = g.Minio.PutObject(ctx, storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
                 ContentType: "application/octet-stream",
         })
         if err != nil </span><span class="cov0" title="0">{
@@ -3312,7 +3312,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 return status.Errorf(codes.Internal, "failed to upload file to MinIO")
         }</span>
 
-        <span class="cov0" title="0">err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, description, claims.UserID, fileSize)
+        <span class="cov8" title="1">err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, description, claims.UserID, fileSize)
         if err != nil </span><span class="cov0" title="0">{
                 if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
@@ -3321,7 +3321,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 return status.Errorf(codes.Internal, "failed to upload file to MinIO")</span>
         }
 
-        <span class="cov0" title="0">logger.Log.Info("file uploaded", zap.String("fileName", fileName), zap.String("fileSize", fmt.Sprint(fileSize)))
+        <span class="cov8" title="1">logger.Log.Info("file uploaded", zap.String("fileName", fileName), zap.String("fileSize", fmt.Sprint(fileSize)))
         return stream.SendAndClose(&amp;proto.FileUploadResponse{
                 FileName: fileName,
                 FileSize: fileSize,
@@ -3937,8 +3937,6 @@ type MinioClientInterface interface {
         RemoveObject(ctx context.Context, bucketName, objectName string, opts minio.RemoveObjectOptions) error
         PutObject(ctx context.Context, bucketName, objectName string, reader io.Reader, objectSize int64, opts minio.PutObjectOptions) (info minio.UploadInfo, err error)
 }
-
-var s minio.Client
 
 // NewMinioStorage initializes a new MinIO client and creates a bucket if it does not already exist.
 //
@@ -6334,7 +6332,7 @@ type FileUploadRequest struct {
         FileSize    int64  `protobuf:"varint,4,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
 }
 
-func (x *FileUploadRequest) Reset() <span class="cov0" title="0">{
+func (x *FileUploadRequest) Reset() <span class="cov8" title="1">{
         *x = FileUploadRequest{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[26]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6347,14 +6345,14 @@ func (x *FileUploadRequest) String() string <span class="cov0" title="0">{
 
 func (*FileUploadRequest) ProtoMessage() {<span class="cov0" title="0">}</span>
 
-func (x *FileUploadRequest) ProtoReflect() protoreflect.Message <span class="cov0" title="0">{
+func (x *FileUploadRequest) ProtoReflect() protoreflect.Message <span class="cov8" title="1">{
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[26]
-        if x != nil </span><span class="cov0" title="0">{
+        if x != nil </span><span class="cov8" title="1">{
                 ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-                if ms.LoadMessageInfo() == nil </span><span class="cov0" title="0">{
+                if ms.LoadMessageInfo() == nil </span><span class="cov8" title="1">{
                         ms.StoreMessageInfo(mi)
                 }</span>
-                <span class="cov0" title="0">return ms</span>
+                <span class="cov8" title="1">return ms</span>
         }
         <span class="cov0" title="0">return mi.MessageOf(x)</span>
 }
@@ -6371,8 +6369,8 @@ func (x *FileUploadRequest) GetFileName() string <span class="cov0" title="0">{
         <span class="cov0" title="0">return ""</span>
 }
 
-func (x *FileUploadRequest) GetChunk() []byte <span class="cov0" title="0">{
-        if x != nil </span><span class="cov0" title="0">{
+func (x *FileUploadRequest) GetChunk() []byte <span class="cov8" title="1">{
+        if x != nil </span><span class="cov8" title="1">{
                 return x.Chunk
         }</span>
         <span class="cov0" title="0">return nil</span>
@@ -6446,7 +6444,7 @@ type FileUploadResponse struct {
         FileSize int64  `protobuf:"varint,2,opt,name=file_size,json=fileSize,proto3" json:"file_size,omitempty"`
 }
 
-func (x *FileUploadResponse) Reset() <span class="cov0" title="0">{
+func (x *FileUploadResponse) Reset() <span class="cov8" title="1">{
         *x = FileUploadResponse{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[28]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6459,14 +6457,14 @@ func (x *FileUploadResponse) String() string <span class="cov0" title="0">{
 
 func (*FileUploadResponse) ProtoMessage() {<span class="cov0" title="0">}</span>
 
-func (x *FileUploadResponse) ProtoReflect() protoreflect.Message <span class="cov0" title="0">{
+func (x *FileUploadResponse) ProtoReflect() protoreflect.Message <span class="cov8" title="1">{
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[28]
-        if x != nil </span><span class="cov0" title="0">{
+        if x != nil </span><span class="cov8" title="1">{
                 ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-                if ms.LoadMessageInfo() == nil </span><span class="cov0" title="0">{
+                if ms.LoadMessageInfo() == nil </span><span class="cov8" title="1">{
                         ms.StoreMessageInfo(mi)
                 }</span>
-                <span class="cov0" title="0">return ms</span>
+                <span class="cov8" title="1">return ms</span>
         }
         <span class="cov0" title="0">return mi.MessageOf(x)</span>
 }
@@ -6498,7 +6496,7 @@ type FileDownloadRequest struct {
         FileName string `protobuf:"bytes,1,opt,name=file_name,json=fileName,proto3" json:"file_name,omitempty"`
 }
 
-func (x *FileDownloadRequest) Reset() <span class="cov0" title="0">{
+func (x *FileDownloadRequest) Reset() <span class="cov8" title="1">{
         *x = FileDownloadRequest{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[29]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6511,14 +6509,14 @@ func (x *FileDownloadRequest) String() string <span class="cov0" title="0">{
 
 func (*FileDownloadRequest) ProtoMessage() {<span class="cov0" title="0">}</span>
 
-func (x *FileDownloadRequest) ProtoReflect() protoreflect.Message <span class="cov0" title="0">{
+func (x *FileDownloadRequest) ProtoReflect() protoreflect.Message <span class="cov8" title="1">{
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[29]
-        if x != nil </span><span class="cov0" title="0">{
+        if x != nil </span><span class="cov8" title="1">{
                 ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-                if ms.LoadMessageInfo() == nil </span><span class="cov0" title="0">{
+                if ms.LoadMessageInfo() == nil </span><span class="cov8" title="1">{
                         ms.StoreMessageInfo(mi)
                 }</span>
-                <span class="cov0" title="0">return ms</span>
+                <span class="cov8" title="1">return ms</span>
         }
         <span class="cov0" title="0">return mi.MessageOf(x)</span>
 }
@@ -6546,7 +6544,7 @@ type FileDownloadResponse struct {
         Description string `protobuf:"bytes,4,opt,name=description,proto3" json:"description,omitempty"`
 }
 
-func (x *FileDownloadResponse) Reset() <span class="cov0" title="0">{
+func (x *FileDownloadResponse) Reset() <span class="cov8" title="1">{
         *x = FileDownloadResponse{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[30]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -6559,14 +6557,14 @@ func (x *FileDownloadResponse) String() string <span class="cov0" title="0">{
 
 func (*FileDownloadResponse) ProtoMessage() {<span class="cov0" title="0">}</span>
 
-func (x *FileDownloadResponse) ProtoReflect() protoreflect.Message <span class="cov0" title="0">{
+func (x *FileDownloadResponse) ProtoReflect() protoreflect.Message <span class="cov8" title="1">{
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[30]
-        if x != nil </span><span class="cov0" title="0">{
+        if x != nil </span><span class="cov8" title="1">{
                 ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-                if ms.LoadMessageInfo() == nil </span><span class="cov0" title="0">{
+                if ms.LoadMessageInfo() == nil </span><span class="cov8" title="1">{
                         ms.StoreMessageInfo(mi)
                 }</span>
-                <span class="cov0" title="0">return ms</span>
+                <span class="cov8" title="1">return ms</span>
         }
         <span class="cov0" title="0">return mi.MessageOf(x)</span>
 }
@@ -7367,33 +7365,33 @@ func (c *gophkeeperClient) RemoveNote(ctx context.Context, in *RemoveNoteRequest
         <span class="cov8" title="1">return out, nil</span>
 }
 
-func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error) <span class="cov0" title="0">{
+func (c *gophkeeperClient) Upload(ctx context.Context, opts ...grpc.CallOption) (grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse], error) <span class="cov8" title="1">{
         cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
         stream, err := c.cc.NewStream(ctx, &amp;Gophkeeper_ServiceDesc.Streams[0], Gophkeeper_Upload_FullMethodName, cOpts...)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">x := &amp;grpc.GenericClientStream[FileUploadRequest, FileUploadResponse]{ClientStream: stream}
+        <span class="cov8" title="1">x := &amp;grpc.GenericClientStream[FileUploadRequest, FileUploadResponse]{ClientStream: stream}
         return x, nil</span>
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_UploadClient = grpc.ClientStreamingClient[FileUploadRequest, FileUploadResponse]
 
-func (c *gophkeeperClient) Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error) <span class="cov0" title="0">{
+func (c *gophkeeperClient) Download(ctx context.Context, in *FileDownloadRequest, opts ...grpc.CallOption) (grpc.ServerStreamingClient[FileDownloadResponse], error) <span class="cov8" title="1">{
         cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
         stream, err := c.cc.NewStream(ctx, &amp;Gophkeeper_ServiceDesc.Streams[1], Gophkeeper_Download_FullMethodName, cOpts...)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">x := &amp;grpc.GenericClientStream[FileDownloadRequest, FileDownloadResponse]{ClientStream: stream}
+        <span class="cov8" title="1">x := &amp;grpc.GenericClientStream[FileDownloadRequest, FileDownloadResponse]{ClientStream: stream}
         if err := x.ClientStream.SendMsg(in); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">if err := x.ClientStream.CloseSend(); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err := x.ClientStream.CloseSend(); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return x, nil</span>
+        <span class="cov8" title="1">return x, nil</span>
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
@@ -7406,7 +7404,7 @@ func (c *gophkeeperClient) RemoveFile(ctx context.Context, in *FileRemoveRequest
         if err != nil </span><span class="cov8" title="1">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return out, nil</span>
+        <span class="cov8" title="1">return out, nil</span>
 }
 
 func (c *gophkeeperClient) GetFiles(ctx context.Context, in *GetFilesRequest, opts ...grpc.CallOption) (*GetFilesResponse, error) <span class="cov8" title="1">{
@@ -7800,19 +7798,19 @@ func _Gophkeeper_RemoveNote_Handler(srv interface{}, ctx context.Context, dec fu
         <span class="cov8" title="1">return interceptor(ctx, in, info, handler)</span>
 }
 
-func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error <span class="cov0" title="0">{
+func _Gophkeeper_Upload_Handler(srv interface{}, stream grpc.ServerStream) error <span class="cov8" title="1">{
         return srv.(GophkeeperServer).Upload(&amp;grpc.GenericServerStream[FileUploadRequest, FileUploadResponse]{ServerStream: stream})
 }</span>
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.
 type Gophkeeper_UploadServer = grpc.ClientStreamingServer[FileUploadRequest, FileUploadResponse]
 
-func _Gophkeeper_Download_Handler(srv interface{}, stream grpc.ServerStream) error <span class="cov0" title="0">{
+func _Gophkeeper_Download_Handler(srv interface{}, stream grpc.ServerStream) error <span class="cov8" title="1">{
         m := new(FileDownloadRequest)
         if err := stream.RecvMsg(m); err != nil </span><span class="cov0" title="0">{
                 return err
         }</span>
-        <span class="cov0" title="0">return srv.(GophkeeperServer).Download(m, &amp;grpc.GenericServerStream[FileDownloadRequest, FileDownloadResponse]{ServerStream: stream})</span>
+        <span class="cov8" title="1">return srv.(GophkeeperServer).Download(m, &amp;grpc.GenericServerStream[FileDownloadRequest, FileDownloadResponse]{ServerStream: stream})</span>
 }
 
 // This type alias is provided for backwards compatibility with existing code that references the prior non-generic stream type by name.

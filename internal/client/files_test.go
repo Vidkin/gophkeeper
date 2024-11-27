@@ -11,6 +11,7 @@ import (
 
 	"github.com/Vidkin/gophkeeper/app"
 	"github.com/Vidkin/gophkeeper/internal/handlers"
+	minioStorage "github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
 )
@@ -19,7 +20,14 @@ func TestFiles(t *testing.T) {
 	storage, dbName := setupTestDB(t)
 	defer teardownTestDB(t, storage.Conn, dbName)
 
+	minioClient, err := minioStorage.NewMinioStorage(
+		"127.0.0.1:9000",
+		"minioadmin",
+		"minioadmin",
+		nil)
+	require.NoError(t, err)
 	gs := &handlers.GophkeeperServer{
+		Minio:       minioClient,
 		Storage:     storage,
 		JWTKey:      "JWTKey",
 		DatabaseKey: "strongDBKey2Ks5nM2J5JaI59PPEhL1x",
@@ -99,7 +107,7 @@ func TestFiles(t *testing.T) {
 	viper.Set("secret_key", "strongDBKey2Ks5nM2J5JaI59PPEhL1x")
 	viper.Set("hash_key", "defaultHashKey")
 	setExpiredToken(t)
-	t.Run("test remove note: expired token", func(t *testing.T) {
+	t.Run("test remove file: expired token", func(t *testing.T) {
 		err = RemoveFile("file")
 		require.ErrorContains(t, err, "need to re-authorize")
 	})
@@ -111,8 +119,33 @@ func TestFiles(t *testing.T) {
 		require.ErrorContains(t, err, "file not found")
 	})
 
-	//t.Run("test remove file: ok", func(t *testing.T) {
-	//	err = RemoveFile("file")
-	//	require.NoError(t, err)
-	//})
+	t.Run("test upload: file does not exist", func(t *testing.T) {
+		err = UploadFile(path.Join(os.TempDir(), "/badPath/badFile"), "token_file")
+		require.ErrorContains(t, err, "no such file or directory")
+	})
+
+	t.Run("test upload: ok", func(t *testing.T) {
+		err = UploadFile(path.Join(os.TempDir(), TokenFileName), "token_file")
+		require.NoError(t, err)
+	})
+
+	t.Run("test download: bad path", func(t *testing.T) {
+		err = DownloadFile(TokenFileName, "/badPath//")
+		require.ErrorContains(t, err, "no such file or directory")
+	})
+
+	t.Run("test download: unknown file error", func(t *testing.T) {
+		err = DownloadFile("fileUnknown", os.TempDir())
+		require.ErrorContains(t, err, "error getting file info")
+	})
+
+	t.Run("test download: ok", func(t *testing.T) {
+		err = DownloadFile(TokenFileName, os.TempDir())
+		require.NoError(t, err)
+	})
+
+	t.Run("test remove file: ok", func(t *testing.T) {
+		err = RemoveFile(TokenFileName)
+		require.NoError(t, err)
+	})
 }
