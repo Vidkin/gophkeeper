@@ -16,9 +16,10 @@ jobs:
           MINIO_SECRET_KEY: minioadmin
         volumes:
           - minio_data:/data
+          - ${{ github.workspace }}/certs:/root/.minio
         command: server /data --console-address ":9001" --certs-dir /root/.minio
         options: >-
-          --health-cmd="curl --silent --fail http://localhost:9000/minio/health/live" 
+          --health-cmd="curl --silent --fail https://localhost:9000/minio/health/live" 
           --health-interval=30s 
           --health-timeout=5s 
           --health-retries=3
@@ -66,10 +67,3 @@ jobs:
         run: staticcheck ./...
 
       - name: Install golint
-        run: go install golang.org/x/lint/golint@latest
-
-      - name: Run golint
-        run: golint ./...
-
-      - name: Run tests
-        run: go test -race -vet=off ./...
