@@ -5,8 +5,6 @@ import (
 	"database/sql"
 	"math/rand"
 	"net"
-	"os"
-	"path"
 	"testing"
 	"time"
 
@@ -29,18 +27,6 @@ func GetTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
 		Certificates: []tls.Certificate{cert},
 		NextProtos:   []string{"h2"}}
 	return tls.Listen("tcp", addr, cfg)
-}
-
-func setExpiredToken(t *testing.T) {
-	err := os.Remove(path.Join(os.TempDir(), TokenFileName))
-	if !os.IsNotExist(err) {
-		require.NoError(t, err)
-	}
-	f, err := os.Create(path.Join(os.TempDir(), TokenFileName))
-	require.NoError(t, err)
-	defer f.Close()
-	_, err = f.WriteString(expiredToken)
-	require.NoError(t, err)
 }
 
 const letters = "abcdefghijklmnopqrstuvwxyz"

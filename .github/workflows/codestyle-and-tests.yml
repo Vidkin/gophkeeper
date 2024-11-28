@@ -3,7 +3,7 @@ name: Checks-and-tests
 on: [push, pull_request]
 
 jobs:
-  audit:
+  checks-and-tests:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -51,7 +51,7 @@ jobs:
       - name: Run golint
         run: golint ./...
 
-      - name: start Minio with certificates
+      - name: Start Minio with certificates
         run: |
           mkdir -p /root/.minio
           cp -r ${{ github.workspace }}/certs/* /root/.minio/
