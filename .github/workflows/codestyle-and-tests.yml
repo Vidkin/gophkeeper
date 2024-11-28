@@ -53,15 +53,12 @@ jobs:
 
       - name: Start Minio with certificates
         run: |
-          mkdir -p /root/.minio
-          cp -r ${{ github.workspace }}/certs/* /root/.minio/
           docker run -d --name minio \
             -p 9000:9000 -p 9001:9001 \
             -e MINIO_ACCESS_KEY=minioadmin \
             -e MINIO_SECRET_KEY=minioadmin \
             -v minio_data:/data \
-            -v ${{ github.workspace }}/certs:/root/.minio \
-            minio/minio server /data --console-address ":9001" --certs-dir /root/.minio
+            minio/minio server /data --console-address ":9001" --certs-dir ${{ github.workspace }}/certs
 
       - name: Run tests
         run: go test -race -vet=off ./...
