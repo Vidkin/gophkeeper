@@ -15,8 +15,10 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/logger"
 )
 
+// MinioBucketName contains default MinIO bucket name for gophkeeper app
 const MinioBucketName = "gophkeeper"
 
+// MinioClientInterface is the interface for MinIO client and mock-client
 type MinioClientInterface interface {
 	MakeBucket(ctx context.Context, bucketName string, opts minio.MakeBucketOptions) error
 	BucketExists(ctx context.Context, bucketName string) (bool, error)

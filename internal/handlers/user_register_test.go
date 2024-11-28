@@ -30,8 +30,8 @@ func TestRegister(t *testing.T) {
 
 	listen, err := GetTLSListener(
 		"0.0.0.0:0",
-		"/Users/skim/GolandProjects/gophkeeper/certs/public.crt",
-		"/Users/skim/GolandProjects/gophkeeper/certs/private.key")
+		"../../certs/public.crt",
+		"../../certs/private.key")
 	require.NoError(t, err)
 	go func() {
 		err = s.Serve(listen)
@@ -41,7 +41,7 @@ func TestRegister(t *testing.T) {
 
 	addr := listen.Addr().(*net.TCPAddr)
 	viper.Set("address", fmt.Sprintf("127.0.0.1:%d", addr.Port))
-	viper.Set("crypto_key_public_path", "/Users/skim/GolandProjects/gophkeeper/certs/public.crt")
+	viper.Set("crypto_key_public_path", "../../certs/public.crt")
 	client, conn, err := client.NewGophkeeperClient()
 	require.NoError(t, err)
 	defer conn.Close()

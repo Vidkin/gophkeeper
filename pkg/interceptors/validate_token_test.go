@@ -12,6 +12,7 @@ import (
 	"google.golang.org/grpc/status"
 
 	pkgJwt "github.com/Vidkin/gophkeeper/pkg/jwt"
+	"github.com/Vidkin/gophkeeper/proto"
 )
 
 func TestValidateToken_ValidToken(t *testing.T) {
@@ -85,7 +86,7 @@ func TestValidateToken_EmptyKey(t *testing.T) {
 
 	interceptor := ValidateToken("")
 
-	resp, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{FullMethod: GrpcEchoMethod}, handler)
+	resp, err := interceptor(ctx, nil, &grpc.UnaryServerInfo{FullMethod: proto.Gophkeeper_Echo_FullMethodName}, handler)
 
 	require.NoError(t, err)
 	assert.Nil(t, resp)

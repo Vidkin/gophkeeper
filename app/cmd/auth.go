@@ -1,6 +1,8 @@
 /*
 Copyright © 2024 MIKHAIL SIRKIN <skim991@gmail.com>
 */
+
+// Package cmd contains the commands for the GophKeeper client application.
 package cmd
 
 import (

@@ -1,6 +1,8 @@
 /*
 Copyright © 2024 NAME HERE <EMAIL ADDRESS>
 */
+
+// Package cmd contains the commands for the GophKeeper client application.
 package cmd
 
 import (
@@ -64,6 +66,7 @@ var rootCmd = &cobra.Command{
 	},
 }
 
+// Execute is the entry point for client commands
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		fmt.Println(err)

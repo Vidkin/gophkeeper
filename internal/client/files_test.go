@@ -42,8 +42,8 @@ func TestFiles(t *testing.T) {
 
 	listen, err := app.GetTLSListener(
 		"127.0.0.1:8080",
-		"/Users/skim/GolandProjects/gophkeeper/certs/public.crt",
-		"/Users/skim/GolandProjects/gophkeeper/certs/private.key")
+		"../../certs/public.crt",
+		"../../certs/private.key")
 	require.NoError(t, err)
 	go func() {
 		err = s.Serve(listen)
@@ -52,7 +52,7 @@ func TestFiles(t *testing.T) {
 	defer s.Stop()
 
 	viper.Set("address", "127.0.0.1:8080")
-	viper.Set("crypto_key_public_path", "/Users/skim/GolandProjects/gophkeeper/certs/public.crt")
+	viper.Set("crypto_key_public_path", "../../certs/public.crt")
 	viper.Set("hash_key", "defaultHashKey")
 
 	err = Register("test_login", "test_pass")

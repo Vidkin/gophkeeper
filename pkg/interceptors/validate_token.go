@@ -17,15 +17,13 @@ import (
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	jwtPKG "github.com/Vidkin/gophkeeper/pkg/jwt"
+	"github.com/Vidkin/gophkeeper/proto"
 )
 
 type contextKey string
 
 const (
-	GrpcRegisterUserMethod            = "/gophkeeper.Gophkeeper/RegisterUser"
-	GrpcAuthorizeMethod               = "/gophkeeper.Gophkeeper/Authorize"
-	GrpcEchoMethod                    = "/gophkeeper.Gophkeeper/Echo"
-	UserID                 contextKey = "UserID"
+	UserID contextKey = "UserID" // UserID field name const
 )
 
 // ValidateToken returns a gRPC unary server interceptor that validates JWT tokens
@@ -47,9 +45,9 @@ const (
 // from the claims and stores it in the context for further use in the request handling.
 func ValidateToken(key string) func(context.Context, interface{}, *grpc.UnaryServerInfo, grpc.UnaryHandler) (interface{}, error) {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		if info.FullMethod == GrpcRegisterUserMethod ||
-			info.FullMethod == GrpcAuthorizeMethod ||
-			info.FullMethod == GrpcEchoMethod {
+		if info.FullMethod == proto.Gophkeeper_RegisterUser_FullMethodName ||
+			info.FullMethod == proto.Gophkeeper_Authorize_FullMethodName ||
+			info.FullMethod == proto.Gophkeeper_Echo_FullMethodName {
 			return handler(ctx, req)
 		}
 		if key == "" {

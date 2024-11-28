@@ -9,8 +9,8 @@ import (
 )
 
 const (
-	DefaultServerAddress = "127.0.0.1"
-	DefaultServerPort    = 8080
+	DefaultServerAddress = "127.0.0.1" // DefaultServerAddress contains default gRPC server ip address
+	DefaultServerPort    = 8080        // DefaultServerAddress contains default gRPC server port
 )
 
 // ServerAddress represents the host and port information for a server.

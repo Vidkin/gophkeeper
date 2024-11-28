@@ -1,6 +1,8 @@
 /*
 Copyright © 2024 MIKHAIL SIRKIN <skim991@gmail.com>
 */
+
+// Package cmd contains the commands for the GophKeeper client application.
 package cmd
 
 import (
@@ -18,7 +20,6 @@ var (
 	card   proto.BankCard
 )
 
-// cardsCmd represents the bank cards management command
 var cardsCmd = &cobra.Command{
 	Use:   "cards [command] [flags]",
 	Short: "Bank cards management",

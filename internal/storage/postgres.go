@@ -12,15 +12,17 @@ import (
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	_ "github.com/golang-migrate/migrate/v4/source/file" // for postgresql migrations
 	"github.com/golang-migrate/migrate/v4/source/iofs"
-	_ "github.com/jackc/pgx/v5/stdlib"
+	_ "github.com/jackc/pgx/v5/stdlib" // for postgresql driver init
 	"go.uber.org/zap"
 
 	"github.com/Vidkin/gophkeeper/internal/logger"
 	"github.com/Vidkin/gophkeeper/internal/model"
 )
 
+// Migrations is the migration files that includes in server binary
+//
 //go:embed migrations/*.sql
 var Migrations embed.FS
 
