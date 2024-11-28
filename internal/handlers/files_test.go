@@ -162,6 +162,7 @@ func TestFiles(t *testing.T) {
 
 	t.Run("upload file 2000 bytes", func(t *testing.T) {
 		stream, err := client.Upload(ctx)
+		require.NoError(t, err)
 		req := &proto.FileUploadRequest{
 			FileName:    file.FileName + "chunks",
 			Description: file.Description,
