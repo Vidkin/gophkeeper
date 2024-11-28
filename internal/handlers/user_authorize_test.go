@@ -55,34 +55,34 @@ func TestAuthorize(t *testing.T) {
 	_, err = client.RegisterUser(context.Background(), &proto.RegisterUserRequest{Credentials: &cred})
 	require.NoError(t, err)
 
-	t.Run("test auth: empty login", func(t *testing.T) {
+	t.Run("test authorize: empty login", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &proto.Credentials{Login: "", Password: "password"}})
 		require.ErrorContains(t, err, "invalid user login or password")
 	})
 
-	t.Run("test auth: empty password", func(t *testing.T) {
+	t.Run("test authorize: empty password", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &proto.Credentials{Login: "login", Password: ""}})
 		require.ErrorContains(t, err, "invalid user login or password")
 	})
 
-	t.Run("test auth: bad login", func(t *testing.T) {
+	t.Run("test authorize: bad login", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &proto.Credentials{Login: "badLogin", Password: "password"}})
 		require.ErrorContains(t, err, "invalid user login or password")
 	})
 
 	gs.DatabaseKey = ""
-	t.Run("test register: empty database key", func(t *testing.T) {
+	t.Run("test authorize: empty database key", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &cred})
 		require.ErrorContains(t, err, "invalid user login or password")
 	})
 
 	gs.DatabaseKey = "strongDBKey2Ks5nM2J5JaI59PPEhL1x"
-	t.Run("test register: invalid password", func(t *testing.T) {
+	t.Run("test authorize: invalid password", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &proto.Credentials{Login: "login", Password: "badPassword"}})
 		require.ErrorContains(t, err, "invalid user login or password")
 	})
 
-	t.Run("test register: ok", func(t *testing.T) {
+	t.Run("test authorize: ok", func(t *testing.T) {
 		_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &cred})
 		require.NoError(t, err)
 	})

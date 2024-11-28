@@ -95,41 +95,41 @@
 				
 				<option value="file19">github.com/Vidkin/gophkeeper/internal/config/server_address.go (100.0%)</option>
 				
-				<option value="file20">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_add.go (0.0%)</option>
+				<option value="file20">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_add.go (75.0%)</option>
 				
-				<option value="file21">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_get.go (0.0%)</option>
+				<option value="file21">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_get.go (80.0%)</option>
 				
-				<option value="file22">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_get_one.go (0.0%)</option>
+				<option value="file22">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_get_one.go (100.0%)</option>
 				
-				<option value="file23">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_remove.go (0.0%)</option>
+				<option value="file23">github.com/Vidkin/gophkeeper/internal/handlers/bank_cards_remove.go (81.8%)</option>
 				
-				<option value="file24">github.com/Vidkin/gophkeeper/internal/handlers/echo.go (0.0%)</option>
+				<option value="file24">github.com/Vidkin/gophkeeper/internal/handlers/echo.go (100.0%)</option>
 				
-				<option value="file25">github.com/Vidkin/gophkeeper/internal/handlers/files_download.go (0.0%)</option>
+				<option value="file25">github.com/Vidkin/gophkeeper/internal/handlers/files_download.go (78.0%)</option>
 				
-				<option value="file26">github.com/Vidkin/gophkeeper/internal/handlers/files_get.go (0.0%)</option>
+				<option value="file26">github.com/Vidkin/gophkeeper/internal/handlers/files_get.go (86.7%)</option>
 				
-				<option value="file27">github.com/Vidkin/gophkeeper/internal/handlers/files_remove.go (0.0%)</option>
+				<option value="file27">github.com/Vidkin/gophkeeper/internal/handlers/files_remove.go (73.3%)</option>
 				
-				<option value="file28">github.com/Vidkin/gophkeeper/internal/handlers/files_upload.go (0.0%)</option>
+				<option value="file28">github.com/Vidkin/gophkeeper/internal/handlers/files_upload.go (72.1%)</option>
 				
-				<option value="file29">github.com/Vidkin/gophkeeper/internal/handlers/note_remove.go (0.0%)</option>
+				<option value="file29">github.com/Vidkin/gophkeeper/internal/handlers/notes_add.go (75.0%)</option>
 				
-				<option value="file30">github.com/Vidkin/gophkeeper/internal/handlers/notes_add.go (0.0%)</option>
+				<option value="file30">github.com/Vidkin/gophkeeper/internal/handlers/notes_get.go (80.0%)</option>
 				
-				<option value="file31">github.com/Vidkin/gophkeeper/internal/handlers/notes_get.go (0.0%)</option>
+				<option value="file31">github.com/Vidkin/gophkeeper/internal/handlers/notes_get_one.go (100.0%)</option>
 				
-				<option value="file32">github.com/Vidkin/gophkeeper/internal/handlers/notes_get_one.go (0.0%)</option>
+				<option value="file32">github.com/Vidkin/gophkeeper/internal/handlers/notes_remove.go (81.8%)</option>
 				
 				<option value="file33">github.com/Vidkin/gophkeeper/internal/handlers/user_authorize.go (90.5%)</option>
 				
-				<option value="file34">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_add.go (0.0%)</option>
+				<option value="file34">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_add.go (75.0%)</option>
 				
-				<option value="file35">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_get.go (0.0%)</option>
+				<option value="file35">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_get.go (80.0%)</option>
 				
-				<option value="file36">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_get_one.go (0.0%)</option>
+				<option value="file36">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_get_one.go (100.0%)</option>
 				
-				<option value="file37">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_remove.go (0.0%)</option>
+				<option value="file37">github.com/Vidkin/gophkeeper/internal/handlers/user_credentials_remove.go (81.8%)</option>
 				
 				<option value="file38">github.com/Vidkin/gophkeeper/internal/handlers/user_register.go (88.9%)</option>
 				
@@ -155,9 +155,9 @@
 				
 				<option value="file49">github.com/Vidkin/gophkeeper/pkg/jwt/jwt.go (80.0%)</option>
 				
-				<option value="file50">github.com/Vidkin/gophkeeper/proto/gophkeeper.pb.go (50.9%)</option>
+				<option value="file50">github.com/Vidkin/gophkeeper/proto/gophkeeper.pb.go (53.2%)</option>
 				
-				<option value="file51">github.com/Vidkin/gophkeeper/proto/gophkeeper_grpc.pb.go (76.3%)</option>
+				<option value="file51">github.com/Vidkin/gophkeeper/proto/gophkeeper_grpc.pb.go (80.3%)</option>
 				
 				</select>
 			</div>
@@ -2770,13 +2770,13 @@ import (
 //
 // The function validates the input fields and logs an error if any required field is missing.
 // It then creates a model.BankCard instance and attempts to add it to the storage.
-func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCardRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Card.Cvv == "" || in.Card.ExpireDate == "" || in.Card.Number == "" || in.Card.Owner == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide: CVV, expire date, card number, card owner")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide: CVV, expire date, card number, card owner")
         }</span>
 
-        <span class="cov0" title="0">card := &amp;model.BankCard{
+        <span class="cov8" title="1">card := &amp;model.BankCard{
                 UserID:      ctx.Value(interceptors.UserID).(int64),
                 CVV:         in.Card.Cvv,
                 Owner:       in.Card.Owner,
@@ -2789,7 +2789,7 @@ func (g *GophkeeperServer) AddBankCard(ctx context.Context, in *proto.AddBankCar
                 logger.Log.Error("error add bank card", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error add bank card")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -2821,7 +2821,7 @@ import (
 // The function fetches the user's bank cards from the storage and constructs a response
 // containing the card details. If an error occurs during the retrieval, it logs the error
 // and returns an appropriate gRPC status code.
-func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCardsRequest) (*proto.GetBankCardsResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCardsRequest) (*proto.GetBankCardsResponse, error) <span class="cov8" title="1">{
         var response proto.GetBankCardsResponse
 
         cards, err := g.Storage.GetBankCards(ctx, ctx.Value(interceptors.UserID).(int64))
@@ -2830,8 +2830,8 @@ func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCar
                 return nil, status.Errorf(codes.Internal, "error get bank cards from DB")
         }</span>
 
-        <span class="cov0" title="0">protoCards := make([]*proto.BankCard, len(cards))
-        for i, card := range cards </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">protoCards := make([]*proto.BankCard, len(cards))
+        for i, card := range cards </span><span class="cov8" title="1">{
                 protoCards[i] = &amp;proto.BankCard{
                         Owner:       card.Owner,
                         Number:      card.Number,
@@ -2841,7 +2841,7 @@ func (g *GophkeeperServer) GetBankCards(ctx context.Context, _ *proto.GetBankCar
                         Id:          card.ID,
                 }
         }</span>
-        <span class="cov0" title="0">response.Cards = protoCards
+        <span class="cov8" title="1">response.Cards = protoCards
         return &amp;response, nil</span>
 }
 </pre>
@@ -2874,20 +2874,20 @@ import (
 // The function converts the card ID from a string to an integer and fetches the corresponding
 // bank card from the storage. If an error occurs during the retrieval, it logs the error
 // and returns an appropriate gRPC status code.
-func (g *GophkeeperServer) GetBankCard(ctx context.Context, in *proto.GetBankCardRequest) (*proto.GetBankCardResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetBankCard(ctx context.Context, in *proto.GetBankCardRequest) (*proto.GetBankCardResponse, error) <span class="cov8" title="1">{
         cardID, err := strconv.Atoi(in.Id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, status.Errorf(codes.InvalidArgument, "missing bank card id")
         }</span>
-        <span class="cov0" title="0">var response proto.GetBankCardResponse
+        <span class="cov8" title="1">var response proto.GetBankCardResponse
 
         card, err := g.Storage.GetBankCard(ctx, int64(cardID))
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("error get bank card from DB", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error get bank card from DB")
         }</span>
 
-        <span class="cov0" title="0">protoCard := &amp;proto.BankCard{
+        <span class="cov8" title="1">protoCard := &amp;proto.BankCard{
                 Owner:       card.Owner,
                 Number:      card.Number,
                 ExpireDate:  card.ExpireDate,
@@ -2929,23 +2929,23 @@ import (
 // The function validates the input ID, converts it to an integer, and attempts to remove the
 // corresponding bank card from the storage. If an error occurs during the removal, it logs the
 // error and returns an appropriate gRPC status code.
-func (g *GophkeeperServer) RemoveBankCard(ctx context.Context, in *proto.RemoveBankCardRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Id == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) RemoveBankCard(ctx context.Context, in *proto.RemoveBankCardRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Id == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide card id")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide card id")
         }</span>
 
-        <span class="cov0" title="0">cardID, err := strconv.ParseInt(in.Id, 10, 64)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">cardID, err := strconv.ParseInt(in.Id, 10, 64)
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("invalid card id")
                 return nil, status.Errorf(codes.InvalidArgument, "invalid card id")
         }</span>
 
-        <span class="cov0" title="0">if err = g.Storage.RemoveBankCard(ctx, cardID); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = g.Storage.RemoveBankCard(ctx, cardID); err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove bank card", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove bank card")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -2968,7 +2968,7 @@ import (
 //   - An error if the operation fails (this method does not generate errors).
 //
 // The function simply takes the input message from the request and returns it in the response.
-func (g *GophkeeperServer) Echo(_ context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) Echo(_ context.Context, in *proto.EchoRequest) (*proto.EchoResponse, error) <span class="cov8" title="1">{
         var response proto.EchoResponse
         response.Message = in.Message
         return &amp;response, nil
@@ -3008,58 +3008,58 @@ import (
 // token and validates it. If the token is valid, it retrieves the file information from the storage
 // and streams the file in chunks to the client. If any errors occur during these processes, they are
 // logged, and appropriate gRPC status codes are returned.
-func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error <span class="cov0" title="0">{
+func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gophkeeper_DownloadServer) error <span class="cov8" title="1">{
         var tokenString string
-        if md, ok := metadata.FromIncomingContext(srv.Context()); ok </span><span class="cov0" title="0">{
+        if md, ok := metadata.FromIncomingContext(srv.Context()); ok </span><span class="cov8" title="1">{
                 values := md.Get("token")
-                if len(values) &gt; 0 </span><span class="cov0" title="0">{
+                if len(values) &gt; 0 </span><span class="cov8" title="1">{
                         tokenString = values[0]
                 }</span>
         }
-        <span class="cov0" title="0">if len(tokenString) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(tokenString) == 0 </span><span class="cov0" title="0">{
                 return status.Error(codes.PermissionDenied, "missing token")
         }</span>
 
-        <span class="cov0" title="0">claims := &amp;jwtPKG.Claims{}
+        <span class="cov8" title="1">claims := &amp;jwtPKG.Claims{}
         token, err := jwt.ParseWithClaims(tokenString, claims,
-                func(t *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                func(t *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
                         if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
                                 logger.Log.Error("unexpected signing method")
                                 return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
                         }</span>
-                        <span class="cov0" title="0">return []byte(g.JWTKey), nil</span>
+                        <span class="cov8" title="1">return []byte(g.JWTKey), nil</span>
                 })
 
-        <span class="cov0" title="0">if err != nil || !token.Valid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil || !token.Valid </span><span class="cov8" title="1">{
                 logger.Log.Error("error parse claims", zap.Error(err))
                 return status.Errorf(codes.PermissionDenied, "error parse claims")
         }</span>
 
-        <span class="cov0" title="0">fileName := norm.NFC.String(in.FileName)
-        if fileName == "" </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">fileName := norm.NFC.String(in.FileName)
+        if fileName == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("file name is required")
                 return status.Error(codes.InvalidArgument, "file name is required")
         }</span>
 
-        <span class="cov0" title="0">fileInfo, err := g.Storage.GetFile(srv.Context(), fileName)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">fileInfo, err := g.Storage.GetFile(srv.Context(), fileName)
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("error getting file info", zap.Error(err))
                 return status.Error(codes.Internal, "error getting file info")
         }</span>
 
-        <span class="cov0" title="0">object, err := g.Minio.GetObject(srv.Context(), fileInfo.BucketName, fileInfo.FileName, minio.GetObjectOptions{})
+        <span class="cov8" title="1">object, err := g.Minio.GetObject(srv.Context(), fileInfo.BucketName, fileInfo.FileName, minio.GetObjectOptions{})
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error getting object from MinIO", zap.Error(err))
                 return status.Error(codes.Internal, "error getting object from MinIO")
         }</span>
 
-        <span class="cov0" title="0">var totalSize int64
+        <span class="cov8" title="1">var totalSize int64
         chunk := make([]byte, 1024)
-        for </span><span class="cov0" title="0">{
+        for </span><span class="cov8" title="1">{
                 clear(chunk)
                 n, err := object.Read(chunk)
-                if err == io.EOF </span><span class="cov0" title="0">{
-                        if n != 0 </span><span class="cov0" title="0">{
+                if err == io.EOF </span><span class="cov8" title="1">{
+                        if n != 0 </span><span class="cov8" title="1">{
                                 totalSize += int64(n)
 
                                 resp := proto.FileDownloadResponse{
@@ -3074,13 +3074,13 @@ func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gop
                                         return err
                                 }</span>
                         }
-                        <span class="cov0" title="0">break</span>
+                        <span class="cov8" title="1">break</span>
                 }
-                <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("error reading object", zap.Error(err))
                         return status.Error(codes.Internal, "error reading object")
                 }</span>
-                <span class="cov0" title="0">totalSize += int64(n)
+                <span class="cov8" title="1">totalSize += int64(n)
 
                 resp := proto.FileDownloadResponse{
                         Chunk:       chunk[:n],
@@ -3094,7 +3094,7 @@ func (g *GophkeeperServer) Download(in *proto.FileDownloadRequest, srv proto.Gop
                         return err
                 }</span>
         }
-        <span class="cov0" title="0">return nil</span>
+        <span class="cov8" title="1">return nil</span>
 }
 </pre>
 		
@@ -3126,7 +3126,7 @@ import (
 // The function fetches the user's files from the storage and constructs a response
 // containing the file details. If an error occurs during the retrieval, it logs the error
 // and returns an appropriate gRPC status code.
-func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesRequest) (*proto.GetFilesResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesRequest) (*proto.GetFilesResponse, error) <span class="cov8" title="1">{
         var response proto.GetFilesResponse
 
         files, err := g.Storage.GetFiles(ctx, ctx.Value(interceptors.UserID).(int64))
@@ -3135,8 +3135,8 @@ func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesReques
                 return nil, status.Errorf(codes.Internal, "error get files from DB")
         }</span>
 
-        <span class="cov0" title="0">protoFiles := make([]*proto.File, len(files))
-        for i, file := range files </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">protoFiles := make([]*proto.File, len(files))
+        for i, file := range files </span><span class="cov8" title="1">{
                 protoFiles[i] = &amp;proto.File{}
                 protoFiles[i].Id = file.ID
                 protoFiles[i].FileName = file.FileName
@@ -3144,7 +3144,7 @@ func (g *GophkeeperServer) GetFiles(ctx context.Context, _ *proto.GetFilesReques
                 protoFiles[i].Description = file.Description
                 protoFiles[i].CreatedAt = file.CreatedAt
         }</span>
-        <span class="cov0" title="0">response.Files = protoFiles
+        <span class="cov8" title="1">response.Files = protoFiles
         return &amp;response, nil</span>
 }
 </pre>
@@ -3182,29 +3182,29 @@ import (
 // MinIO. If an error occurs during the removal from MinIO, it logs the error and returns an Internal status.
 // Finally, it attempts to remove the file from the database, logging any errors that occur and returning an
 // Internal status if the operation fails. If all operations are successful, it returns an empty response.
-func (g *GophkeeperServer) RemoveFile(ctx context.Context, in *proto.FileRemoveRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.FileName == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) RemoveFile(ctx context.Context, in *proto.FileRemoveRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.FileName == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide file name")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide file name")
         }</span>
 
-        <span class="cov0" title="0">file, err := g.Storage.GetFile(ctx, in.FileName)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">file, err := g.Storage.GetFile(ctx, in.FileName)
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("file not found", zap.Error(err))
                 return nil, status.Errorf(codes.NotFound, "file not found")
         }</span>
 
-        <span class="cov0" title="0">err = g.Minio.RemoveObject(ctx, storage.MinioBucketName, file.FileName, minio.RemoveObjectOptions{ForceDelete: true})
+        <span class="cov8" title="1">err = g.Minio.RemoveObject(ctx, storage.MinioBucketName, file.FileName, minio.RemoveObjectOptions{ForceDelete: true})
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove file from minio", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove file from minio")
         }</span>
 
-        <span class="cov0" title="0">if err = g.Storage.RemoveFile(ctx, in.FileName); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = g.Storage.RemoveFile(ctx, in.FileName); err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove file from DB", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove file from DB")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -3240,37 +3240,37 @@ import (
 //
 // Returns:
 //   - An error if any step in the upload process fails, indicating the type of error encountered.
-func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <span class="cov0" title="0">{
+func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <span class="cov8" title="1">{
         var fileName, description string
         var fileSize int64
         var tokenString string
 
-        if md, ok := metadata.FromIncomingContext(stream.Context()); ok </span><span class="cov0" title="0">{
+        if md, ok := metadata.FromIncomingContext(stream.Context()); ok </span><span class="cov8" title="1">{
                 values := md.Get("token")
-                if len(values) &gt; 0 </span><span class="cov0" title="0">{
+                if len(values) &gt; 0 </span><span class="cov8" title="1">{
                         tokenString = values[0]
                 }</span>
         }
-        <span class="cov0" title="0">if len(tokenString) == 0 </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if len(tokenString) == 0 </span><span class="cov0" title="0">{
                 return status.Error(codes.PermissionDenied, "missing token")
         }</span>
 
-        <span class="cov0" title="0">claims := &amp;jwtPKG.Claims{}
+        <span class="cov8" title="1">claims := &amp;jwtPKG.Claims{}
         token, err := jwt.ParseWithClaims(tokenString, claims,
-                func(t *jwt.Token) (interface{}, error) </span><span class="cov0" title="0">{
+                func(t *jwt.Token) (interface{}, error) </span><span class="cov8" title="1">{
                         if _, ok := t.Method.(*jwt.SigningMethodHMAC); !ok </span><span class="cov0" title="0">{
                                 logger.Log.Error("unexpected signing method")
                                 return nil, fmt.Errorf("unexpected signing method: %v", t.Header["alg"])
                         }</span>
-                        <span class="cov0" title="0">return []byte(g.JWTKey), nil</span>
+                        <span class="cov8" title="1">return []byte(g.JWTKey), nil</span>
                 })
 
-        <span class="cov0" title="0">if err != nil || !token.Valid </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil || !token.Valid </span><span class="cov8" title="1">{
                 logger.Log.Error("error parse claims", zap.Error(err))
                 return status.Errorf(codes.PermissionDenied, "error parse claims")
         }</span>
 
-        <span class="cov0" title="0">ctx, cancel := context.WithCancel(context.Background())
+        <span class="cov8" title="1">ctx, cancel := context.WithCancel(context.Background())
         defer cancel()
         pr, pw := io.Pipe()
 
@@ -3279,29 +3279,29 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 logger.Log.Error("empty file")
                 return status.Errorf(codes.FailedPrecondition, "empty file")
         }</span>
-        <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error receive file", zap.Error(err))
                 return status.Errorf(codes.Internal, "error receive file")
         }</span>
 
-        <span class="cov0" title="0">fileName = norm.NFC.String(req.FileName)
+        <span class="cov8" title="1">fileName = norm.NFC.String(req.FileName)
         description = req.Description
         fileSize = req.FileSize
         if fileName == "" || fileSize == 0 </span><span class="cov0" title="0">{
                 return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
         }</span>
 
-        <span class="cov0" title="0">chunkChan := make(chan []byte)
-        go func() </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">chunkChan := make(chan []byte)
+        go func() </span><span class="cov8" title="1">{
                 defer close(chunkChan)
-                for </span><span class="cov0" title="0">{
+                for </span><span class="cov8" title="1">{
                         chunk := req.GetChunk()
-                        if chunk != nil </span><span class="cov0" title="0">{
+                        if chunk != nil </span><span class="cov8" title="1">{
                                 chunkChan &lt;- chunk
                         }</span>
 
-                        <span class="cov0" title="0">req, err = stream.Recv()
-                        if err == io.EOF </span><span class="cov0" title="0">{
+                        <span class="cov8" title="1">req, err = stream.Recv()
+                        if err == io.EOF </span><span class="cov8" title="1">{
                                 break</span>
                         }
                         <span class="cov0" title="0">if err != nil </span><span class="cov0" title="0">{
@@ -3312,15 +3312,15 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 }
         }()
 
-        <span class="cov0" title="0">go func() </span><span class="cov0" title="0">{
-                defer func(pw *io.PipeWriter) </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">go func() </span><span class="cov8" title="1">{
+                defer func(pw *io.PipeWriter) </span><span class="cov8" title="1">{
                         err = pw.Close()
                         if err != nil </span><span class="cov0" title="0">{
                                 logger.Log.Error("failed to close pipe writer", zap.Error(err))
                         }</span>
                 }(pw)
 
-                <span class="cov0" title="0">for chunk := range chunkChan </span><span class="cov0" title="0">{
+                <span class="cov8" title="1">for chunk := range chunkChan </span><span class="cov8" title="1">{
                         if _, err = pw.Write(chunk); err != nil </span><span class="cov0" title="0">{
                                 logger.Log.Error("error writing chunk to pipe", zap.Error(err))
                                 return
@@ -3328,15 +3328,15 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 }
         }()
 
-        <span class="cov0" title="0">_, err = g.Minio.PutObject(ctx, storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
+        <span class="cov8" title="1">_, err = g.Minio.PutObject(ctx, storage.MinioBucketName, fileName, pr, fileSize, minio.PutObjectOptions{
                 ContentType: "application/octet-stream",
         })
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("failed to upload file to MinIO", zap.Error(err))
                 return status.Errorf(codes.Internal, "failed to upload file to MinIO")
         }</span>
 
-        <span class="cov0" title="0">err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, description, claims.UserID, fileSize)
+        <span class="cov8" title="1">err = g.Storage.AddFile(stream.Context(), storage.MinioBucketName, fileName, description, claims.UserID, fileSize)
         if err != nil </span><span class="cov0" title="0">{
                 if errRm := g.Minio.RemoveObject(stream.Context(), storage.MinioBucketName, fileName, minio.RemoveObjectOptions{ForceDelete: true}); errRm != nil </span><span class="cov0" title="0">{
                         logger.Log.Error("failed to remove file from MinIO", zap.Error(err))
@@ -3345,7 +3345,7 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                 return status.Errorf(codes.Internal, "failed to upload file to MinIO")</span>
         }
 
-        <span class="cov0" title="0">logger.Log.Info("file uploaded", zap.String("fileName", fileName), zap.String("fileSize", fmt.Sprint(fileSize)))
+        <span class="cov8" title="1">logger.Log.Info("file uploaded", zap.String("fileName", fileName), zap.String("fileSize", fmt.Sprint(fileSize)))
         return stream.SendAndClose(&amp;proto.FileUploadResponse{
                 FileName: fileName,
                 FileSize: fileSize,
@@ -3354,51 +3354,6 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
 </pre>
 		
 		<pre class="file" id="file29" style="display: none">package handlers
-
-import (
-        "context"
-        "strconv"
-
-        "go.uber.org/zap"
-        "google.golang.org/grpc/codes"
-        "google.golang.org/grpc/status"
-        "google.golang.org/protobuf/types/known/emptypb"
-
-        "github.com/Vidkin/gophkeeper/internal/logger"
-        "github.com/Vidkin/gophkeeper/proto"
-)
-
-// RemoveNote deletes a note associated with the user from the storage.
-//
-// Parameters:
-//   - ctx: The context for the gRPC call, which may contain user identification information.
-//   - in: A pointer to the proto.RemoveNoteRequest structure, which contains the ID of the note to be removed.
-//
-// Returns:
-//   - A pointer to an empty proto.Empty response indicating successful removal of the note.
-//   - An error if the operation fails, for example, if the note ID is not provided, if the note ID is
-//     invalid, or if there is an internal error while removing the note from the storage.
-func (g *GophkeeperServer) RemoveNote(ctx context.Context, in *proto.RemoveNoteRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Id == "" </span><span class="cov0" title="0">{
-                logger.Log.Error("you must provide note id")
-                return nil, status.Errorf(codes.InvalidArgument, "you must provide note id")
-        }</span>
-
-        <span class="cov0" title="0">noteID, err := strconv.ParseInt(in.Id, 10, 64)
-        if err != nil </span><span class="cov0" title="0">{
-                logger.Log.Error("invalid note id")
-                return nil, status.Errorf(codes.InvalidArgument, "invalid note id")
-        }</span>
-
-        <span class="cov0" title="0">if err = g.Storage.RemoveNote(ctx, noteID); err != nil </span><span class="cov0" title="0">{
-                logger.Log.Error("error remove note", zap.Error(err))
-                return nil, status.Errorf(codes.Internal, "error remove note")
-        }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
-}
-</pre>
-		
-		<pre class="file" id="file30" style="display: none">package handlers
 
 import (
         "context"
@@ -3424,13 +3379,13 @@ import (
 //   - A pointer to an empty proto.Empty response indicating successful addition of the note.
 //   - An error if the operation fails, for example, if the note text is not provided or if there is an
 //     internal error while adding the note to the storage.
-func (g *GophkeeperServer) AddNote(ctx context.Context, in *proto.AddNoteRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Note.Text == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) AddNote(ctx context.Context, in *proto.AddNoteRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Note.Text == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide note text")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide note text")
         }</span>
 
-        <span class="cov0" title="0">note := &amp;model.Note{
+        <span class="cov8" title="1">note := &amp;model.Note{
                 UserID:      ctx.Value(interceptors.UserID).(int64),
                 Text:        in.Note.Text,
                 Description: in.Note.Description,
@@ -3440,11 +3395,11 @@ func (g *GophkeeperServer) AddNote(ctx context.Context, in *proto.AddNoteRequest
                 logger.Log.Error("error add note", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error add note")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file31" style="display: none">package handlers
+		<pre class="file" id="file30" style="display: none">package handlers
 
 import (
         "context"
@@ -3472,7 +3427,7 @@ import (
 // The function fetches the user's notes from the storage using the user ID extracted from the context.
 // If an error occurs during the retrieval, it logs the error and returns an Internal status. If the
 // operation is successful, it constructs a response containing the notes and returns it.
-func (g *GophkeeperServer) GetNotes(ctx context.Context, _ *proto.GetNotesRequest) (*proto.GetNotesResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetNotes(ctx context.Context, _ *proto.GetNotesRequest) (*proto.GetNotesResponse, error) <span class="cov8" title="1">{
         var response proto.GetNotesResponse
 
         notes, err := g.Storage.GetNotes(ctx, ctx.Value(interceptors.UserID).(int64))
@@ -3481,20 +3436,20 @@ func (g *GophkeeperServer) GetNotes(ctx context.Context, _ *proto.GetNotesReques
                 return nil, status.Errorf(codes.Internal, "error get notes from DB")
         }</span>
 
-        <span class="cov0" title="0">protoNotes := make([]*proto.Note, len(notes))
-        for i, note := range notes </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">protoNotes := make([]*proto.Note, len(notes))
+        for i, note := range notes </span><span class="cov8" title="1">{
                 protoNotes[i] = &amp;proto.Note{
                         Text:        note.Text,
                         Description: note.Description,
                         Id:          note.ID,
                 }
         }</span>
-        <span class="cov0" title="0">response.Notes = protoNotes
+        <span class="cov8" title="1">response.Notes = protoNotes
         return &amp;response, nil</span>
 }
 </pre>
 		
-		<pre class="file" id="file32" style="display: none">package handlers
+		<pre class="file" id="file31" style="display: none">package handlers
 
 import (
         "context"
@@ -3523,26 +3478,71 @@ import (
 // it returns an InvalidArgument error. It then retrieves the note from the storage using the note ID.
 // If an error occurs during the retrieval, it logs the error and returns an Internal status. If the
 // operation is successful, it constructs a response containing the note and returns it.
-func (g *GophkeeperServer) GetNote(ctx context.Context, in *proto.GetNoteRequest) (*proto.GetNoteResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetNote(ctx context.Context, in *proto.GetNoteRequest) (*proto.GetNoteResponse, error) <span class="cov8" title="1">{
         noteID, err := strconv.Atoi(in.Id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, status.Errorf(codes.InvalidArgument, "missing note id")
         }</span>
-        <span class="cov0" title="0">var response proto.GetNoteResponse
+        <span class="cov8" title="1">var response proto.GetNoteResponse
 
         note, err := g.Storage.GetNote(ctx, int64(noteID))
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("error get note from DB", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error get note from DB")
         }</span>
 
-        <span class="cov0" title="0">protoNote := &amp;proto.Note{
+        <span class="cov8" title="1">protoNote := &amp;proto.Note{
                 Text:        note.Text,
                 Description: note.Description,
                 Id:          note.ID,
         }
         response.Note = protoNote
         return &amp;response, nil</span>
+}
+</pre>
+		
+		<pre class="file" id="file32" style="display: none">package handlers
+
+import (
+        "context"
+        "strconv"
+
+        "go.uber.org/zap"
+        "google.golang.org/grpc/codes"
+        "google.golang.org/grpc/status"
+        "google.golang.org/protobuf/types/known/emptypb"
+
+        "github.com/Vidkin/gophkeeper/internal/logger"
+        "github.com/Vidkin/gophkeeper/proto"
+)
+
+// RemoveNote deletes a note associated with the user from the storage.
+//
+// Parameters:
+//   - ctx: The context for the gRPC call, which may contain user identification information.
+//   - in: A pointer to the proto.RemoveNoteRequest structure, which contains the ID of the note to be removed.
+//
+// Returns:
+//   - A pointer to an empty proto.Empty response indicating successful removal of the note.
+//   - An error if the operation fails, for example, if the note ID is not provided, if the note ID is
+//     invalid, or if there is an internal error while removing the note from the storage.
+func (g *GophkeeperServer) RemoveNote(ctx context.Context, in *proto.RemoveNoteRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Id == "" </span><span class="cov8" title="1">{
+                logger.Log.Error("you must provide note id")
+                return nil, status.Errorf(codes.InvalidArgument, "you must provide note id")
+        }</span>
+
+        <span class="cov8" title="1">noteID, err := strconv.ParseInt(in.Id, 10, 64)
+        if err != nil </span><span class="cov8" title="1">{
+                logger.Log.Error("invalid note id")
+                return nil, status.Errorf(codes.InvalidArgument, "invalid note id")
+        }</span>
+
+        <span class="cov8" title="1">if err = g.Storage.RemoveNote(ctx, noteID); err != nil </span><span class="cov0" title="0">{
+                logger.Log.Error("error remove note", zap.Error(err))
+                return nil, status.Errorf(codes.Internal, "error remove note")
+        }</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -3647,13 +3647,13 @@ import (
 // populating it with the user ID (extracted from the context), login, password, and description from the
 // request. If an error occurs while adding the credentials to the storage, it logs the error and returns
 // an Internal status. If the operation is successful, it returns an empty response.
-func (g *GophkeeperServer) AddUserCredentials(ctx context.Context, in *proto.AddUserCredentialsRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Credentials.Login == "" || in.Credentials.Password == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) AddUserCredentials(ctx context.Context, in *proto.AddUserCredentialsRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Credentials.Login == "" || in.Credentials.Password == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide: login and password")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide: login and password")
         }</span>
 
-        <span class="cov0" title="0">cred := &amp;model.Credentials{
+        <span class="cov8" title="1">cred := &amp;model.Credentials{
                 UserID:      ctx.Value(interceptors.UserID).(int64),
                 Login:       in.Credentials.Login,
                 Password:    in.Credentials.Password,
@@ -3664,7 +3664,7 @@ func (g *GophkeeperServer) AddUserCredentials(ctx context.Context, in *proto.Add
                 logger.Log.Error("error add user credentials", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error add user credentials")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -3696,7 +3696,7 @@ import (
 // The function fetches the user's credentials from the storage using the user ID extracted from the context.
 // If an error occurs during the retrieval, it logs the error and returns an Internal status. If the
 // operation is successful, it constructs a response containing the credentials and returns it.
-func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, _ *proto.GetUserCredentialsRequest) (*proto.GetUserCredentialsResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, _ *proto.GetUserCredentialsRequest) (*proto.GetUserCredentialsResponse, error) <span class="cov8" title="1">{
         var response proto.GetUserCredentialsResponse
 
         creds, err := g.Storage.GetUserCredentials(ctx, ctx.Value(interceptors.UserID).(int64))
@@ -3705,8 +3705,8 @@ func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, _ *proto.GetU
                 return nil, status.Errorf(codes.Internal, "error get user credentials from DB")
         }</span>
 
-        <span class="cov0" title="0">protoCreds := make([]*proto.Credentials, len(creds))
-        for i, cred := range creds </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">protoCreds := make([]*proto.Credentials, len(creds))
+        for i, cred := range creds </span><span class="cov8" title="1">{
                 protoCreds[i] = &amp;proto.Credentials{
                         Login:       cred.Login,
                         Password:    cred.Password,
@@ -3714,7 +3714,7 @@ func (g *GophkeeperServer) GetUserCredentials(ctx context.Context, _ *proto.GetU
                         Id:          cred.ID,
                 }
         }</span>
-        <span class="cov0" title="0">response.Credentials = protoCreds
+        <span class="cov8" title="1">response.Credentials = protoCreds
         return &amp;response, nil</span>
 }
 </pre>
@@ -3749,20 +3749,20 @@ import (
 // fails, it returns an InvalidArgument error. It then retrieves the credential from the storage using the
 // credential ID. If an error occurs during the retrieval, it logs the error and returns an Internal status.
 // If the operation is successful, it constructs a response containing the credential and returns it.
-func (g *GophkeeperServer) GetUserCredential(ctx context.Context, in *proto.GetUserCredentialRequest) (*proto.GetUserCredentialResponse, error) <span class="cov0" title="0">{
+func (g *GophkeeperServer) GetUserCredential(ctx context.Context, in *proto.GetUserCredentialRequest) (*proto.GetUserCredentialResponse, error) <span class="cov8" title="1">{
         credID, err := strconv.Atoi(in.Id)
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 return nil, status.Errorf(codes.InvalidArgument, "missing credentials id")
         }</span>
-        <span class="cov0" title="0">var response proto.GetUserCredentialResponse
+        <span class="cov8" title="1">var response proto.GetUserCredentialResponse
 
         cred, err := g.Storage.GetUserCredential(ctx, int64(credID))
-        if err != nil </span><span class="cov0" title="0">{
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("error get credentials from DB", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error get credentials from DB")
         }</span>
 
-        <span class="cov0" title="0">protoCreds := &amp;proto.Credentials{
+        <span class="cov8" title="1">protoCreds := &amp;proto.Credentials{
                 Login:       cred.Login,
                 Password:    cred.Password,
                 Description: cred.Description,
@@ -3805,23 +3805,23 @@ import (
 // If the parsing fails, it logs the error and returns an InvalidArgument status. If the credential ID is
 // valid, it proceeds to remove the credential from the storage. If an error occurs during the removal, it
 // logs the error and returns an Internal status. If the operation is successful, it returns an empty response.
-func (g *GophkeeperServer) RemoveUserCredentials(ctx context.Context, in *proto.RemoveUserCredentialsRequest) (*emptypb.Empty, error) <span class="cov0" title="0">{
-        if in.Id == "" </span><span class="cov0" title="0">{
+func (g *GophkeeperServer) RemoveUserCredentials(ctx context.Context, in *proto.RemoveUserCredentialsRequest) (*emptypb.Empty, error) <span class="cov8" title="1">{
+        if in.Id == "" </span><span class="cov8" title="1">{
                 logger.Log.Error("you must provide credentials id")
                 return nil, status.Errorf(codes.InvalidArgument, "you must provide credentials id")
         }</span>
 
-        <span class="cov0" title="0">credID, err := strconv.ParseInt(in.Id, 10, 64)
-        if err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">credID, err := strconv.ParseInt(in.Id, 10, 64)
+        if err != nil </span><span class="cov8" title="1">{
                 logger.Log.Error("invalid credentials id")
                 return nil, status.Errorf(codes.InvalidArgument, "invalid credentials id")
         }</span>
 
-        <span class="cov0" title="0">if err = g.Storage.RemoveUserCredential(ctx, credID); err != nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if err = g.Storage.RemoveUserCredential(ctx, credID); err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error remove user credentials", zap.Error(err))
                 return nil, status.Errorf(codes.Internal, "error remove user credentials")
         }</span>
-        <span class="cov0" title="0">return &amp;emptypb.Empty{}, nil</span>
+        <span class="cov8" title="1">return &amp;emptypb.Empty{}, nil</span>
 }
 </pre>
 		
@@ -5888,7 +5888,7 @@ type EchoRequest struct {
         Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 }
 
-func (x *EchoRequest) Reset() <span class="cov0" title="0">{
+func (x *EchoRequest) Reset() <span class="cov8" title="1">{
         *x = EchoRequest{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[16]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5933,7 +5933,7 @@ type EchoResponse struct {
         Message string `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 }
 
-func (x *EchoResponse) Reset() <span class="cov0" title="0">{
+func (x *EchoResponse) Reset() <span class="cov8" title="1">{
         *x = EchoResponse{}
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[17]
         ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -5946,14 +5946,14 @@ func (x *EchoResponse) String() string <span class="cov0" title="0">{
 
 func (*EchoResponse) ProtoMessage() {<span class="cov0" title="0">}</span>
 
-func (x *EchoResponse) ProtoReflect() protoreflect.Message <span class="cov0" title="0">{
+func (x *EchoResponse) ProtoReflect() protoreflect.Message <span class="cov8" title="1">{
         mi := &amp;file_proto_gophkeeper_proto_msgTypes[17]
-        if x != nil </span><span class="cov0" title="0">{
+        if x != nil </span><span class="cov8" title="1">{
                 ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
-                if ms.LoadMessageInfo() == nil </span><span class="cov0" title="0">{
+                if ms.LoadMessageInfo() == nil </span><span class="cov8" title="1">{
                         ms.StoreMessageInfo(mi)
                 }</span>
-                <span class="cov0" title="0">return ms</span>
+                <span class="cov8" title="1">return ms</span>
         }
         <span class="cov0" title="0">return mi.MessageOf(x)</span>
 }
@@ -7275,14 +7275,14 @@ func (c *gophkeeperClient) Authorize(ctx context.Context, in *AuthorizeRequest, 
         <span class="cov8" title="1">return out, nil</span>
 }
 
-func (c *gophkeeperClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) <span class="cov0" title="0">{
+func (c *gophkeeperClient) Echo(ctx context.Context, in *EchoRequest, opts ...grpc.CallOption) (*EchoResponse, error) <span class="cov8" title="1">{
         cOpts := append([]grpc.CallOption{grpc.StaticMethod()}, opts...)
         out := new(EchoResponse)
         err := c.cc.Invoke(ctx, Gophkeeper_Echo_FullMethodName, in, out, cOpts...)
         if err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">return out, nil</span>
+        <span class="cov8" title="1">return out, nil</span>
 }
 
 func (c *gophkeeperClient) AddBankCard(ctx context.Context, in *AddBankCardRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) <span class="cov8" title="1">{
@@ -7604,22 +7604,22 @@ func _Gophkeeper_Authorize_Handler(srv interface{}, ctx context.Context, dec fun
         <span class="cov8" title="1">return interceptor(ctx, in, info, handler)</span>
 }
 
-func _Gophkeeper_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) <span class="cov0" title="0">{
+func _Gophkeeper_Echo_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) <span class="cov8" title="1">{
         in := new(EchoRequest)
         if err := dec(in); err != nil </span><span class="cov0" title="0">{
                 return nil, err
         }</span>
-        <span class="cov0" title="0">if interceptor == nil </span><span class="cov0" title="0">{
+        <span class="cov8" title="1">if interceptor == nil </span><span class="cov0" title="0">{
                 return srv.(GophkeeperServer).Echo(ctx, in)
         }</span>
-        <span class="cov0" title="0">info := &amp;grpc.UnaryServerInfo{
+        <span class="cov8" title="1">info := &amp;grpc.UnaryServerInfo{
                 Server:     srv,
                 FullMethod: Gophkeeper_Echo_FullMethodName,
         }
-        handler := func(ctx context.Context, req interface{}) (interface{}, error) </span><span class="cov0" title="0">{
+        handler := func(ctx context.Context, req interface{}) (interface{}, error) </span><span class="cov8" title="1">{
                 return srv.(GophkeeperServer).Echo(ctx, req.(*EchoRequest))
         }</span>
-        <span class="cov0" title="0">return interceptor(ctx, in, info, handler)</span>
+        <span class="cov8" title="1">return interceptor(ctx, in, info, handler)</span>
 }
 
 func _Gophkeeper_AddBankCard_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) <span class="cov8" title="1">{

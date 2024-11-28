@@ -15,7 +15,6 @@ import (
 
 const (
 	TokenFileName = "gophkeeperJWT.tmp"
-	expiredToken  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzIzODczMzgsIlVzZXJJRCI6MX0.B6kBiV1YOiDZd1oxp4weHgkFtJcN5VebwWpRD70uQDw"
 )
 
 func GetTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
