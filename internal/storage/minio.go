@@ -6,8 +6,10 @@ package storage
 import (
 	"context"
 	"crypto/tls"
+	"crypto/x509"
 	"io"
 	"net/http"
+	"os"
 
 	"github.com/minio/minio-go/v7"
 	"github.com/minio/minio-go/v7/pkg/credentials"
@@ -42,15 +44,26 @@ type MinioClientInterface interface {
 // It then attempts to create a bucket with the name defined by MinioBucketName. If the bucket
 // already exists, it logs an informational message. If the bucket creation fails for any other
 // reason, it returns an error. If successful, it returns the MinIO client instance.
-func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface) (MinioClientInterface, error) {
+func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface, certPath string) (MinioClientInterface, error) {
 	ctx := context.Background()
 	if minioClient == nil {
 		var err error
+
+		certPool := x509.NewCertPool()
+		caCert, err := os.ReadFile(certPath)
+		if err != nil {
+			return nil, err
+		}
+		if ok := certPool.AppendCertsFromPEM(caCert); !ok {
+			return nil, err
+		}
+
 		minioClient, err = minio.New(endpoint, &minio.Options{
 			Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
 			Secure: true,
 			Transport: &http.Transport{
 				TLSClientConfig: &tls.Config{
+					RootCAs:            certPool,
 					InsecureSkipVerify: true,
 				},
 			},

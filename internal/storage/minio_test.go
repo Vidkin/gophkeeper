@@ -107,7 +107,7 @@ func TestNewMinioStorage(t *testing.T) {
 			}
 
 			// Call NewMinioStorage with the mock client
-			minioClient, err := NewMinioStorage(tt.endpoint, tt.accessKeyID, tt.secretAccessKey, mockClient)
+			minioClient, err := NewMinioStorage(tt.endpoint, tt.accessKeyID, tt.secretAccessKey, mockClient, "../../certs/public.crt")
 
 			if (err != nil) != tt.expectErr {
 				t.Errorf("NewMinioStorage() error = %v, expectErr %v", err, tt.expectErr)

@@ -54,7 +54,8 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) {
 		logger.Log.Error("error init postgres storage", zap.Error(err))
 		return nil, err
 	}
-	minioClient, err := storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey, nil)
+	minioClient, err := storage.NewMinioStorage(
+		cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey, nil, cfg.CryptoKeyPublic)
 	if err != nil {
 		logger.Log.Error("error init minio storage", zap.Error(err))
 		return nil, err

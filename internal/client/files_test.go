@@ -24,7 +24,9 @@ func TestFiles(t *testing.T) {
 		"127.0.0.1:9000",
 		"minioadmin",
 		"minioadmin",
-		nil)
+		nil,
+		"../../certs/public.crt",
+	)
 	require.NoError(t, err)
 	gs := &handlers.GophkeeperServer{
 		Minio:       minioClient,

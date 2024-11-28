@@ -135,7 +135,7 @@
 				
 				<option value="file39">github.com/Vidkin/gophkeeper/internal/logger/logger.go (81.8%)</option>
 				
-				<option value="file40">github.com/Vidkin/gophkeeper/internal/storage/minio.go (71.4%)</option>
+				<option value="file40">github.com/Vidkin/gophkeeper/internal/storage/minio.go (50.0%)</option>
 				
 				<option value="file41">github.com/Vidkin/gophkeeper/internal/storage/postgres.go (79.2%)</option>
 				
@@ -824,7 +824,8 @@ func NewServerApp(cfg *config.ServerConfig) (*ServerApp, error) <span class="cov
                 logger.Log.Error("error init postgres storage", zap.Error(err))
                 return nil, err
         }</span>
-        <span class="cov0" title="0">minioClient, err := storage.NewMinioStorage(cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey, nil)
+        <span class="cov0" title="0">minioClient, err := storage.NewMinioStorage(
+                cfg.MinioEndpoint, cfg.MinioAccessKeyID, cfg.MinioSecretAccessKey, nil, cfg.CryptoKeyPublic)
         if err != nil </span><span class="cov0" title="0">{
                 logger.Log.Error("error init minio storage", zap.Error(err))
                 return nil, err
@@ -2641,8 +2642,10 @@ import (
 )
 
 const (
-        DefaultServerAddress = "127.0.0.1" // DefaultServerAddress contains default gRPC server ip address
-        DefaultServerPort    = 8080        // DefaultServerAddress contains default gRPC server port
+        // DefaultServerAddress contains default gRPC server ip address
+        DefaultServerAddress = "127.0.0.1"
+        // DefaultServerPort contains default gRPC server port
+        DefaultServerPort = 8080
 )
 
 // ServerAddress represents the host and port information for a server.
@@ -3287,22 +3290,15 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
         if fileName == "" || fileSize == 0 </span><span class="cov0" title="0">{
                 return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
         }</span>
-        <span class="cov0" title="0">chunk := req.GetChunk()
+
+        <span class="cov0" title="0">chunkChan := make(chan []byte)
         go func() </span><span class="cov0" title="0">{
-                defer func(pw *io.PipeWriter) </span><span class="cov0" title="0">{
-                        err = pw.Close()
-                        if err != nil </span><span class="cov0" title="0">{
-                                logger.Log.Error("failed to close pipe writer", zap.Error(err))
-                        }</span>
-                }(pw)
-                <span class="cov0" title="0">for </span><span class="cov0" title="0">{
+                defer close(chunkChan)
+                for </span><span class="cov0" title="0">{
+                        chunk := req.GetChunk()
                         if chunk != nil </span><span class="cov0" title="0">{
-                                if _, err = pw.Write(chunk); err != nil </span><span class="cov0" title="0">{
-                                        logger.Log.Error("error writing chunk to pipe", zap.Error(err))
-                                        return
-                                }</span>
-                                <span class="cov0" title="0">chunk = nil</span>
-                        }
+                                chunkChan &lt;- chunk
+                        }</span>
 
                         <span class="cov0" title="0">req, err = stream.Recv()
                         if err == io.EOF </span><span class="cov0" title="0">{
@@ -3313,8 +3309,22 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error <s
                                 cancel()
                                 return
                         }</span>
+                }
+        }()
 
-                        <span class="cov0" title="0">chunk = req.GetChunk()</span>
+        <span class="cov0" title="0">go func() </span><span class="cov0" title="0">{
+                defer func(pw *io.PipeWriter) </span><span class="cov0" title="0">{
+                        err = pw.Close()
+                        if err != nil </span><span class="cov0" title="0">{
+                                logger.Log.Error("failed to close pipe writer", zap.Error(err))
+                        }</span>
+                }(pw)
+
+                <span class="cov0" title="0">for chunk := range chunkChan </span><span class="cov0" title="0">{
+                        if _, err = pw.Write(chunk); err != nil </span><span class="cov0" title="0">{
+                                logger.Log.Error("error writing chunk to pipe", zap.Error(err))
+                                return
+                        }</span>
                 }
         }()
 
@@ -3933,8 +3943,10 @@ package storage
 import (
         "context"
         "crypto/tls"
+        "crypto/x509"
         "io"
         "net/http"
+        "os"
 
         "github.com/minio/minio-go/v7"
         "github.com/minio/minio-go/v7/pkg/credentials"
@@ -3969,15 +3981,26 @@ type MinioClientInterface interface {
 // It then attempts to create a bucket with the name defined by MinioBucketName. If the bucket
 // already exists, it logs an informational message. If the bucket creation fails for any other
 // reason, it returns an error. If successful, it returns the MinIO client instance.
-func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface) (MinioClientInterface, error) <span class="cov8" title="1">{
+func NewMinioStorage(endpoint, accessKeyID, secretAccessKey string, minioClient MinioClientInterface, certPath string) (MinioClientInterface, error) <span class="cov8" title="1">{
         ctx := context.Background()
         if minioClient == nil </span><span class="cov0" title="0">{
                 var err error
-                minioClient, err = minio.New(endpoint, &amp;minio.Options{
+
+                certPool := x509.NewCertPool()
+                caCert, err := os.ReadFile(certPath)
+                if err != nil </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+                <span class="cov0" title="0">if ok := certPool.AppendCertsFromPEM(caCert); !ok </span><span class="cov0" title="0">{
+                        return nil, err
+                }</span>
+
+                <span class="cov0" title="0">minioClient, err = minio.New(endpoint, &amp;minio.Options{
                         Creds:  credentials.NewStaticV4(accessKeyID, secretAccessKey, ""),
                         Secure: true,
                         Transport: &amp;http.Transport{
                                 TLSClientConfig: &amp;tls.Config{
+                                        RootCAs:            certPool,
                                         InsecureSkipVerify: true,
                                 },
                         },
@@ -4970,7 +4993,8 @@ import (
 type contextKey string
 
 const (
-        UserID contextKey = "UserID" // UserID field name const
+        // UserID field name const
+        UserID contextKey = "UserID"
 )
 
 // ValidateToken returns a gRPC unary server interceptor that validates JWT tokens
