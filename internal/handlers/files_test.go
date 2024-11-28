@@ -108,13 +108,16 @@ func TestFiles(t *testing.T) {
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 	t.Run("upload file: error expired token", func(t *testing.T) {
 		stream, err := client.Upload(ctx)
+		require.NoError(t, err)
 		req := &proto.FileUploadRequest{
 			FileName:    file.FileName,
 			Description: file.Description,
 			FileSize:    file.FileSize,
 			Chunk:       ft,
 		}
+		require.NoError(t, err)
 		err = stream.Send(req)
+		require.NoError(t, err)
 		_, err = stream.CloseAndRecv()
 		require.ErrorContains(t, err, "error parse claims")
 	})
@@ -144,6 +147,7 @@ func TestFiles(t *testing.T) {
 
 	t.Run("upload file ok", func(t *testing.T) {
 		stream, err := client.Upload(ctx)
+		require.NoError(t, err)
 		req := &proto.FileUploadRequest{
 			FileName:    file.FileName,
 			Description: file.Description,
@@ -151,6 +155,7 @@ func TestFiles(t *testing.T) {
 			Chunk:       ft,
 		}
 		err = stream.Send(req)
+		require.NoError(t, err)
 		_, err = stream.CloseAndRecv()
 		require.NoError(t, err)
 	})
@@ -171,6 +176,7 @@ func TestFiles(t *testing.T) {
 
 	t.Run("upload file error upload file with wrong file size", func(t *testing.T) {
 		stream, err := client.Upload(ctx)
+		require.NoError(t, err)
 		req := &proto.FileUploadRequest{
 			FileName:    file.FileName,
 			Description: file.Description,
@@ -178,6 +184,7 @@ func TestFiles(t *testing.T) {
 			Chunk:       ft,
 		}
 		err = stream.Send(req)
+		require.NoError(t, err)
 		_, err = stream.CloseAndRecv()
 		require.Error(t, err)
 	})
