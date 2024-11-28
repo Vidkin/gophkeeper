@@ -58,7 +58,7 @@ jobs:
             -e MINIO_ACCESS_KEY=minioadmin \
             -e MINIO_SECRET_KEY=minioadmin \
             -v minio_data:/data \
-            -v ${{ github.workspace }}/certs:/root/.minio
+            -v ${{ github.workspace }}/certs:/root/.minio \
             minio/minio server /data --console-address ":9001" --certs-dir /root/.minio
 
       - name: Run tests
