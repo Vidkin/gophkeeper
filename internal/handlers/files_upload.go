@@ -80,21 +80,14 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 	if fileName == "" || fileSize == 0 {
 		return status.Errorf(codes.InvalidArgument, "filename, file-size are required")
 	}
-	chunk := req.GetChunk()
+
+	chunkChan := make(chan []byte)
 	go func() {
-		defer func(pw *io.PipeWriter) {
-			err = pw.Close()
-			if err != nil {
-				logger.Log.Error("failed to close pipe writer", zap.Error(err))
-			}
-		}(pw)
+		defer close(chunkChan)
 		for {
+			chunk := req.GetChunk()
 			if chunk != nil {
-				if _, err = pw.Write(chunk); err != nil {
-					logger.Log.Error("error writing chunk to pipe", zap.Error(err))
-					return
-				}
-				chunk = nil
+				chunkChan <- chunk
 			}
 
 			req, err = stream.Recv()
@@ -106,8 +99,22 @@ func (g *GophkeeperServer) Upload(stream proto.Gophkeeper_UploadServer) error {
 				cancel()
 				return
 			}
+		}
+	}()
 
-			chunk = req.GetChunk()
+	go func() {
+		defer func(pw *io.PipeWriter) {
+			err = pw.Close()
+			if err != nil {
+				logger.Log.Error("failed to close pipe writer", zap.Error(err))
+			}
+		}(pw)
+
+		for chunk := range chunkChan {
+			if _, err = pw.Write(chunk); err != nil {
+				logger.Log.Error("error writing chunk to pipe", zap.Error(err))
+				return
+			}
 		}
 	}()
 

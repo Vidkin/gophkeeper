@@ -58,7 +58,10 @@ jobs:
             -e MINIO_ACCESS_KEY=minioadmin \
             -e MINIO_SECRET_KEY=minioadmin \
             -v minio_data:/data \
-            minio/minio server /data --console-address ":9001" --certs-dir ${{ github.workspace }}/certs
+            minio/minio server /data --console-address ":9001" --certs-dir ${{ github.workspace }}/gophkeeper/certs
 
       - name: Run tests
-        run: go test -race -vet=off ./...
+        run:  go test -cover -coverprofile=${{ github.workspace }}/gophkeeper/coverage/coverage.out ./... -vet=off ./...
+
+      - name: Check coverage
+        run: go tool cover -func=${{ github.workspace }}/gophkeeper/coverage/coverage.out

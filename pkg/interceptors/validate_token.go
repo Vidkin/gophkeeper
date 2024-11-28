@@ -23,7 +23,8 @@ import (
 type contextKey string
 
 const (
-	UserID contextKey = "UserID" // UserID field name const
+	// UserID field name const
+	UserID contextKey = "UserID"
 )
 
 // ValidateToken returns a gRPC unary server interceptor that validates JWT tokens
