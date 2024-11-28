@@ -46,7 +46,7 @@ func (g *GophkeeperServer) Authorize(ctx context.Context, in *proto.AuthorizeReq
 
 	decPwd, err := aes.Decrypt(g.DatabaseKey, u.Password)
 	if err != nil {
-		logger.Log.Error("error encrypt password", zap.Error(err))
+		logger.Log.Error("error decrypt password", zap.Error(err))
 		return nil, status.Errorf(codes.PermissionDenied, "invalid user login or password")
 	}
 

@@ -1,8 +1,10 @@
-package client
+package handlers
 
 import (
+	"crypto/tls"
 	"database/sql"
 	"math/rand"
+	"net"
 	"os"
 	"path"
 	"testing"
@@ -14,8 +16,20 @@ import (
 )
 
 const (
-	expiredToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzIzODczMzgsIlVzZXJJRCI6MX0.B6kBiV1YOiDZd1oxp4weHgkFtJcN5VebwWpRD70uQDw"
+	TokenFileName = "gophkeeperJWT.tmp"
+	expiredToken  = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MzIzODczMzgsIlVzZXJJRCI6MX0.B6kBiV1YOiDZd1oxp4weHgkFtJcN5VebwWpRD70uQDw"
 )
+
+func GetTLSListener(addr, certFile, keyFile string) (net.Listener, error) {
+	cert, err := tls.LoadX509KeyPair(certFile, keyFile)
+	if err != nil {
+		return nil, err
+	}
+	cfg := &tls.Config{
+		Certificates: []tls.Certificate{cert},
+		NextProtos:   []string{"h2"}}
+	return tls.Listen("tcp", addr, cfg)
+}
 
 func setExpiredToken(t *testing.T) {
 	err := os.Remove(path.Join(os.TempDir(), TokenFileName))
