@@ -6,24 +6,6 @@ jobs:
   audit:
     runs-on: ubuntu-latest
     services:
-      minio:
-        image: minio/minio
-        ports:
-          - "9000:9000"
-          - "9001:9001"
-        env:
-          MINIO_ACCESS_KEY: minioadmin
-          MINIO_SECRET_KEY: minioadmin
-        volumes:
-          - minio_data:/data
-          - ${{ github.workspace }}/certs:/root/.minio
-        command: server /data --console-address ":9001" --certs-dir /root/.minio
-        options: >-
-          --health-cmd="curl --silent --fail https://localhost:9000/minio/health/live" 
-          --health-interval=30s 
-          --health-timeout=5s 
-          --health-retries=3
-
       postgres:
         image: postgres:latest
         ports:
@@ -36,9 +18,6 @@ jobs:
           --health-interval=30s 
           --health-timeout=5s 
           --health-retries=3
-
-    volumes:
-      minio_data:
 
     steps:
       - uses: actions/checkout@v4.2.2
@@ -67,7 +46,22 @@ jobs:
         run: staticcheck ./...
 
       - name: Install golint
+        run: go install golang.org/x/lint/golint@latest
+
+      - name: Run golint
         run: golint ./...
+
+      - name: start Minio with certificates
+        run: |
+          mkdir -p /root/.minio
+          cp -r ${{ github.workspace }}/certs/* /root/.minio/
+          docker run -d --name minio \
+            -p 9000:9000 -p 9001:9001 \
+            -e MINIO_ACCESS_KEY=minioadmin \
+            -e MINIO_SECRET_KEY=minioadmin \
+            -v minio_data:/data \
+            -v ${{ github.workspace }}/certs:/root/.minio \
+            minio/minio server /data --console-address ":9001" --certs-dir /root/.minio
 
       - name: Run tests
         run: go test -race -vet=off ./...
