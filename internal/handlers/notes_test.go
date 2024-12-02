@@ -4,8 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net"
-	"os"
-	"path"
 	"testing"
 
 	"github.com/spf13/viper"
@@ -59,7 +57,7 @@ func TestNotes(t *testing.T) {
 	_, err = client.RegisterUser(context.Background(), &proto.RegisterUserRequest{Credentials: &cred})
 	require.NoError(t, err)
 
-	_, err = client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &cred})
+	resp, err := client.Authorize(context.Background(), &proto.AuthorizeRequest{Credentials: &cred})
 	require.NoError(t, err)
 
 	note := &proto.Note{
@@ -67,10 +65,7 @@ func TestNotes(t *testing.T) {
 		Description: "description",
 	}
 
-	f, err := os.ReadFile(path.Join(os.TempDir(), TokenFileName))
-	require.NoError(t, err)
-	token := string(f)
-	md := metadata.New(map[string]string{"token": token})
+	md := metadata.New(map[string]string{"token": resp.Token})
 	ctx := metadata.NewOutgoingContext(context.Background(), md)
 
 	t.Run("test add note: error text is empty", func(t *testing.T) {
