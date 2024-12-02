@@ -11,8 +11,8 @@ services:
       MINIO_ACCESS_KEY: minioadmin
       MINIO_SECRET_KEY: minioadmin
     volumes:
-      - ./private.key:/root/.minio/private.key # укажите тут путь к private.key, если он отличается от текущего каталога
-      - ./public.crt:/root/.minio/public.crt # укажите тут путь к public.crt, если он отличается от текущего каталога
+      - ../../certs/private.key:/root/.minio/private.key # укажите тут путь к private.key, если он отличается от текущего каталога
+      - ../../certs/public.crt:/root/.minio/public.crt # укажите тут путь к public.crt, если он отличается от текущего каталога
       - minio_data:/data
     command: server /data --console-address ":9001" --certs-dir /root/.minio
 
