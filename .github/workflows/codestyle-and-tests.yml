@@ -62,7 +62,7 @@ jobs:
             minio/minio server /data --console-address ":9001" --certs-dir /root/.minio
 
       - name: Run tests
-        run:  go test -cover -coverprofile=${{ github.workspace }}/coverage/coverage.out ./... -vet=off ./...
+        run:  go test -cover -coverprofile=${{ github.workspace }}/coverage/coverage.out -parallel 1 -vet=off ./...
 
       - name: Check coverage
         run: go tool cover -func=${{ github.workspace }}/coverage/coverage.out
