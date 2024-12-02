@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 	"google.golang.org/grpc"
 
-	"github.com/Vidkin/gophkeeper/app"
+	"github.com/Vidkin/gophkeeper/app/server"
 	"github.com/Vidkin/gophkeeper/internal/handlers"
 	minioStorage "github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
@@ -42,7 +42,7 @@ func TestFiles(t *testing.T) {
 			interceptors.ValidateToken("JWTKey")))
 	proto.RegisterGophkeeperServer(s, gs)
 
-	listen, err := app.GetTLSListener(
+	listen, err := server.GetTLSListener(
 		"127.0.0.1:8080",
 		"../../certs/public.crt",
 		"../../certs/private.key")

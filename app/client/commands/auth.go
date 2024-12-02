@@ -3,7 +3,7 @@ Copyright © 2024 MIKHAIL SIRKIN <skim991@gmail.com>
 */
 
 // Package cmd contains the commands for the GophKeeper client application.
-package cmd
+package commands
 
 import (
 	"fmt"
@@ -13,20 +13,20 @@ import (
 	"github.com/Vidkin/gophkeeper/internal/client"
 )
 
-// registerCmd represents the register command
-var registerCmd = &cobra.Command{
-	Use:   "register [login] [password]",
-	Short: "Register user",
-	Long: `Register user in GophKeeper. For example:
-	client register login password`,
+// authCmd represents the authorize command
+var authCmd = &cobra.Command{
+	Use:   "auth [login] [password]",
+	Short: "Authorize user",
+	Long: `Authorize user in GophKeeper and get JWT. For example:
+	client auth login password`,
 	Args: cobra.ExactArgs(2),
 	Run: func(cmd *cobra.Command, args []string) {
-		if err := client.Register(args[0], args[1]); err != nil {
+		if err := client.Auth(args[0], args[1]); err != nil {
 			fmt.Println(err)
 		}
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(registerCmd)
+	rootCmd.AddCommand(authCmd)
 }

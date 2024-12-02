@@ -10,7 +10,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Vidkin/gophkeeper/app"
+	"github.com/Vidkin/gophkeeper/app/server"
 	"github.com/Vidkin/gophkeeper/internal/srvconfig"
 )
 
@@ -34,7 +34,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	serverApp, err := app.NewServerApp(cfg)
+	serverApp, err := server.NewServerApp(cfg)
 	if err != nil {
 		panic(err)
 	}

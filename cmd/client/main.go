@@ -11,7 +11,7 @@ package main
 import (
 	"fmt"
 
-	"github.com/Vidkin/gophkeeper/app/cmd"
+	"github.com/Vidkin/gophkeeper/app/client/commands"
 )
 
 // buildVersion holds the build version of the application.
@@ -25,9 +25,9 @@ var buildDate = "N/A"
 // main serves as the entry point for the GophKeeper application. It performs the following tasks:
 //
 //  1. Prints the build version and build date of the application.
-//  2. Executes the command-line interface (CLI) using the cmd.Execute() function,
+//  2. Executes the command-line interface (CLI) using the commands.Execute() function,
 //     which handles all user commands and interactions.
 func main() {
 	fmt.Printf("Build version: %s\nBuild date: %s\n---------------\n", buildVersion, buildDate)
-	cmd.Execute()
+	commands.Execute()
 }

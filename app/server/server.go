@@ -2,7 +2,7 @@
 // It encapsulates all necessary components for running the server, including configuration,
 // gRPC server instance, listener, and storage. The package handles signal management to
 // gracefully stop the server and ensures proper resource cleanup.
-package app
+package server
 
 import (
 	"crypto/tls"
