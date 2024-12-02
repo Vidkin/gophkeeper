@@ -11,7 +11,7 @@ import (
 	"fmt"
 
 	"github.com/Vidkin/gophkeeper/app"
-	"github.com/Vidkin/gophkeeper/internal/config"
+	"github.com/Vidkin/gophkeeper/internal/srvconfig"
 )
 
 // buildVersion holds the build version of the application.

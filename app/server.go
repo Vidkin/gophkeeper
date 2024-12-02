@@ -14,9 +14,9 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 
-	"github.com/Vidkin/gophkeeper/internal/config"
 	"github.com/Vidkin/gophkeeper/internal/handlers"
 	"github.com/Vidkin/gophkeeper/internal/logger"
+	"github.com/Vidkin/gophkeeper/internal/srvconfig"
 	"github.com/Vidkin/gophkeeper/internal/storage"
 	"github.com/Vidkin/gophkeeper/pkg/interceptors"
 	"github.com/Vidkin/gophkeeper/proto"
