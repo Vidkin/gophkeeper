@@ -37,14 +37,18 @@ func initConfig() {
 		fmt.Println("You must provide the path to config file")
 		panic("You must provide the path to config file")
 	}
+
 	if hashKey != "" {
 		if err := viper.BindPFlag("hash_key", rootCmd.PersistentFlags().Lookup("hash_key")); err != nil {
 			fmt.Println("Can't bind hash key flag to viper: ", err)
 			panic("Can't bind hash key flag to viper")
 		}
 	} else {
-		fmt.Println("You must provide the hash_key flag, see --help")
-		panic("You must provide the hash_key flag, see --help")
+		hashKey = viper.GetString("hash_key")
+		if hashKey == "" {
+			fmt.Println("You must provide the hash_key flag or set it in the config file, see --help")
+			panic("You must provide the hash_key flag or set it in the config file, see --help")
+		}
 	}
 
 	if secretKey != "" {
@@ -53,8 +57,11 @@ func initConfig() {
 			panic("Can't bind secret key flag to viper")
 		}
 	} else {
-		fmt.Println("You must provide the secret_key flag, see --help")
-		panic("You must provide the secret_key flag, see --help")
+		secretKey = viper.GetString("secret_key")
+		if secretKey == "" {
+			fmt.Println("You must provide the secret_key flag or set it in the config file, see --help")
+			panic("You must provide the secret_key flag or set it in the config file, see --help")
+		}
 	}
 }
 
