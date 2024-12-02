@@ -1,6 +1,8 @@
 # gophkeeper
 
 ## Начало работы
+- проект содержит пример конфигурационного файла для клиента со значениями по умолчанию: cfgclient.yaml.example 
+  (необходимо переименовать в cfgclient.yaml для использования)
 - бинарные данные, загруженные клиентом хранятся на сервере в хранилище MinIO (подключение защищено TLS)
     - при запуске сервера необходимо передать ключи: 
         - -minio-endpoint - адрес сервера MinIO
@@ -42,97 +44,97 @@
 
 ### Регистрация пользователя с логином test и паролем test
 ```
-./client register test test --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client register test test --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Авторизация пользователя с логином test и паролем test
 ```
-./client auth test test --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client auth test test --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Банковские карты
 #### Добавление новой банковской карты
 ```
-./client cards add --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --owner "Name Surname" --cvv 123 --expire 2024-04-23 --number 13473812 --desc "Test description"
+./client cards add --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --owner "Name Surname" --cvv 123 --expire 2024-04-23 --number 13473812 --desc "Test description"
 ```
 
 #### Показать все банковские карты
 ```
-./client cards getAll --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client cards getAll --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Показать банковскую карту по id
 ```
-./client cards get --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client cards get --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Удалить банковскую карту по id
 ```
-./client cards remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client cards remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Текстовые данные
 
 #### Добавление новых текстовых данных
 ```
-./client notes add --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --text "Some text" --desc "Test description"
+./client notes add --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --text "Some text" --desc "Test description"
 ```
 
 ### Показать все текстовые данные
 ```
-./client notes getAll --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client notes getAll --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Показать текстовые данные по id
 ```
-./client notes get --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client notes get --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Удалить текстовы данные по id
 ```
-./client notes remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client notes remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Пары логин-пароль
 
 #### Добавление новой пары логин-пароль
 ```
-./client credentials add --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --login TestLogin --pass 123 --desc "Test description"
+./client credentials add --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x --login TestLogin --pass 123 --desc "Test description"
 ```
 
 #### Показать все пары логин-пароль
 ```
-./client credentials getAll --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client credentials getAll --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Показать пару логин-пароль по id
 ```
-./client credentials get --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client credentials get --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Удалить пару логин-пароль по id
 ```
-./client credentials remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client credentials remove --id 1 --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 ### Файлы
 
 #### Upload
 ```
-./client files upload --path "/Users/skim/Downloads/Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --desc "File description" --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client files upload --path "/Users/skim/Downloads/Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --desc "File description" --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Показать все файлы
 ```
-./client files getAll --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client files getAll --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Download
 ```
-./client files download --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --dir "/Users/skim/Downloads/test" --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client files download --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --dir "/Users/skim/Downloads/test" --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yaml --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
 
 #### Удалить файл по имени
 ```
-./client files remove --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config /Users/skim/GolandProjects/gophkeeper/clientConfig.json --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
+./client files remove --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config /Users/skim/GolandProjects/gophkeeper/cfgclient.yamll --hash_key defaultHashKey --secret_key strongDBKey2Ks5nM2J5JaI59PPEhL1x
 ```
