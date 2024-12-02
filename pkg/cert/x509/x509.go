@@ -1,8 +1,8 @@
 /*
-Package cert provides functionality for creating and saving
+Package x509 provides functionality for creating and saving
 X.509 certificates and corresponding private keys in PEM format.
 */
-package cert
+package x509
 
 import (
 	"bytes"
@@ -105,7 +105,7 @@ func createPrivateKeyPEM(privateKey *rsa.PrivateKey) (bytes.Buffer, error) {
 	return privateKeyPEM, err
 }
 
-// createAndSave is the entry point of the program. It creates an X.509 certificate,
+// CreateAndSave is the entry point of the program. It creates an X.509 certificate,
 // generates the corresponding private key, and saves them to files
 // cert.pem and privateKey.pem.
 // Parameters:
@@ -115,7 +115,7 @@ func createPrivateKeyPEM(privateKey *rsa.PrivateKey) (bytes.Buffer, error) {
 //   - pathPrivateKeyPEM: path where to save private key pem file.
 //
 // Returns an error if operation fails.
-func createAndSave(organization, country, pathCertPEM, pathPrivateKeyPEM string) error {
+func CreateAndSave(organization, country, pathCertPEM, pathPrivateKeyPEM string) error {
 	privateKey, certBytes, err := createX509Certificate(organization, country)
 	if err != nil {
 		return err

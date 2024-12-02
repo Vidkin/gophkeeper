@@ -51,6 +51,9 @@ jobs:
       - name: Run golint
         run: golint ./...
 
+      - name: Generate certificates
+        run: go run ${{ github.workspace }}/pkg/cert/main.go test test ${{ github.workspace }}/certs/public.crt ${{ github.workspace }}/certs/private.key
+
       - name: Start Minio with certificates
         run: |
           docker run -d --name minio \

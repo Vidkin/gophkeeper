@@ -1,4 +1,4 @@
-package cert
+package x509
 
 import (
 	"os"
@@ -54,7 +54,7 @@ func Test_createAndSave(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if !tt.wantErr {
-				err := createAndSave(tt.args.organization, tt.args.country, tt.args.pathCertPEM, tt.args.pathPrivateKeyPEM)
+				err := CreateAndSave(tt.args.organization, tt.args.country, tt.args.pathCertPEM, tt.args.pathPrivateKeyPEM)
 				assert.NoError(t, err)
 				defer os.Remove(tt.args.pathCertPEM)
 				defer os.Remove(tt.args.pathPrivateKeyPEM)
@@ -73,7 +73,7 @@ func Test_createAndSave(t *testing.T) {
 				assert.NoError(t, err)
 				assert.NotEqual(t, 0, info.Size())
 			} else {
-				err := createAndSave(tt.args.organization, tt.args.country, tt.args.pathCertPEM, tt.args.pathPrivateKeyPEM)
+				err := CreateAndSave(tt.args.organization, tt.args.country, tt.args.pathCertPEM, tt.args.pathPrivateKeyPEM)
 				assert.Error(t, err)
 			}
 		})
