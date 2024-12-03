@@ -35,21 +35,21 @@ docker login
   - будет создан конфиг файл клиента со значениями по умолчанию;
   - запустится сервер со значениями по умолчанию.
 - открываем второе окно терминала, переходим в корень проекта и выполняем команды клиента, например:
-    - ./client register test test --config ./cfgclient.yaml
-    - ./client auth test test --config ./cfgclient.yaml
-    - ./client cards add --config ./cfgclient.yaml --owner "Name Surname" --cvv 123 --expire 2024-04-23 --number 13473812 --desc "Test description"
-    - ./client cards getAll --config ./cfgclient.yaml
-    - ./client cards remove --id 1 --config ./cfgclient.yaml
-    - ./client notes add --config ./cfgclient.yaml --text "Some text" --desc "Test description"
-    - ./client notes getAll --config ./cfgclient.yaml
-    - ./client notes remove --id 1 --config ./cfgclient.yaml
-    - ./client credentials add --config ./cfgclient.yaml --login TestLogin --pass 123 --desc "Test description"
-    - ./client credentials getAll --config ./cfgclient.yaml
-    - ./client credentials remove --id 1 --config ./cfgclient.yaml
-    - ./client files upload --path "/Users/skim/Downloads/Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config ./cfgclient.yaml --desc "File description"
+    - ./client register test test
+    - ./client auth test test
+    - ./client cards add --owner "Name Surname" --cvv 123 --expire 2024-04-23 --number 13473812 --desc "Test description"
+    - ./client cards getAll
+    - ./client cards remove --id 1
+    - ./client notes add --text "Some text" --desc "Test description"
+    - ./client notes getAll
+    - ./client notes remove --id 1
+    - ./client credentials add --login TestLogin --pass 123 --desc "Test description"
+    - ./client credentials getAll
+    - ./client credentials remove --id 1
+    - ./client files upload --path "/Users/skim/Downloads/Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --desc "File description"
     - ./client files getAll --config ./cfgclient.yaml
-    - ./client files download --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --dir "/Users/skim/Downloads/test" --config ./cfgclient.yaml
-    - ./client files remove --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --config ./cfgclient.yaml
+    - ./client files download --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --dir "/Users/skim/Downloads/test"
+    - ./client files remove --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4"
 
 ### Генерация открытого и закрытого ключа:
 Пример команды для генерации открытого и закрытого ключа из корня проекта:
