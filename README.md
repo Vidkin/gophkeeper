@@ -47,7 +47,7 @@ docker login
     - ./client credentials getAll
     - ./client credentials remove --id 1
     - ./client files upload --path "/Users/skim/Downloads/Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --desc "File description"
-    - ./client files getAll --config ./cfgclient.yaml
+    - ./client files getAll
     - ./client files download --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4" --dir "/Users/skim/Downloads/test"
     - ./client files remove --name "Открытый вебинар «Разработка Cloud Native приложений на Go (Введение в Kubernetes)» .mp4"
 
