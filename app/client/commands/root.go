@@ -13,6 +13,8 @@ import (
 	"github.com/spf13/viper"
 )
 
+const DefaultConfigPath = "./cfgclient.yaml"
+
 var (
 	cfgFilePath string
 	hashKey     string
@@ -30,12 +32,15 @@ func initConfig() {
 	if cfgFilePath != "" {
 		viper.SetConfigFile(cfgFilePath)
 		if err := viper.ReadInConfig(); err != nil {
-			fmt.Println("Can't read config:", err)
-			panic("Can't read config")
+			fmt.Println("Can't read config (see --help), error:", err)
+			panic("Can't read default config, see --help")
 		}
 	} else {
-		fmt.Println("You must provide the path to config file")
-		panic("You must provide the path to config file")
+		viper.SetConfigFile(DefaultConfigPath)
+		if err := viper.ReadInConfig(); err != nil {
+			fmt.Println("Can't read default config (see --help), error:", err)
+			panic("Can't read default config, see --help")
+		}
 	}
 
 	if hashKey != "" {
