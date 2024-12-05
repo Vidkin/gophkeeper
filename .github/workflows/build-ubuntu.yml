@@ -1,0 +1,41 @@
+name: Build ubuntu
+
+on:
+  pull_request:
+    branches:
+      - deploy
+  push:
+    branches:
+      - deploy
+
+jobs:
+  build-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+
+      - name: Set up Go
+        uses: actions/setup-go@v5.1.0
+        with:
+          go-version: 1.23
+
+      - name: Verify dependencies
+        run: go mod verify
+
+      - name: Build server
+        run: go build -ldflags "-X main.buildVersion=v1.0.0 -X 'main.buildDate=$(date +'%Y/%m/%d %H:%M:%S')'" -o gophkeeper-server -v ./cmd/server/
+
+      - name: Build client
+        run: go build -ldflags "-X main.buildVersion=v1.0.0 -X 'main.buildDate=$(date +'%Y/%m/%d %H:%M:%S')'" -o gophkeeper-client -v ./cmd/client/
+
+      - name: Archive server artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: gophkeeper-server-ubuntu-artifact
+          path: gophkeeper-server
+
+      - name: Archive client artifact
+        uses: actions/upload-artifact@v4.4.3
+        with:
+          name: gophkeeper-client-ubuntu-artifact
+          path: gophkeeper-client

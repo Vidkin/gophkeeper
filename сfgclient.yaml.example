@@ -1,0 +1,4 @@
+address: "127.0.0.1:8080"
+crypto_key_public_path: "/Users/skim/GolandProjects/gophkeeper/certs/public.crt"
+hash_key: "defaultHashKey"
+secret_key: "strongDBKey2Ks5nM2J5JaI59PPEhL1x"
